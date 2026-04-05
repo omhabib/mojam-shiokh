@@ -347,6 +347,8 @@ mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;pad
         <div class="report-card" onclick="runReport('ejaza-seraj')"><span class="rc-ic">🌟</span><div class="rc-t">إجازات سراج</div><div class="rc-s">تفصيل كامل</div></div>
         <div class="report-card" onclick="runReport('ejaza-layan')"><span class="rc-ic">🌸</span><div class="rc-t">إجازات ليان</div><div class="rc-s">تفصيل كامل</div></div>
         <div class="report-card" onclick="runReport('ejaza-banan')"><span class="rc-ic">🌺</span><div class="rc-t">إجازات بنان</div><div class="rc-s">تفصيل كامل</div></div>
+        <div class="report-card" onclick="runReport('ejaza-linah')"><span class="rc-ic">🌷</span><div class="rc-t">إجازات لينة</div><div class="rc-s">تفصيل كامل</div></div>
+        <div class="report-card" onclick="runReport('dhurriya')"><span class="rc-ic">👨‍👧‍👦</span><div class="rc-t">حالة الذرية</div><div class="rc-s">مجاز / معدوم / لا يدخل</div></div>
         <div class="report-card" onclick="runReport('istidaa')"><span class="rc-ic">📞</span><div class="rc-t">الاستدعاءات</div><div class="rc-s">سرد مطلق</div></div>
         <div class="report-card" onclick="runReport('istidaa-family')"><span class="rc-ic">👨‍👩‍👧‍👦</span><div class="rc-t">استدعاءات الأسرة</div><div class="rc-s">شامل للجميع</div></div>
         <div class="report-card" onclick="runReport('stats')"><span class="rc-ic">📊</span><div class="rc-t">إحصائيات عامة</div><div class="rc-s">أرقام وتحليلات</div></div>
@@ -1996,8 +1998,8 @@ async function runReport(type) {
     </table>`;
   } else {
     // reports requiring akhz data
-    const memberMap={'ejaza-zawja':'الزوجة','ejaza-seraj':'سراج','ejaza-layan':'ليان','ejaza-banan':'بنان'};
-    if(memberMap[type]||type==='masmouat'||type==='istidaa'||type==='istidaa-family'||type==='riwaya'||type==='riwaya-full'){
+    const memberMap={'ejaza-zawja':'الزوجة','ejaza-seraj':'سراج','ejaza-layan':'ليان','ejaza-banan':'بنان','ejaza-linah':'لينة'};
+    if(memberMap[type]||type==='masmouat'||type==='istidaa'||type==='istidaa-family'||type==='riwaya'||type==='riwaya-full'||type==='dhurriya'){
       const{data:akhzData}=await sb.from('akhz').select('*,shuyookh(name_short)').order('sheikh_id');
       const{data:riwData}=await sb.from('sheikh_riwaya').select('*,shuyookh(name_short)').order('sheikh_id');
 
@@ -2029,6 +2031,33 @@ async function runReport(type) {
         title='مسموعاتي تفصيلاً';
         const relevant=akhzData.filter(a=>a.akhz_type==='مسموع');
         content=relevant.map((a,i)=>`<div style="margin-bottom:12px"><b>${i+1}. ${a.shuyookh?.name_short||''}</b>: ${a.content||''}</div>`).join('');
+      } else if(type==='dhurriya'){
+        title='حالة الذرية في الإجازات';
+        const relevant=akhzData.filter(a=>{
+          const mujaz=JSON.parse(a.mujaz_lahum||'[]');
+          return mujaz.some(m=>m.includes('الذرية')||m.includes('يُدرك')||m.includes('يدرك')||DHURRIYA.some(c=>m.includes(c.name)));
+        });
+        content=`<table border="1" style="width:100%;border-collapse:collapse;direction:rtl;font-size:13px">
+          <tr style="background:#f5f0e0"><th style="padding:8px">م</th><th style="padding:8px">الشيخ</th><th style="padding:8px">التاريخ</th>${DHURRIYA.map(c=>`<th style="padding:8px">${c.name}</th>`).join('')}</tr>`+
+          relevant.map((a,i)=>{
+            const sh=allShuyookh.find(s=>s.id===a.sheikh_id)||{};
+            let dY=toArabicNum(sh.death_date), dM=hijriMonthNum(sh.death_month)||gregMonthNum(sh.death_month);
+            if(sh.death_type==='ميلادي'&&dY>0&&dY<2100){const h=gregToHijriApprox(dY,dM);dY=h.year;dM=h.month;}
+            let aY=toArabicNum(a.date_year), aM=hijriMonthNum(a.date_month)||gregMonthNum(a.date_month);
+            if(a.date_type==='ميلادي'&&aY>0&&aY<2100){const h=gregToHijriApprox(aY,aM);aY=h.year;aM=h.month;}
+            const mujazArr=JSON.parse(a.mujaz_lahum||'[]');
+            const hasManyudrik=mujazArr.some(m=>m.includes('يُدرك')||m.includes('يدرك'));
+            const dateStr=[a.date_day,a.date_month,a.date_year].filter(Boolean).join(' ')||'—';
+            const cells=DHURRIYA.map(c=>{
+              const st=getChildStatus(c,dY,dM,aY,aM,hasManyudrik);
+              const bg=st.status==='مجاز'?'#e8f5e9':st.status==='معدوم'?'#fff3e0':'#fce4ec';
+              return`<td style="padding:6px;text-align:center;background:${bg}">${st.icon} ${st.status}</td>`;
+            }).join('');
+            return`<tr><td style="padding:6px;text-align:center">${i+1}</td><td style="padding:6px">${sh.name_short||''}</td><td style="padding:6px;font-size:11px">${dateStr}</td>${cells}</tr>`;
+          }).join('')+'</table>'+
+          `<div style="margin-top:20px;padding:12px;background:#f9f6ee;border-radius:8px;font-size:13px">
+            <b>المفتاح:</b> ✅ مجاز (أدرك الحياة + وُلد قبل الاستدعاء) | ⏳ معدوم (أدرك الحياة + وُلد بعد الاستدعاء + مشمول بـ"من يُدرك") | ❌ لا يدخل (وُلد بعد وفاة الشيخ)
+          </div>`;
       } else if(type==='riwaya'||type==='riwaya-full'){
         title=type==='riwaya'?'الشيوخ مع شيوخ الرواية':'الشيوخ مع شيوخ الرواية والتفاصيل';
         content=data.map((s,i)=>{
