@@ -1029,9 +1029,22 @@ function applyFilterSort(data) {
   if (currentFilter==='img') d = d.filter(s=>s.photo_url&&s.photo_url.trim());
   if (currentFilter==='noimg') d = d.filter(s=>!s.photo_url||!s.photo_url.trim());
   if (sortEnabled) d = [...d].sort((a,b)=>{
-    const ka=(a.sort_key||a.name_short||'').replace(/[\u064B-\u065F]/g,'');
-    const kb=(b.sort_key||b.name_short||'').replace(/[\u064B-\u065F]/g,'');
-    return ka.localeCompare(kb,'ar');
+    // الترتيب: الاسم المميز (بعد ←) + باقي الاسم الكامل بعده (بن فلان بن فلان...)
+    const extractKey = (s) => {
+      const sk = s.sort_key || '';
+      const arrow = sk.indexOf('→');
+      if (arrow > -1) {
+        const shortName = sk.substring(arrow + 1).trim();
+        // الاسم الكامل قبل ←
+        const fullPart = sk.substring(0, arrow).trim().replace(/[.…]+$/, '').trim();
+        // نبحث عن موضع الاسم المميز في الاسم الكامل ونأخذ من بعده
+        const idx = fullPart.indexOf(shortName);
+        const rest = idx > -1 ? fullPart.substring(idx + shortName.length).trim() : fullPart;
+        return (shortName + ' ' + rest).replace(/[\u064B-\u065F]/g,'').trim();
+      }
+      return (s.name_short || '').replace(/[\u064B-\u065F]/g,'');
+    };
+    return extractKey(a).localeCompare(extractKey(b), 'ar');
   });
   return d;
 }
