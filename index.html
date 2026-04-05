@@ -814,10 +814,10 @@ const MONTHS_M = ['يناير','فبراير','مارس','أبريل','مايو'
 // DHURRIYA (الذرية)
 // ═══════════════════════════════
 const DHURRIYA = [
-  { name: 'سراج', year: 1433, month: 1 },
-  { name: 'بنان', year: 1438, month: 2 },
-  { name: 'ليان', year: 1441, month: 6 },
-  { name: 'لينة', year: 1445, month: 11 },
+  { name: 'سراج', year: 1433, month: 1, birthDay: '٢٣', birthMonth: 'محرم', birthYear: '١٤٣٣' },
+  { name: 'بنان', year: 1438, month: 2, birthDay: '٢٨', birthMonth: 'صفر', birthYear: '١٤٣٨' },
+  { name: 'ليان', year: 1441, month: 6, birthDay: '٥', birthMonth: 'جمادى الآخرة', birthYear: '١٤٤١' },
+  { name: 'لينة', year: 1445, month: 11, birthDay: '١٥', birthMonth: 'ذو القعدة', birthYear: '١٤٤٥' },
 ];
 
 function hijriMonthNum(name) {
@@ -2079,15 +2079,13 @@ async function runReport(type) {
             ${isChild?statBox('الميلاد',`${childObj.birthDay||''} ${childObj.birthMonth||''} ${childObj.birthYear||''} هـ`):''}
             ${isChild?`${statBox('✅ مجاز',cntMujaz)} ${statBox('⏳ معدوم',cntMadum)} ${statBox('❌ لا يدخل',cntNo)}`:''}
           </div>
-          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-            ${searchBox}
-            ${isChild?`<div style="display:flex;gap:6px;margin-bottom:16px">
-              <button onclick="filterByStatus('')" style="${filterBtnStyle};background:#f5f0e0;color:#6b5a1e">الكل</button>
-              <button onclick="filterByStatus('مجاز')" style="${filterBtnStyle};background:#e8f5e9;color:#2e7d32">✅ مجاز</button>
-              <button onclick="filterByStatus('معدوم')" style="${filterBtnStyle};background:#fff3e0;color:#e65100">⏳ معدوم</button>
-              <button onclick="filterByStatus('لا يدخل')" style="${filterBtnStyle};background:#fce4ec;color:#c62828">❌ لا يدخل</button>
-            </div>`:''}
-          </div>
+          ${searchBox}
+          ${isChild?`<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+            <button onclick="filterByStatus('')" style="${filterBtnStyle};background:#f5f0e0;color:#6b5a1e">🔄 الكل (${relevant.length})</button>
+            <button onclick="filterByStatus('مجاز')" style="${filterBtnStyle};background:#e8f5e9;color:#2e7d32">✅ مجاز (${cntMujaz})</button>
+            <button onclick="filterByStatus('معدوم')" style="${filterBtnStyle};background:#fff3e0;color:#e65100">⏳ معدوم (${cntMadum})</button>
+            <button onclick="filterByStatus('لا يدخل')" style="${filterBtnStyle};background:#fce4ec;color:#c62828">❌ لا يدخل (${cntNo})</button>
+          </div>`:''}
         `+cardData.map(({sh,dateStr,a,status,i})=>{
           let statusHtml='';
           if(status){
