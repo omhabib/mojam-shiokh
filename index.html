@@ -808,6 +808,76 @@ const sb = supabase.createClient(SURL, SKEY);
 const MONTHS_H = ['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
 const MONTHS_M = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
+// ═══════════════════════════════
+// DHURRIYA (الذرية)
+// ═══════════════════════════════
+const DHURRIYA = [
+  { name: 'سراج', year: 1433, month: 1 },
+  { name: 'بنان', year: 1438, month: 2 },
+  { name: 'ليان', year: 1441, month: 6 },
+  { name: 'لينة', year: 1445, month: 11 },
+];
+
+function hijriMonthNum(name) {
+  if (!name) return 0;
+  const n = name.trim();
+  const idx = MONTHS_H.findIndex(m => n.includes(m));
+  return idx >= 0 ? idx + 1 : 0;
+}
+
+function toArabicNum(s) {
+  if (!s) return 0;
+  return parseInt(String(s).replace(/[١٢٣٤٥٦٧٨٩٠]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^\d]/g,'')) || 0;
+}
+
+// مقارنة تاريخين: يرجع -1 إذا (y1,m1) < (y2,m2)، 0 إذا متساويان، 1 إذا أكبر
+function cmpDate(y1, m1, y2, m2) {
+  if (y1 !== y2) return y1 < y2 ? -1 : 1;
+  if (m1 !== m2) return m1 < m2 ? -1 : 1;
+  return 0;
+}
+
+// تحويل تقريبي من ميلادي إلى هجري
+function gregToHijriApprox(gYear, gMonth) {
+  // تقريب: السنة الهجرية ≈ (الميلادية - 622) × 1.0307
+  const hYear = Math.round((gYear - 622) * 1.0307);
+  return { year: hYear, month: gMonth || 1 };
+}
+
+function gregMonthNum(name) {
+  if (!name) return 0;
+  const idx = MONTHS_M.findIndex(m => name.includes(m));
+  return idx >= 0 ? idx + 1 : 0;
+}
+
+/**
+ * حالة الابن/البنت في إجازة معينة
+ * @returns {status: 'مجاز'|'معدوم'|'لا يدخل', icon: string, color: string}
+ */
+function getChildStatus(child, deathYear, deathMonth, akhzYear, akhzMonth, hasManyudrik) {
+  const dY = deathYear || 9999; // الشيخ حي = لا حد
+  const dM = deathMonth || 12;
+  const aY = akhzYear || 0;
+  const aM = akhzMonth || 1;
+
+  const bornBeforeDeath = cmpDate(child.year, child.month, dY, dM) <= 0;
+  const bornBeforeAkhz = aY > 0 ? cmpDate(child.year, child.month, aY, aM) <= 0 : true;
+
+  if (!bornBeforeDeath) {
+    // وُلد بعد وفاة الشيخ → لا يدخل مطلقًا
+    return { status: 'لا يدخل', icon: '❌', color: '#e74c3c' };
+  }
+  if (bornBeforeAkhz) {
+    // وُلد قبل الاستدعاء وقبل الوفاة → مجاز
+    return { status: 'مجاز', icon: '✅', color: '#27ae60' };
+  }
+  // وُلد بعد الاستدعاء لكن قبل الوفاة (أدرك الحياة)
+  if (hasManyudrik) {
+    return { status: 'معدوم', icon: '⏳', color: '#e67e22' };
+  }
+  return { status: 'لا يدخل', icon: '❌', color: '#e74c3c' };
+}
+
 function fillMonthSelect(selId, type) {
   const sel = document.getElementById(selId);
   if (!sel) return;
@@ -1129,10 +1199,36 @@ async function loadDetailAkhz(id) {
     container.innerHTML='<div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">📜</span><div class="es-sub">لا توجد إجازات أو مسموعات مضافة بعد</div></div>';
     return;
   }
+  // بيانات وفاة الشيخ (تحويل للهجري إذا ميلادي)
+  const sheikh = allShuyookh.find(s=>s.id===id) || {};
+  let deathYear = toArabicNum(sheikh.death_date);
+  let deathMonth = hijriMonthNum(sheikh.death_month) || gregMonthNum(sheikh.death_month);
+  if (sheikh.death_type === 'ميلادي' && deathYear > 0 && deathYear < 2100) {
+    const h = gregToHijriApprox(deathYear, deathMonth);
+    deathYear = h.year;
+    deathMonth = h.month;
+  }
+
   container.innerHTML = data.map(a=>{
     const mujaz = a.mujaz_lahum ? JSON.parse(a.mujaz_lahum||'[]').join('، ') : '';
+    const mujazArr = a.mujaz_lahum ? JSON.parse(a.mujaz_lahum||'[]') : [];
+    const hasManyudrik = mujazArr.some(m => m.includes('يُدرك') || m.includes('يدرك'));
     const dateStr = [a.date_day,a.date_month,a.date_year,a.date_type].filter(Boolean).join(' ');
     const typeColor = a.akhz_type==='مسموع'?'badge-green':a.akhz_type==='إنشادة'?'badge-blue':'badge-gold';
+
+    // حالة الذرية — تحويل التاريخ الميلادي للهجري إذا لزم
+    let akhzYear = toArabicNum(a.date_year);
+    let akhzMonth = hijriMonthNum(a.date_month) || gregMonthNum(a.date_month);
+    if (a.date_type === 'ميلادي' && akhzYear > 0 && akhzYear < 2100) {
+      const h = gregToHijriApprox(akhzYear, akhzMonth);
+      akhzYear = h.year;
+      akhzMonth = h.month;
+    }
+    const dhurriyaHtml = DHURRIYA.map(child => {
+      const st = getChildStatus(child, deathYear, deathMonth, akhzYear, akhzMonth, hasManyudrik);
+      return `<span style="color:${st.color};font-weight:600;white-space:nowrap">${st.icon} ${child.name} <small style="opacity:0.85">${st.status}</small></span>`;
+    }).join('<span style="color:#999;margin:0 4px">|</span>');
+
     return `<div class="akhz-item">
       <span class="badge ${typeColor} akhz-type-badge">${esc(a.akhz_type)}</span>
       <div style="margin-top:4px;padding-top:4px">
@@ -1143,6 +1239,10 @@ async function loadDetailAkhz(id) {
           ${a.reader?`<span>📖 بقراءة: ${esc(a.reader)}</span>`:''}
           ${dateStr?`<span>📅 ${dateStr}</span>`:''}
           ${mujaz?`<span>👥 ${mujaz}</span>`:''}
+        </div>
+        <div style="margin-top:6px;padding:6px 8px;background:rgba(0,0,0,0.03);border-radius:8px;font-size:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+          <span style="font-weight:700;color:var(--gold)">👨‍👧‍👦 الذرية:</span>
+          ${dhurriyaHtml}
         </div>
       </div>
       <div style="margin-top:8px;text-align:left;display:flex;gap:6px">
