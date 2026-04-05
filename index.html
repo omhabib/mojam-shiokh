@@ -8,9 +8,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
-  --bg1:#09060302;--bg2:#0e0a06;--bg3:#161009;--bg4:#1e160c;--bg5:#251b10;--bg6:#2e2114;--bg7:#382818;
+  --bg1:#0b0806;--bg2:#110d08;--bg3:#19120b;--bg4:#21190f;--bg5:#291e13;--bg6:#322417;--bg7:#3c2c1c;
   --gold1:#d4a843;--gold2:#b8922e;--gold3:#8a6a1e;--gold4:#c9a227;--gold5:#f0d898;--gold6:#5a4210;--gold7:#3a2a08;
-  --cream1:#e8d9b8;--cream2:#b8a888;--cream3:#786848;--cream4:#4a3828;
+  --cream1:#e8d9b8;--cream2:#c4b498;--cream3:#9a8a6a;--cream4:#4a3828;
   --red-bg:rgba(120,30,20,0.3);--red-c:#e88878;--red-b:rgba(139,58,42,0.4);
   --green-bg:rgba(20,80,40,0.3);--green-c:#78c888;
   --b1:rgba(180,140,40,0.3);--b2:rgba(180,140,40,0.15);--b3:rgba(180,140,40,0.07);
@@ -33,7 +33,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .sb-brand-icon{font-size:36px;display:block;margin-bottom:10px;filter:drop-shadow(0 0 10px rgba(212,168,67,0.5));animation:glow 3s ease-in-out infinite}
 @keyframes glow{0%,100%{filter:drop-shadow(0 0 8px rgba(212,168,67,0.4))}50%{filter:drop-shadow(0 0 22px rgba(212,168,67,0.8))}}
 .sb-brand h1{font-family:var(--font-d);font-size:18px;color:var(--gold1);font-weight:700;line-height:1.5}
-.sb-brand p{font-size:10px;color:var(--cream3);margin-top:5px;letter-spacing:.5px}
+.sb-brand p{font-size:9px;color:var(--cream2);margin-top:5px;letter-spacing:.3px;white-space:nowrap}
 .sb-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:12px;border-bottom:1px solid var(--b2)}
 .sb-st{background:var(--bg5);border:1px solid var(--b2);border-radius:var(--r1);padding:10px 8px;text-align:center;transition:all .2s}
 .sb-st:hover{border-color:var(--b1)}
@@ -252,7 +252,7 @@ mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;pad
 <div class="sidebar">
   <div class="sb-brand">
     <span class="sb-brand-icon">📜</span>
-    <h1>فيض الإله في معجم شيوخ ابن حبيب الله</h1>
+    <h1>فيض الإله<br>في معجم شيوخ ابن حبيب الله</h1>
     <p>معجم شيوخ عمر بن محمد سراج حبيب الله</p>
   </div>
   <div class="sb-stats">
@@ -551,7 +551,7 @@ mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;pad
 
   <div class="fsep">📝 الترجمة والملاحظات</div>
   <div class="fg"><label>ترجمة مطولة بقلمي</label><textarea id="ms-tarjama" style="min-height:100px"></textarea></div>
-  <div class="fg"><label>روايته عنه</label><textarea id="ms-riwaya-anhu" style="min-height:80px" placeholder="وصف كيفية الرواية عن هذا الشيخ..."></textarea></div>
+  <div class="fg" style="display:none"><label>روايته عنه</label><textarea id="ms-riwaya-anhu" style="min-height:80px" placeholder="وصف كيفية الرواية عن هذا الشيخ..."></textarea></div>
   <div class="fg"><label>ملاحظات</label><input type="text" id="ms-notes"></div>
 
   <div class="modal-footer">
@@ -920,8 +920,19 @@ function setDateType(group, type, btn) {
 }
 
 // init months
+function arabizeSelectOptions() {
+  const map = {'0':'٠','1':'١','2':'٢','3':'٣','4':'٤','5':'٥','6':'٦','7':'٧','8':'٨','9':'٩'};
+  document.querySelectorAll('select option').forEach(opt => {
+    if (/^\d+$/.test(opt.textContent.trim())) {
+      const arabicText = opt.textContent.replace(/[0-9]/g, d => map[d]);
+      opt.textContent = arabicText;
+    }
+  });
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   ['ms-bmonth','ms-dmonth','ak-month','rw-month','ssh-bmonth','ssh-dmonth'].forEach(id => fillMonthSelect(id,'هجري'));
+  arabizeSelectOptions();
 });
 
 // ═══════════════════════════════
@@ -1242,10 +1253,10 @@ async function loadDetailAkhz(id) {
           ${dateStr?`<span>📅 ${dateStr}</span>`:''}
           ${mujaz?`<span>👥 ${mujaz}</span>`:''}
         </div>
-        <div style="margin-top:6px;padding:6px 8px;background:rgba(0,0,0,0.03);border-radius:8px;font-size:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+        ${a.subtype==='باستدعاء'?`<div style="margin-top:6px;padding:6px 8px;background:rgba(0,0,0,0.03);border-radius:8px;font-size:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
           <span style="font-weight:700;color:var(--gold)">👨‍👧‍👦 الذرية:</span>
           ${dhurriyaHtml}
-        </div>
+        </div>`:''}
       </div>
       <div style="margin-top:8px;text-align:left;display:flex;gap:6px">
         <button class="btn btn-xs" onclick="editAkhz(${a.id})" style="background:var(--gold2);color:#000;padding:2px 8px;font-size:11px">✏️ تعديل</button>
@@ -1513,7 +1524,8 @@ async function saveAkhz() {
 async function editAkhz(id) {
   const {data:a} = await sb.from('akhz').select('*').eq('id',id).single();
   if(!a) return;
-  const mujaz = a.mujaz_lahum ? JSON.parse(a.mujaz_lahum||'[]').join('، ') : '';
+  const mujazArr = a.mujaz_lahum ? JSON.parse(a.mujaz_lahum||'[]') : [];
+  const mujaz = mujazArr.join('، ');
   const html = `
     <div style="display:grid;gap:10px;direction:rtl;text-align:right">
       <label>نوع الأخذ:<select id="ea-type" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)">
@@ -1541,7 +1553,14 @@ async function editAkhz(id) {
           <option ${a.date_type==='ميلادي'?'selected':''}>ميلادي</option>
         </select></label>
       </div>
-      <label>المُجاز لهم (مفصولون بفاصلة):<input id="ea-mujaz" value="${esc(mujaz)}" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)"></label>
+      <div style="margin-top:8px"><span style="color:var(--gold1);font-size:13px;font-weight:600">👥 المُجاز لهم</span>
+        <div id="ea-mujaz-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px;margin-top:6px">
+          ${['لي فقط','الزوجة','سراج','بنان','ليان','لينة','أخواتي','والدتي','طلابي','من يُدرك'].map(v=>{
+            const sel=mujazArr.some(m=>m===v||(v==='من يُدرك'&&(m==='من يدرك'||m==='من يُدرك')))?'selected':'';
+            return`<div class="mujaz-opt ${sel}" onclick="toggleMujaz(this)" data-v="${v}">${v}</div>`;
+          }).join('')}
+        </div>
+      </div>
     </div>`;
 
   const modal = document.createElement('div');
@@ -1559,8 +1578,7 @@ async function editAkhz(id) {
 }
 
 async function saveAkhzEdit(id, btn) {
-  const mujazStr = document.getElementById('ea-mujaz').value.trim();
-  const mujazArr = mujazStr ? mujazStr.split('،').map(s=>s.trim()).filter(Boolean) : [];
+  const mujazArr = Array.from(document.querySelectorAll('#ea-mujaz-grid .mujaz-opt.selected')).map(o=>o.dataset.v);
   const updates = {
     akhz_type: document.getElementById('ea-type').value,
     content: document.getElementById('ea-content').value.trim(),
@@ -2005,18 +2023,43 @@ async function runReport(type) {
 
       if(memberMap[type]){
         const member=memberMap[type];
+        const isChild=DHURRIYA.some(c=>c.name===member);
         title=`إجازات ${member}`;
         const relevant=akhzData.filter(a=>{
           const mujaz=JSON.parse(a.mujaz_lahum||'[]');
-          return mujaz.includes(member)||mujaz.includes('من يُدرك');
+          return mujaz.includes(member)||mujaz.includes('من يُدرك')||mujaz.includes('من يدرك');
         });
-        content=relevant.map((a,i)=>`<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #ccc">
-          <b>${i+1}. ${a.shuyookh?.name_short||''}</b><br>
-          النوع: ${a.akhz_type||''} — ${a.subtype||''}<br>
-          ${a.content?'المحتوى: '+a.content+'<br>':''}
-          ${a.mustadei?'باستدعاء: '+a.mustadei+'<br>':''}
-          التاريخ: ${[a.date_day,a.date_month,a.date_year,a.date_type].filter(Boolean).join(' ')||'—'}
-        </div>`).join('');
+        const childObj=isChild?DHURRIYA.find(c=>c.name===member):null;
+        content=`
+          <div style="margin-bottom:16px;padding:14px;background:#f9f6ee;border-radius:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:15px">
+            <span><b>إجمالي الإجازات:</b> ${relevant.length}</span>
+            ${isChild?`<span><b>تاريخ الميلاد:</b> ${childObj.birthDay||''} ${childObj.birthMonth||''} ${childObj.birthYear||''} هـ</span>`:''}
+          </div>
+          <input type="text" id="rpt-filter" placeholder="🔍 ابحث في الأسماء..." oninput="filterReportCards(this.value)" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;margin-bottom:16px;font-size:14px;direction:rtl">
+        `+relevant.map((a,i)=>{
+          const sh=data.find(s=>s.id===a.sheikh_id)||{};
+          const dateStr=[a.date_day,a.date_month,a.date_year].filter(Boolean).join(' ')||'—';
+          let statusHtml='';
+          if(isChild&&childObj){
+            let dY=toArabicNum(sh.death_date),dM=hijriMonthNum(sh.death_month)||gregMonthNum(sh.death_month);
+            if(sh.death_type==='ميلادي'&&dY>0&&dY<2100){const h=gregToHijriApprox(dY,dM);dY=h.year;dM=h.month;}
+            let aY=toArabicNum(a.date_year),aM=hijriMonthNum(a.date_month)||gregMonthNum(a.date_month);
+            if(a.date_type==='ميلادي'&&aY>0&&aY<2100){const h=gregToHijriApprox(aY,aM);aY=h.year;aM=h.month;}
+            const mujazArr=JSON.parse(a.mujaz_lahum||'[]');
+            const hasManyudrik=mujazArr.some(m=>m.includes('يُدرك')||m.includes('يدرك'));
+            const st=getChildStatus(childObj,dY,dM,aY,aM,hasManyudrik);
+            const bg=st.status==='مجاز'?'#2e7d32':st.status==='معدوم'?'#e65100':'#c62828';
+            statusHtml=`<span style="background:${bg};color:#fff;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700">${st.icon} ${st.status}</span>`;
+          }
+          return`<div class="rpt-card" data-name="${(sh.name_short||'').toLowerCase()}" style="background:#fff;border:1px solid #e0d9c8;border-radius:10px;padding:14px;margin-bottom:10px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;direction:rtl">
+            <span style="background:#f5f0e0;color:#6b5a1e;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">${i+1}</span>
+            <div>
+              <div style="font-weight:700;font-size:15px;color:#333">${sh.name_short||''}</div>
+              <div style="font-size:12px;color:#888;margin-top:3px">📅 ${dateStr}${a.mustadei?` · 📞 ${a.mustadei}`:''}</div>
+            </div>
+            <div>${statusHtml}</div>
+          </div>`;
+        }).join('');
       } else if(type==='istidaa'||type==='istidaa-family'){
         title=type==='istidaa'?'الاستدعاءات الكاملة':'استدعاءات الأسرة';
         const relevant=akhzData.filter(a=>a.subtype==='باستدعاء');
@@ -2073,10 +2116,14 @@ async function runReport(type) {
 
   const w=window.open('','_blank');
   w.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>${title}</title>
-    <style>body{font-family:serif;padding:30px;direction:rtl;line-height:2;max-width:960px;margin:0 auto}
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>body{font-family:'Tajawal',sans-serif;padding:30px;direction:rtl;line-height:2;max-width:960px;margin:0 auto}
+    h1,h2,h3,b{font-family:'Amiri',serif}
     @media print{.np{display:none}}</style></head><body>
     <div class="np" style="margin-bottom:20px"><button onclick="window.print()" style="padding:8px 16px;cursor:pointer;font-size:14px">🖨️ طباعة</button></div>
-    <h1 style="color:#8a6a1e;margin-bottom:24px;font-family:serif">${title}</h1>${content}</body></html>`);
+    <h1 style="color:#8a6a1e;margin-bottom:24px;font-family:'Amiri',serif">${title}</h1>${content}
+    <scr`+`ipt>function filterReportCards(q){document.querySelectorAll('.rpt-card').forEach(c=>{c.style.display=!q||c.dataset.name.includes(q.toLowerCase())?'':'none'})}</scr`+`ipt>
+    </body></html>`);
   w.document.close();
 }
 
