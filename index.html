@@ -290,8 +290,14 @@ mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;pad
       <div class="filter-bar">
         <span class="f-label">تصفية:</span>
         <button class="f-btn active" onclick="setFilter('all',this)">الكل</button>
+        <button class="f-btn" onclick="setFilter('alive',this)">🟢 الأحياء</button>
+        <button class="f-btn" onclick="setFilter('dead',this)">⚫ المتوفون</button>
+        <button class="f-btn" onclick="setFilter('notarjama',this)">📝 بدون ترجمة</button>
         <button class="f-btn" onclick="setFilter('img',this)">لديهم صور</button>
         <button class="f-btn" onclick="setFilter('noimg',this)">بدون صورة</button>
+      </div>
+      <div class="filter-bar" id="letter-bar" style="gap:4px;margin-bottom:10px">
+        <button class="f-btn active" onclick="setLetterFilter('',this)" style="padding:4px 10px;font-size:12px;font-weight:700">الكل</button>
       </div>
       <div class="toolbar">
         <div class="vbtns">
@@ -956,6 +962,7 @@ async function loadShuyookh() {
   if (error) { showToast('خطأ: '+error.message, true); return; }
   allShuyookh = data || [];
   updateStats();
+  buildLetterBar();
   if (currentPage==='shuyookh') renderShuyookh();
 }
 
@@ -1008,11 +1015,57 @@ function showPage(id, el) {
 // ═══════════════════════════════
 // FILTER & SORT
 // ═══════════════════════════════
+let currentLetterFilter = '';
+
 function setFilter(f, el) {
   currentFilter=f;
-  document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.filter-bar:first-of-type .f-btn').forEach(b=>b.classList.remove('active'));
   if(el)el.classList.add('active');
   renderShuyookh();
+}
+
+function setLetterFilter(letter, el) {
+  currentLetterFilter = letter;
+  document.querySelectorAll('#letter-bar .f-btn').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  // فعّل الترتيب الألفبائي تلقائيًا عند اختيار حرف
+  if(letter && !sortEnabled) {
+    sortEnabled = true;
+    const sortBtn = document.getElementById('sort-btn');
+    if(sortBtn) { sortBtn.textContent='↕ الترتيب الأصلي'; sortBtn.style.color='var(--gold1)'; }
+  }
+  renderShuyookh();
+}
+
+function getShortName(s) {
+  const sk = s.sort_key || '';
+  const arrow = sk.indexOf('→');
+  if (arrow > -1) return sk.substring(arrow + 1).trim();
+  return s.name_short || '';
+}
+
+function buildLetterBar() {
+  const letters = {};
+  allShuyookh.forEach(s => {
+    const name = getShortName(s);
+    if (name) {
+      let first = name.charAt(0);
+      // توحيد الألف بأشكالها
+      if ('أإآ'.includes(first)) first = 'ا';
+      letters[first] = (letters[first] || 0) + 1;
+    }
+  });
+  const bar = document.getElementById('letter-bar');
+  if (!bar) return;
+  const arabicOrder = 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي';
+  const displayMap = {'ه':'هـ'};
+  let html = '<button class="f-btn active" onclick="setLetterFilter(\'\',this)" style="padding:4px 10px;font-size:12px;font-weight:700">الكل</button>';
+  for (const ch of arabicOrder) {
+    if (letters[ch]) {
+      html += `<button class="f-btn" onclick="setLetterFilter('${ch}',this)" style="padding:4px 8px;font-size:13px;min-width:28px;text-align:center" title="${letters[ch]} شيخ">${displayMap[ch]||ch}</button>`;
+    }
+  }
+  bar.innerHTML = html;
 }
 
 function toggleSort(btn) {
@@ -1028,6 +1081,15 @@ function applyFilterSort(data) {
   if (q) d = d.filter(s=>((s.name_short||'')+(s.name_full||'')+(s.notes||'')+(s.tarjama_mine||'')).toLowerCase().includes(q));
   if (currentFilter==='img') d = d.filter(s=>s.photo_url&&s.photo_url.trim());
   if (currentFilter==='noimg') d = d.filter(s=>!s.photo_url||!s.photo_url.trim());
+  if (currentFilter==='dead') d = d.filter(s=>s.death_date||s.death_detail);
+  if (currentFilter==='alive') d = d.filter(s=>!s.death_date&&!s.death_detail);
+  if (currentFilter==='notarjama') d = d.filter(s=>!s.tarjama_mine||!s.tarjama_mine.trim());
+  if (currentLetterFilter) d = d.filter(s=>{
+    const name = getShortName(s);
+    let first = name.charAt(0);
+    if ('أإآ'.includes(first)) first = 'ا';
+    return first === currentLetterFilter;
+  });
   if (sortEnabled) d = [...d].sort((a,b)=>{
     // الترتيب: الاسم المميز (بعد ←) + باقي الاسم الكامل بعده (بن فلان بن فلان...)
     const extractKey = (s) => {
