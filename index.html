@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فيض الإله في معجم شيوخ ابن حبيب الله</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg1:#09060302;--bg2:#0e0a06;--bg3:#161009;--bg4:#1e160c;--bg5:#251b10;--bg6:#2e2114;--bg7:#382818;
+  --gold1:#d4a843;--gold2:#b8922e;--gold3:#8a6a1e;--gold4:#c9a227;--gold5:#f0d898;--gold6:#5a4210;--gold7:#3a2a08;
+  --cream1:#e8d9b8;--cream2:#b8a888;--cream3:#786848;--cream4:#4a3828;
+  --red-bg:rgba(120,30,20,0.3);--red-c:#e88878;--red-b:rgba(139,58,42,0.4);
+  --green-bg:rgba(20,80,40,0.3);--green-c:#78c888;
+  --b1:rgba(180,140,40,0.3);--b2:rgba(180,140,40,0.15);--b3:rgba(180,140,40,0.07);
+  --font-d:'Amiri',serif;--font-b:'Tajawal',sans-serif;
+  --r1:6px;--r2:10px;--r3:16px;--r4:24px;
+  --sh1:0 4px 24px rgba(0,0,0,0.5);
+  --sh2:0 12px 48px rgba(0,0,0,0.6),0 0 0 1px var(--b2);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-b);background:var(--bg2);color:var(--cream1);direction:rtl;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 10% 10%,rgba(180,140,40,0.06) 0%,transparent 55%),
+  radial-gradient(ellipse 60% 50% at 90% 90%,rgba(140,80,10,0.04) 0%,transparent 55%)}
+.app{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* ═══════ SIDEBAR ═══════ */
+.sidebar{width:230px;background:var(--bg3);border-left:1px solid var(--b1);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sb-brand{padding:24px 18px 18px;text-align:center;border-bottom:1px solid var(--b2);background:linear-gradient(180deg,rgba(180,140,40,0.1) 0%,transparent 100%)}
+.sb-brand-icon{font-size:36px;display:block;margin-bottom:10px;filter:drop-shadow(0 0 10px rgba(212,168,67,0.5));animation:glow 3s ease-in-out infinite}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 8px rgba(212,168,67,0.4))}50%{filter:drop-shadow(0 0 22px rgba(212,168,67,0.8))}}
+.sb-brand h1{font-family:var(--font-d);font-size:18px;color:var(--gold1);font-weight:700;line-height:1.5}
+.sb-brand p{font-size:10px;color:var(--cream3);margin-top:5px;letter-spacing:.5px}
+.sb-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:12px;border-bottom:1px solid var(--b2)}
+.sb-st{background:var(--bg5);border:1px solid var(--b2);border-radius:var(--r1);padding:10px 8px;text-align:center;transition:all .2s}
+.sb-st:hover{border-color:var(--b1)}
+.sb-st .n{font-family:var(--font-d);font-size:22px;color:var(--gold1);font-weight:700;display:block}
+.sb-st .l{font-size:9px;color:var(--cream3);display:block;margin-top:2px}
+.nav-section{padding:14px 18px 5px;font-size:9px;color:var(--gold3);letter-spacing:1.8px;text-transform:uppercase;font-weight:500}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;color:var(--cream2);font-size:13px;border-right:3px solid transparent;transition:all .15s;user-select:none;position:relative}
+.nav-item:hover{background:var(--bg5);color:var(--cream1)}
+.nav-item.active{background:linear-gradient(90deg,rgba(212,168,67,0.08) 0%,transparent 100%);color:var(--gold1);border-right-color:var(--gold1)}
+.nav-ic{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{margin-right:auto;background:var(--gold7);color:var(--gold4);font-size:9px;padding:2px 7px;border-radius:10px;border:1px solid var(--b1)}
+
+/* ═══════ MAIN ═══════ */
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{background:var(--bg3);border-bottom:1px solid var(--b1);padding:0 22px;height:60px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:40;backdrop-filter:blur(10px)}
+.topbar-title{font-family:var(--font-d);font-size:18px;color:var(--gold1);font-weight:700;flex:1}
+.search-wrap{position:relative;flex:1;max-width:420px}
+.search-inp{width:100%;background:rgba(0,0,0,0.4);border:1px solid var(--b1);border-radius:30px;padding:9px 38px 9px 14px;color:var(--cream1);font-family:var(--font-b);font-size:13px;transition:all .2s;direction:rtl}
+.search-inp:focus{outline:none;border-color:var(--gold2);background:rgba(0,0,0,0.6);box-shadow:0 0 0 3px rgba(180,140,40,0.12)}
+.search-inp::placeholder{color:var(--cream3)}
+.search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gold3);pointer-events:none}
+
+/* ═══════ BUTTONS ═══════ */
+.btn{font-family:var(--font-b);cursor:pointer;border:none;border-radius:var(--r2);padding:9px 18px;font-size:13px;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-weight:500}
+.btn-gold{background:linear-gradient(135deg,var(--gold2) 0%,var(--gold3) 100%);color:var(--bg2);font-weight:700;box-shadow:0 2px 14px rgba(180,140,40,0.4)}
+.btn-gold:hover{background:linear-gradient(135deg,var(--gold1) 0%,var(--gold2) 100%);box-shadow:0 4px 24px rgba(180,140,40,0.55);transform:translateY(-1px)}
+.btn-ghost{background:var(--bg5);color:var(--cream2);border:1px solid var(--b1)}
+.btn-ghost:hover{background:var(--bg7);color:var(--cream1)}
+.btn-danger{background:var(--red-bg);color:var(--red-c);border:1px solid var(--red-b)}
+.btn-danger:hover{background:rgba(120,30,20,0.5)}
+.btn-soft{background:rgba(180,140,40,0.1);color:var(--gold4);border:1px solid var(--b1)}
+.btn-soft:hover{background:rgba(180,140,40,0.2)}
+.btn-sm{padding:5px 11px;font-size:11px;border-radius:var(--r1)}
+.btn-xs{padding:3px 8px;font-size:10px;border-radius:4px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+
+/* ═══════ CONTENT ═══════ */
+.content{flex:1;padding:24px;overflow-y:auto}
+.page{display:none}
+.page.active{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ═══════ FILTER BAR ═══════ */
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.f-label{font-size:11px;color:var(--cream3)}
+.f-btn{background:var(--bg5);border:1px solid var(--b2);border-radius:20px;padding:5px 13px;cursor:pointer;color:var(--cream3);font-size:11px;transition:all .15s;font-family:var(--font-b)}
+.f-btn:hover{border-color:var(--b1);color:var(--cream1)}
+.f-btn.active{background:var(--gold6);color:var(--gold1);border-color:var(--b1)}
+
+/* ═══════ TOOLBAR ═══════ */
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.toolbar-r{margin-right:auto;display:flex;align-items:center;gap:6px}
+.res-count{font-size:11px;color:var(--cream3);padding:5px 11px;background:var(--bg5);border:1px solid var(--b2);border-radius:var(--r1)}
+.vbtns{display:flex;gap:3px}
+.vbtn{background:var(--bg5);border:1px solid var(--b2);border-radius:var(--r1);padding:5px 10px;cursor:pointer;color:var(--cream3);font-size:13px;transition:all .12s}
+.vbtn.active{background:var(--bg7);color:var(--gold1);border-color:var(--b1)}
+
+/* ═══════ GRID ═══════ */
+.s-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px}
+.s-card{background:var(--bg6);border:1px solid var(--b2);border-radius:var(--r3);overflow:hidden;transition:all .22s;position:relative}
+.s-card:hover{border-color:var(--b1);transform:translateY(-5px);box-shadow:var(--sh2)}
+.s-card-img{width:100%;height:130px;overflow:hidden;border-bottom:1px solid var(--b2);background:linear-gradient(135deg,var(--bg4),var(--bg5));display:flex;align-items:center;justify-content:center;font-size:46px;cursor:pointer;flex-shrink:0}
+.s-card-img img{width:100%;height:100%;object-fit:cover}
+.s-card-body{padding:14px;cursor:pointer}
+.s-card-name{font-family:var(--font-d);font-size:14px;color:var(--cream1);font-weight:700;margin-bottom:5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.s-card-sub{font-size:11px;color:var(--cream3);margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.s-card-badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.s-card-actions{display:flex;gap:4px;border-top:1px solid var(--b2);padding:8px 14px 12px}
+
+/* ═══════ TABLE ═══════ */
+.tbl-wrap{background:var(--bg6);border:1px solid var(--b2);border-radius:var(--r3);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{background:var(--bg5);color:var(--gold3);font-size:11px;font-weight:600;padding:12px 14px;text-align:right;border-bottom:1px solid var(--b1);white-space:nowrap;letter-spacing:.4px}
+td{padding:12px 14px;border-bottom:1px solid var(--b2);color:var(--cream2);font-size:12px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(180,140,40,0.04)}
+.td-name{font-family:var(--font-d);font-size:14px;color:var(--cream1);font-weight:700;cursor:pointer}
+.td-name:hover{color:var(--gold1)}
+.td-sub{font-size:10px;color:var(--cream3);margin-top:2px}
+.td-clip{max-width:350px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--cream3);cursor:pointer}
+.td-clip:hover{color:var(--gold4)}
+.av{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--b1);cursor:pointer;flex-shrink:0}
+.av-ph{width:40px;height:40px;border-radius:50%;background:var(--bg4);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex-shrink:0}
+mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;padding:0 2px}
+
+/* ═══════ BADGES ═══════ */
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:600;letter-spacing:.3px}
+.badge-gold{background:var(--gold7);color:var(--gold4);border:1px solid var(--b1)}
+.badge-green{background:var(--green-bg);color:var(--green-c);border:1px solid rgba(40,120,60,0.3)}
+.badge-red{background:var(--red-bg);color:var(--red-c);border:1px solid var(--red-b)}
+.badge-blue{background:rgba(20,50,120,0.3);color:#88a8e8;border:1px solid rgba(30,60,140,0.4)}
+
+/* ═══════ DETAIL PAGE ═══════ */
+.detail-page{display:none;position:fixed;inset:0;background:var(--bg2);z-index:100;overflow-y:auto;direction:rtl}
+.detail-page.open{display:block;transform:none}
+.detail-hdr{background:var(--bg3);border-bottom:1px solid var(--b1);padding:14px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:10;backdrop-filter:blur(10px)}
+.detail-back{background:var(--bg5);border:1px solid var(--b1);border-radius:var(--r1);padding:7px 16px;cursor:pointer;color:var(--cream2);font-size:13px;font-family:var(--font-b);transition:all .12s;display:flex;align-items:center;gap:6px}
+.detail-back:hover{background:var(--bg7);color:var(--gold1)}
+.detail-hdr-name{font-family:var(--font-d);font-size:20px;color:var(--gold1);font-weight:700;flex:1}
+.detail-body{max-width:940px;margin:0 auto;padding:28px 24px}
+.detail-hero{display:flex;gap:26px;margin-bottom:28px;align-items:flex-start;flex-wrap:wrap}
+.detail-photo{width:170px;height:195px;border-radius:var(--r2);overflow:hidden;border:2px solid var(--b1);flex-shrink:0;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:64px;cursor:pointer;transition:all .2s}
+.detail-photo:hover{border-color:var(--gold1)}
+.detail-photo img{width:100%;height:100%;object-fit:cover}
+.detail-info{flex:1;min-width:200px}
+.detail-name{font-family:var(--font-d);font-size:28px;color:var(--gold1);font-weight:700;margin-bottom:10px;line-height:1.4}
+.detail-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.detail-actions-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+.detail-sec{background:var(--bg5);border:1px solid var(--b2);border-radius:var(--r2);padding:20px;margin-bottom:14px}
+.detail-sec-title{font-family:var(--font-d);font-size:15px;color:var(--gold2);font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--b2)}
+.detail-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.detail-field{background:var(--bg4);border-radius:var(--r1);padding:10px 12px}
+.detail-field-label{font-size:10px;color:var(--gold3);margin-bottom:4px;letter-spacing:.3px}
+.detail-field-val{font-size:13px;color:var(--cream1)}
+
+/* akhz item */
+.akhz-item{background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r1);padding:14px;margin-bottom:8px;position:relative}
+.akhz-item:hover{border-color:var(--b1)}
+.akhz-type-badge{position:absolute;top:10px;left:10px}
+.akhz-content{font-size:13px;color:var(--cream1);line-height:1.8;margin-bottom:8px}
+.akhz-meta{font-size:11px;color:var(--cream3);display:flex;flex-wrap:wrap;gap:10px}
+.akhz-meta span{display:flex;align-items:center;gap:4px}
+
+/* riwaya item */
+.riwaya-item{background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r1);padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px}
+.riwaya-item:hover{border-color:var(--b1)}
+.riwaya-item-name{flex:1;font-family:var(--font-d);font-size:14px;color:var(--cream1);font-weight:700}
+.riwaya-item-meta{font-size:11px;color:var(--cream3)}
+
+/* wathaeq */
+.wathaeq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.wthq-item{background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r1);overflow:hidden;cursor:pointer;transition:all .15s}
+.wthq-item:hover{border-color:var(--b1);transform:scale(1.02)}
+.wthq-thumb{width:100%;height:90px;object-fit:cover}
+.wthq-label{padding:6px 8px;font-size:10px;color:var(--cream3);text-align:center}
+
+/* ═══════ MODAL ═══════ */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-bg.open{display:flex;animation:fadeUp .2s ease}
+.modal{background:var(--bg5);border:1px solid var(--b1);border-radius:var(--r4);padding:26px;width:720px;max-width:96vw;max-height:92vh;overflow-y:auto;direction:rtl;position:relative;box-shadow:0 40px 100px rgba(0,0,0,0.8)}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--gold2) 50%,transparent 100%);border-radius:var(--r4) var(--r4) 0 0}
+.modal h3{font-family:var(--font-d);font-size:20px;color:var(--gold1);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--b2)}
+.modal-close{position:absolute;top:18px;left:18px;background:var(--bg4);border:1px solid var(--b2);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--cream3);font-size:14px;transition:all .12s}
+.modal-close:hover{background:var(--bg7);color:var(--gold1);border-color:var(--b1)}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:16px;border-top:1px solid var(--b2)}
+
+/* ═══════ FORM ═══════ */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fg label{font-size:11px;color:var(--gold3);font-weight:600;letter-spacing:.3px}
+.fg input,.fg select,.fg textarea{background:rgba(0,0,0,0.4);border:1px solid var(--b1);border-radius:var(--r1);padding:9px 12px;color:var(--cream1);font-family:var(--font-b);font-size:13px;transition:all .15s;direction:rtl;width:100%}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--gold2);background:rgba(0,0,0,0.6);box-shadow:0 0 0 3px rgba(180,140,40,0.1)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--cream3);opacity:.6}
+.fg textarea{resize:vertical;min-height:80px}
+.fg select option{background:var(--bg5)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.frow.tri{grid-template-columns:1fr 1fr 1fr}
+.frow.full{grid-template-columns:1fr}
+.fsep{border-top:1px solid var(--b2);margin:18px 0 14px;padding-top:12px;font-size:12px;font-weight:600;color:var(--gold3);display:flex;align-items:center;gap:8px}
+
+/* date fields */
+.date-group{display:flex;gap:8px;align-items:flex-end}
+.date-group .fg{flex:1;margin-bottom:0}
+.date-type-toggle{display:flex;gap:4px;margin-bottom:12px}
+.dtt-btn{padding:5px 12px;border-radius:var(--r1);font-size:11px;cursor:pointer;border:1px solid var(--b2);background:var(--bg4);color:var(--cream3);font-family:var(--font-b);transition:all .12s}
+.dtt-btn.active{background:var(--gold6);color:var(--gold1);border-color:var(--b1)}
+
+/* multi-add section */
+.multi-section{background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r2);padding:14px;margin-bottom:12px}
+.multi-section-title{font-size:12px;font-weight:600;color:var(--gold3);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.multi-item{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r1);padding:8px 10px;margin-bottom:6px}
+.multi-item span{flex:1;font-size:12px;color:var(--cream1)}
+.multi-item .mi-del{background:none;border:none;cursor:pointer;color:var(--cream3);font-size:13px;padding:2px 5px;border-radius:3px;transition:all .12s}
+.multi-item .mi-del:hover{background:var(--red-bg);color:var(--red-c)}
+
+/* mujaz checkboxes */
+.mujaz-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mujaz-opt{background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r1);padding:8px;text-align:center;cursor:pointer;font-size:12px;color:var(--cream2);transition:all .12s;user-select:none}
+.mujaz-opt:hover{border-color:var(--b1);color:var(--cream1)}
+.mujaz-opt.selected{background:var(--gold6);color:var(--gold1);border-color:var(--b1)}
+
+/* REPORTS */
+.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.report-card{background:var(--bg6);border:1px solid var(--b2);border-radius:var(--r2);padding:18px;cursor:pointer;transition:all .2s;text-align:center}
+.report-card:hover{border-color:var(--b1);background:var(--bg7);transform:translateY(-2px);box-shadow:var(--sh1)}
+.report-card .rc-ic{font-size:28px;margin-bottom:10px;display:block}
+.report-card .rc-t{font-size:13px;font-weight:600;color:var(--cream1);margin-bottom:3px}
+.report-card .rc-s{font-size:10px;color:var(--cream3)}
+
+/* LOADING */
+.loading-state{text-align:center;padding:70px 20px;color:var(--cream3)}
+.spinner{width:36px;height:36px;border:2px solid var(--b2);border-top-color:var(--gold2);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 18px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-state p{font-family:var(--font-d);font-size:16px;color:var(--gold3)}
+.empty-state{text-align:center;padding:60px 20px}
+.empty-state .es-ic{font-size:56px;margin-bottom:14px;display:block}
+.empty-state p{font-family:var(--font-d);font-size:15px;color:var(--gold3)}
+.empty-state .es-sub{font-size:12px;color:var(--cream3);margin-top:6px}
+
+/* TOAST */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg5);border:1px solid var(--b1);color:var(--gold1);padding:12px 26px;border-radius:var(--r2);font-size:13px;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;box-shadow:var(--sh2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{color:var(--red-c);border-color:var(--red-b)}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--gold6);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--gold3)}
+.hidden{display:none!important}
+@media print{.sidebar,.topbar,.s-card-actions,.modal-bg,.detail-actions-bar,.detail-back,#print-btn{display:none!important}.main,.detail-page{display:block!important}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-brand">
+    <span class="sb-brand-icon">📜</span>
+    <h1>فيض الإله في معجم شيوخ ابن حبيب الله</h1>
+    <p>معجم شيوخ عمر بن محمد سراج حبيب الله</p>
+  </div>
+  <div class="sb-stats">
+    <div class="sb-st"><span class="n" id="st-total">—</span><span class="l">إجمالي الشيوخ</span></div>
+    <div class="sb-st"><span class="n" id="st-img">—</span><span class="l">لديهم صور</span></div>
+    <div class="sb-st"><span class="n" id="st-shsh">—</span><span class="l">شيوخ الشيوخ</span></div>
+    <div class="sb-st"><span class="n" id="st-akhz">—</span><span class="l">إجمالي الأخذ</span></div>
+  </div>
+  <div class="nav-section">الأقسام</div>
+  <div class="nav-item active" onclick="showPage('shuyookh',this)"><span class="nav-ic">🧑‍🏫</span>معجم الشيوخ<span class="nav-badge" id="nb-total">—</span></div>
+  <div class="nav-item" onclick="showPage('shuyookh-sh',this)"><span class="nav-ic">👥</span>شيوخ الشيوخ</div>
+
+  <div class="nav-item" onclick="showPage('reports',this)"><span class="nav-ic">📊</span>التقارير</div>
+  <div class="nav-section">الأدوات</div>
+  <div class="nav-item" onclick="showPage('search',this)"><span class="nav-ic">🔍</span>البحث المتقدم</div>
+  <div class="nav-item" onclick="openAddSheikh()"><span class="nav-ic">➕</span>إضافة شيخ</div>
+  <div class="nav-item" onclick="loadAll()"><span class="nav-ic">↻</span>تحديث</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">معجم الشيوخ</div>
+    <div class="search-wrap">
+      <input class="search-inp" id="search-inp" type="text" placeholder="ابحث بالاسم..." oninput="onSearch(this.value)">
+      <span class="search-ico">🔍</span>
+    </div>
+    <button class="btn btn-gold" onclick="openAddSheikh()">+ إضافة شيخ</button>
+  </div>
+
+  <div class="content">
+
+    <!-- معجم الشيوخ -->
+    <div class="page active" id="page-shuyookh">
+      <div class="filter-bar">
+        <span class="f-label">تصفية:</span>
+        <button class="f-btn active" onclick="setFilter('all',this)">الكل</button>
+        <button class="f-btn" onclick="setFilter('img',this)">لديهم صور</button>
+        <button class="f-btn" onclick="setFilter('noimg',this)">بدون صورة</button>
+      </div>
+      <div class="toolbar">
+        <div class="vbtns">
+          <button class="vbtn active" id="vb-grid" onclick="setView('grid',this)">⊞ بطاقات</button>
+          <button class="vbtn" id="vb-table" onclick="setView('table',this)">☰ جدول</button>
+        </div>
+        <span class="res-count" id="res-count">جارٍ التحميل...</span>
+        <div class="toolbar-r">
+          <button class="btn btn-ghost btn-sm" id="sort-btn" onclick="toggleSort(this)">أ-ي ترتيب</button>
+        </div>
+      </div>
+      <div id="view-grid">
+        <div class="s-grid" id="s-grid">
+          <div class="loading-state" style="grid-column:1/-1"><div class="spinner"></div><p>جارٍ تحميل البيانات...</p></div>
+        </div>
+      </div>
+      <div id="view-table" style="display:none">
+        <div class="tbl-wrap"><div id="s-table"><div class="loading-state"><div class="spinner"></div><p>جارٍ التحميل...</p></div></div></div>
+      </div>
+    </div>
+
+    <!-- شيوخ الشيوخ -->
+    <div class="page" id="page-shuyookh-sh">
+      <div class="toolbar">
+        <span class="res-count" id="res-count-sh">جارٍ التحميل...</span>
+        <div class="toolbar-r">
+          <button class="btn btn-gold btn-sm" onclick="openAddSheikhSh()">+ إضافة شيخ شيوخ</button>
+        </div>
+      </div>
+      <div class="tbl-wrap"><div id="tbl-sh"><div class="loading-state"><div class="spinner"></div><p>جارٍ التحميل...</p></div></div></div>
+    </div>
+
+    <!-- المسموعات -->
+    <div class="page" id="page-masmouat">
+      <div class="empty-state"><span class="es-ic">🎧</span><p>قسم المسموعات</p><div class="es-sub">ستُعرض المسموعات من بيانات الشيوخ</div></div>
+    </div>
+
+    <!-- الإجازات -->
+    <div class="page" id="page-ejazat">
+      <div class="empty-state"><span class="es-ic">📋</span><p>قسم الإجازات</p><div class="es-sub">إجازات سراج وبنان وليان ولينة والزوجة</div></div>
+    </div>
+
+    <!-- التقارير -->
+    <div class="page" id="page-reports">
+      <p style="font-family:var(--font-d);font-size:19px;color:var(--gold1);margin-bottom:20px">التقارير</p>
+      <div class="report-grid">
+        <div class="report-card" onclick="runReport('names')"><span class="rc-ic">📋</span><div class="rc-t">أسماء الشيوخ</div><div class="rc-s">قائمة مختصرة</div></div>
+        <div class="report-card" onclick="runReport('names-dates')"><span class="rc-ic">📅</span><div class="rc-t">الشيوخ مع التواريخ</div><div class="rc-s">المواليد والوفيات</div></div>
+        <div class="report-card" onclick="runReport('riwaya')"><span class="rc-ic">🔗</span><div class="rc-t">مع شيوخ الرواية</div><div class="rc-s">بدون تفصيل</div></div>
+        <div class="report-card" onclick="runReport('riwaya-full')"><span class="rc-ic">📜</span><div class="rc-t">الرواية مع التفاصيل</div><div class="rc-s">سرد كامل</div></div>
+        <div class="report-card" onclick="runReport('masmouat')"><span class="rc-ic">🎧</span><div class="rc-t">مسموعاتي تفصيلاً</div><div class="rc-s">على كل الشيوخ</div></div>
+        <div class="report-card" onclick="runReport('ejaza-zawja')"><span class="rc-ic">💍</span><div class="rc-t">إجازات الزوجة</div><div class="rc-s">تفصيل كامل</div></div>
+        <div class="report-card" onclick="runReport('ejaza-seraj')"><span class="rc-ic">🌟</span><div class="rc-t">إجازات سراج</div><div class="rc-s">تفصيل كامل</div></div>
+        <div class="report-card" onclick="runReport('ejaza-layan')"><span class="rc-ic">🌸</span><div class="rc-t">إجازات ليان</div><div class="rc-s">تفصيل كامل</div></div>
+        <div class="report-card" onclick="runReport('ejaza-banan')"><span class="rc-ic">🌺</span><div class="rc-t">إجازات بنان</div><div class="rc-s">تفصيل كامل</div></div>
+        <div class="report-card" onclick="runReport('istidaa')"><span class="rc-ic">📞</span><div class="rc-t">الاستدعاءات</div><div class="rc-s">سرد مطلق</div></div>
+        <div class="report-card" onclick="runReport('istidaa-family')"><span class="rc-ic">👨‍👩‍👧‍👦</span><div class="rc-t">استدعاءات الأسرة</div><div class="rc-s">شامل للجميع</div></div>
+        <div class="report-card" onclick="runReport('stats')"><span class="rc-ic">📊</span><div class="rc-t">إحصائيات عامة</div><div class="rc-s">أرقام وتحليلات</div></div>
+      </div>
+    </div>
+
+    <!-- البحث المتقدم -->
+    <div class="page" id="page-search">
+      <p style="font-family:var(--font-d);font-size:19px;color:var(--gold1);margin-bottom:20px">البحث المتقدم</p>
+      <div style="background:var(--bg6);border:1px solid var(--b2);border-radius:var(--r3);padding:20px;margin-bottom:18px">
+        <div class="frow tri">
+          <div class="fg"><label>كلمة البحث</label><input type="text" id="adv-q" placeholder="ابحث..."></div>
+          <div class="fg"><label>البحث في</label>
+            <select id="adv-in">
+              <option value="all">كل الحقول</option>
+              <option value="name">الاسم فقط</option>
+              <option value="tarjama">الترجمة فقط</option>
+            </select>
+          </div>
+          <div class="fg"><label> </label><button class="btn btn-gold" onclick="doAdvSearch()" style="margin-top:1px">🔍 بحث</button></div>
+        </div>
+      </div>
+      <div id="adv-results"></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ═══════ DETAIL PAGE ═══════ -->
+<div class="detail-page" id="detail-page">
+  <div class="detail-hdr">
+    <button class="detail-back" onclick="closeDetail()">← رجوع</button>
+    <div class="detail-hdr-name" id="detail-hdr-name"></div>
+    <button class="btn btn-ghost btn-sm" id="print-btn" onclick="window.print()">🖨️ طباعة</button>
+  </div>
+  <div class="detail-body">
+
+    <!-- Hero -->
+    <div class="detail-hero">
+      <div class="detail-photo" id="d-photo">🧑‍🏫</div>
+      <div class="detail-info">
+        <div class="detail-name" id="d-name"></div>
+        <div class="detail-meta" id="d-meta"></div>
+        <div id="d-notes" style="font-size:12px;color:var(--cream3);font-style:italic;margin-top:8px"></div>
+      </div>
+    </div>
+
+    <div class="detail-actions-bar">
+      <button class="btn btn-soft" onclick="openEditFromDetail()">✏️ تعديل</button>
+      <button class="btn btn-soft" onclick="openAddAkhzFromDetail()">+ إضافة أخذ</button>
+      <button class="btn btn-soft" onclick="openAddRiwayaFromDetail()">+ إضافة شيخ رواية</button>
+      <button class="btn btn-soft" onclick="openAddWthqFromDetail()">+ إضافة وثيقة</button>
+      <button class="btn btn-danger" onclick="deleteFromDetail()">🗑️ حذف</button>
+    </div>
+
+    <!-- بيانات أساسية -->
+    <div class="detail-sec" id="d-sec-basic">
+      <div class="detail-sec-title">📍 البيانات الأساس</div>
+      <div class="detail-grid-2" id="d-basic-grid"></div>
+    </div>
+
+    <!-- الأخذ -->
+    <div class="detail-sec">
+      <div class="detail-sec-title">📜 الأخذ والإجازات والمسموعات
+        <button class="btn btn-soft btn-xs" onclick="openAddAkhzFromDetail()">+ إضافة</button>
+      </div>
+      <div id="d-akhz-list"><div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">📜</span><div class="es-sub">لا توجد إجازات أو مسموعات مضافة بعد</div></div></div>
+    </div>
+
+    <!-- شيوخ الرواية -->
+    <div class="detail-sec">
+      <div class="detail-sec-title">🔗 شيوخ الرواية
+        <button class="btn btn-soft btn-xs" onclick="openAddRiwayaFromDetail()">+ إضافة</button>
+      </div>
+      <div id="d-riwaya-list"><div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">🔗</span><div class="es-sub">لم يُضف شيوخ رواية بعد</div></div></div>
+    </div>
+
+    <!-- روايته عنه -->
+    <div class="detail-sec" id="d-sec-riwaya-anhu" style="display:none">
+      <div class="detail-sec-title">📖 روايته عنه</div>
+      <div id="d-riwaya-anhu-content" style="white-space:pre-wrap;font-family:var(--font-d);font-size:15px;line-height:2;color:var(--cream2)"></div>
+    </div>
+
+    <!-- الترجمة -->
+    <div class="detail-sec" id="d-sec-tarjama" style="display:none">
+      <div class="detail-sec-title">📝 الترجمة المطولة</div>
+      <div id="d-tarjama-content" style="white-space:pre-wrap;font-family:var(--font-d);font-size:15px;line-height:2;color:var(--cream2)"></div>
+    </div>
+
+    <!-- الوثائق والصور -->
+    <div class="detail-sec">
+      <div class="detail-sec-title">🖼️ الصور والوثائق
+        <button class="btn btn-soft btn-xs" onclick="openAddWthqFromDetail()">+ إضافة</button>
+      </div>
+      <div id="d-wathaeq-list"><div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">🖼️</span><div class="es-sub">لم تُضف وثائق بعد</div></div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════ DETAIL PAGE: شيخ شيوخ ═══════ -->
+<div class="detail-page" id="detail-page-sh">
+  <div class="detail-hdr">
+    <button class="detail-back" onclick="closeDetailSh()">← رجوع</button>
+    <div class="detail-hdr-name" id="detail-hdr-name-sh"></div>
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ طباعة</button>
+  </div>
+  <div class="detail-body">
+    <div class="detail-hero">
+      <div class="detail-photo" id="d-photo-sh">👤</div>
+      <div class="detail-info">
+        <div class="detail-name" id="d-name-sh"></div>
+        <div class="detail-meta" id="d-meta-sh"></div>
+        <div id="d-notes-sh" style="font-size:12px;color:var(--cream3);font-style:italic;margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="detail-actions-bar">
+      <button class="btn btn-soft" onclick="openEditSheikhSh(detailSheikhShId)">✏️ تعديل</button>
+      <button class="btn btn-danger" onclick="deleteFromDetailSh()">🗑️ حذف</button>
+    </div>
+    <div class="detail-sec" id="d-sec-basic-sh">
+      <div class="detail-sec-title">📍 البيانات الأساس</div>
+      <div class="detail-grid-2" id="d-basic-grid-sh"></div>
+    </div>
+    <div class="detail-sec" id="d-sec-tarjama-sh" style="display:none">
+      <div class="detail-sec-title">📝 الترجمة المطولة</div>
+      <div id="d-tarjama-content-sh" style="white-space:pre-wrap;font-family:var(--font-d);font-size:15px;line-height:2;color:var(--cream2)"></div>
+    </div>
+    <!-- الشيوخ الذين يروون عنه -->
+    <div class="detail-sec" id="d-sec-rawu-anhu">
+      <div class="detail-sec-title">🔗 الشيوخ الذين يروون عنه</div>
+      <div id="d-rawu-anhu-list"><div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">🔗</span><div class="es-sub">لا يوجد شيوخ مرتبطون</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODAL: إضافة/تعديل شيخ ═══════ -->
+<div class="modal-bg" id="modal-sheikh">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-sheikh')">✕</button>
+  <h3 id="modal-sheikh-title">➕ إضافة شيخ جديد</h3>
+
+  <div class="frow">
+    <div class="fg"><label>الاسم مختصراً *</label><input type="text" id="ms-short" placeholder="مثال: الألباني"></div>
+    <div class="fg"><label>الاسم كاملاً</label><input type="text" id="ms-full" placeholder="محمد ناصر الدين الألباني"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label>مفتاح الترتيب</label><input type="text" id="ms-sort" placeholder="الاسم الدال للترتيب الألفبائي"></div>
+    <div class="fg"><label>رابط الصورة</label>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="ms-photo" placeholder="https://... أو ارفع مباشرة ←" style="flex:1">
+        <label style="background:linear-gradient(135deg,var(--gold2),var(--gold3));color:var(--bg2);border-radius:var(--r1);padding:0 12px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;height:38px;white-space:nowrap" title="رفع صورة">
+          📷
+          <input type="file" id="ms-photo-file" accept="image/*" style="display:none" onchange="handleMsPhotoUpload(this)">
+        </label>
+        <button type="button" onclick="document.getElementById('ms-photo').value=''" style="background:var(--red-bg);border:1px solid var(--red-b);color:var(--red-c);border-radius:var(--r1);padding:0 10px;cursor:pointer;font-size:13px;white-space:nowrap;height:38px" title="حذف الصورة">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="fsep">📍 الميلاد</div>
+  <div class="date-type-toggle">
+    <button class="dtt-btn active" onclick="setDateType('birth','هجري',this)">هجري</button>
+    <button class="dtt-btn" onclick="setDateType('birth','ميلادي',this)">ميلادي</button>
+  </div>
+  <div class="frow">
+    <div class="fg"><label>مكان الميلاد</label><input type="text" id="ms-bplace"></div>
+    <div class="date-group" style="flex:1">
+      <div class="fg"><label>يوم/ليلة</label>
+        <select id="ms-bday-name" style="flex:0.6"><option value="">—</option><option>يوم</option><option>ليلة</option></select><select id="ms-bday-wday" style="flex:1"><option value="">—</option><option>السبت</option><option>الأحد</option><option>الاثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option></select><select id="ms-bday-num" style="flex:0.6"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select>
+      </div>
+      <div class="fg"><label>الشهر</label>
+        <select id="ms-bmonth"><option value="">—</option></select>
+      </div>
+      <div class="fg"><label>السنة</label><input type="text" id="ms-byear" placeholder="١٣٥٠"></div>
+    </div>
+  </div>
+  <input type="hidden" id="ms-btype" value="هجري">
+
+  <div class="fsep">🕊️ الوفاة</div>
+  <div class="date-type-toggle">
+    <button class="dtt-btn active" onclick="setDateType('death','هجري',this)">هجري</button>
+    <button class="dtt-btn" onclick="setDateType('death','ميلادي',this)">ميلادي</button>
+  </div>
+  <div class="frow">
+    <div class="fg"><label>مكان الوفاة</label><input type="text" id="ms-dplace"></div>
+    <div class="date-group" style="flex:1">
+      <div class="fg"><label>يوم/ليلة</label>
+        <select id="ms-dday-name" style="flex:0.6"><option value="">—</option><option>يوم</option><option>ليلة</option></select><select id="ms-dday-wday" style="flex:1"><option value="">—</option><option>السبت</option><option>الأحد</option><option>الاثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option></select><select id="ms-dday-num" style="flex:0.6"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select>
+      </div>
+      <div class="fg"><label>الشهر</label>
+        <select id="ms-dmonth"><option value="">—</option></select>
+      </div>
+      <div class="fg"><label>السنة</label><input type="text" id="ms-dyear" placeholder="١٤٤٠"></div>
+    </div>
+  </div>
+  <div class="fg"><label>تفاصيل الوفاة</label><input type="text" id="ms-ddesc" placeholder="صلي عليه بجامع..."></div>
+  <input type="hidden" id="ms-dtype" value="هجري">
+
+  <div class="fsep">📝 الترجمة والملاحظات</div>
+  <div class="fg"><label>ترجمة مطولة بقلمي</label><textarea id="ms-tarjama" style="min-height:100px"></textarea></div>
+  <div class="fg"><label>روايته عنه</label><textarea id="ms-riwaya-anhu" style="min-height:80px" placeholder="وصف كيفية الرواية عن هذا الشيخ..."></textarea></div>
+  <div class="fg"><label>ملاحظات</label><input type="text" id="ms-notes"></div>
+
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeModal('modal-sheikh')">إلغاء</button>
+    <button class="btn btn-gold" id="btn-save-sheikh" onclick="saveSheikh()">حفظ ←</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL: إضافة أخذ ═══════ -->
+<div class="modal-bg" id="modal-akhz">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-akhz')">✕</button>
+  <h3 id="modal-akhz-title">➕ إضافة أخذ</h3>
+
+  <div class="fg"><label>نوع الأخذ *</label>
+    <select id="ak-type" onchange="onAkhzTypeChange(this.value)">
+      <option value="إجازة عامة">إجازة عامة</option>
+      <option value="مسموع">مسموع</option>
+      <option value="إنشادة">إنشادة</option>
+    </select>
+  </div>
+
+  <div class="fg"><label>المحتوى / العنوان</label>
+    <textarea id="ak-content" placeholder="صحيح البخاري، الحديث المسلسل بالأولية..."></textarea>
+  </div>
+
+  <div class="fsep">📜 طريقة الأخذ</div>
+  <div class="frow">
+    <div class="fg"><label>طريقة الأخذ</label>
+      <select id="ak-subtype" onchange="onSubtypeChange(this.value)">
+        <option value="بنفسي">بنفسي — قراءة</option>
+        <option value="سماعاً بقراءة">سماعاً بقراءة غيري</option>
+        <option value="إجازة">إجازة عامة بنفسي</option>
+        <option value="باستدعاء">باستدعاء</option>
+      </select>
+    </div>
+    <div class="fg" id="ak-reader-wrap" style="display:none"><label>اسم القارئ</label><input type="text" id="ak-reader"></div>
+    <div class="fg" id="ak-mustadei-wrap" style="display:none"><label>اسم المستدعي</label><input type="text" id="ak-mustadei"></div>
+  </div>
+
+  <div class="fsep">📅 التاريخ</div>
+  <div class="date-type-toggle">
+    <button class="dtt-btn active" onclick="setDateType('akhz','هجري',this)">هجري</button>
+    <button class="dtt-btn" onclick="setDateType('akhz','ميلادي',this)">ميلادي</button>
+  </div>
+  <div class="date-group">
+    <div class="fg"><label>يوم/ليلة</label>
+      <select id="ak-day-name" style="flex:0.6"><option value="">—</option><option>يوم</option><option>ليلة</option></select><select id="ak-day-wday" style="flex:1"><option value="">—</option><option>السبت</option><option>الأحد</option><option>الاثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option></select><select id="ak-day-num" style="flex:0.6"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select>
+    </div>
+    <div class="fg"><label>الشهر</label><select id="ak-month"><option value="">—</option></select></div>
+    <div class="fg"><label>السنة</label><input type="text" id="ak-year" placeholder="١٤٣٥"></div>
+  </div>
+  <input type="hidden" id="ak-dtype" value="هجري">
+
+  <div class="fsep" id="ak-mujaz-sep">👥 المُجاز لهم</div>
+  <div class="mujaz-grid" id="ak-mujaz-grid">
+    <div class="mujaz-opt" onclick="toggleMujaz(this)" data-v="لي فقط">لي فقط</div>
+    <div class="mujaz-opt" onclick="toggleMujaz(this)" data-v="الزوجة">الزوجة</div>
+    <div class="mujaz-opt" onclick="toggleMujaz(this)" data-v="سراج">سراج</div>
+    <div class="mujaz-opt" onclick="toggleMujaz(this)" data-v="بنان">بنان</div>
+    <div class="mujaz-opt" onclick="toggleMujaz(this)" data-v="ليان">ليان</div>
+    <div class="mujaz-opt" onclick="toggleMujaz(this)" data-v="لينة">لينة</div>
+    <div class="mujaz-opt" onclick="toggleMujaz(this)" data-v="أخواتي">أخواتي</div>
+    <div class="mujaz-opt" onclick="toggleMujaz(this)" data-v="والدتي">والدتي</div>
+    <div class="mujaz-opt" onclick="toggleMujaz(this)" data-v="طلابي">طلابي</div>
+    <div class="mujaz-opt" onclick="toggleMujaz(this)" data-v="من يدرك">من يُدرك</div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeModal('modal-akhz')">إلغاء</button>
+    <button class="btn btn-gold" id="btn-save-akhz" onclick="saveAkhz()">حفظ ←</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL: إضافة شيخ رواية ═══════ -->
+<div class="modal-bg" id="modal-riwaya">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-riwaya')">✕</button>
+  <h3>+ إضافة شيخ رواية</h3>
+
+  <div class="fg"><label>اسم الشيخ (من القائمة أو جديد)</label>
+    <select id="rw-sheikh-id" onchange="onRiwayaSheikhChange(this.value)">
+      <option value="">— اختر من شيوخ الشيوخ —</option>
+    </select>
+  </div>
+  <div class="fg" id="rw-new-name-wrap">
+    <label>أو أدخل اسماً جديداً</label>
+    <input type="text" id="rw-new-name" placeholder="اسم الشيخ إن لم يكن في القائمة">
+  </div>
+
+  <div class="fg"><label>نوع الإجازة</label>
+    <select id="rw-type">
+      <option value="إجازة عامة">إجازة عامة</option>
+      <option value="سماع">سماع</option>
+      <option value="إجازة خاصة">إجازة خاصة</option>
+      <option value="إجازة في الطريقة">إجازة في الطريقة</option>
+    </select>
+  </div>
+
+  <div class="fg"><label>المسموعات عليه</label>
+    <textarea id="rw-masmouat" placeholder="الحديث المسلسل، أوائل الكتب..."></textarea>
+  </div>
+
+  <div class="fsep">📅 التاريخ</div>
+  <div class="date-type-toggle">
+    <button class="dtt-btn active" onclick="setDateType('riwaya','هجري',this)">هجري</button>
+    <button class="dtt-btn" onclick="setDateType('riwaya','ميلادي',this)">ميلادي</button>
+  </div>
+  <div class="date-group">
+    <div class="fg"><label>يوم/ليلة</label>
+      <select id="rw-day-name" style="flex:0.6"><option value="">—</option><option>يوم</option><option>ليلة</option></select><select id="rw-day-wday" style="flex:1"><option value="">—</option><option>السبت</option><option>الأحد</option><option>الاثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option></select><select id="rw-day-num" style="flex:0.6"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select>
+    </div>
+    <div class="fg"><label>الشهر</label><select id="rw-month"><option value="">—</option></select></div>
+    <div class="fg"><label>السنة</label><input type="text" id="rw-year" placeholder="١٤٣٥"></div>
+  </div>
+  <input type="hidden" id="rw-dtype" value="هجري">
+
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeModal('modal-riwaya')">إلغاء</button>
+    <button class="btn btn-gold" onclick="saveRiwaya()">حفظ ←</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL: إضافة وثيقة ═══════ -->
+<div class="modal-bg" id="modal-wthq">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-wthq')">✕</button>
+  <h3>+ إضافة صورة أو وثيقة</h3>
+  <div class="fg"><label>النوع</label>
+    <select id="wq-type">
+      <option value="صورة شخصية">صورة شخصية</option>
+      <option value="صورة إجازة">صورة إجازة</option>
+      <option value="صورة استدعاء">صورة استدعاء</option>
+      <option value="وثيقة">وثيقة</option>
+      <option value="أخرى">أخرى</option>
+    </select>
+  </div>
+  <div class="fg"><label>رابط الصورة أو الوثيقة</label>
+    <div style="display:flex;gap:6px;align-items:center">
+      <input type="text" id="wq-url" placeholder="https://... أو ارفع مباشرة ←" style="flex:1">
+      <label style="background:linear-gradient(135deg,var(--gold2),var(--gold3));color:var(--bg2);border-radius:var(--r1);padding:9px 12px;cursor:pointer;font-size:12px;white-space:nowrap;font-weight:700;display:inline-flex;align-items:center;gap:5px" title="رفع صورة مباشرة">
+        📷 رفع
+        <input type="file" id="wq-file" accept="image/*" style="display:none" onchange="handleWthqUpload(this)">
+      </label>
+    </div>
+    <div id="wq-upload-status" style="font-size:11px;color:var(--gold3);margin-top:4px;display:none">⏳ جارٍ الرفع...</div>
+  </div>
+  <div class="fg"><label>التسمية / الوصف</label><input type="text" id="wq-label" placeholder="صورة إجازة الشيخ الألباني..."></div>
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeModal('modal-wthq')">إلغاء</button>
+    <button class="btn btn-gold" onclick="saveWthq()">حفظ ←</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL: إضافة شيخ شيوخ ═══════ -->
+<div class="modal-bg" id="modal-sheikh-sh">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-sheikh-sh')">✕</button>
+  <h3 id="modal-sh-title">+ إضافة شيخ شيوخ</h3>
+
+  <div class="frow">
+    <div class="fg"><label>الاسم مختصراً *</label><input type="text" id="ssh-short"></div>
+    <div class="fg"><label>الاسم كاملاً</label><input type="text" id="ssh-full"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><label>مفتاح الترتيب</label><input type="text" id="ssh-sort"></div>
+    <div class="fg"><label>رابط الصورة</label>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="ssh-photo" placeholder="https://..." style="flex:1">
+        <label style="background:linear-gradient(135deg,var(--gold2),var(--gold3));color:var(--bg2);border-radius:var(--r1);padding:0 12px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;height:38px" title="رفع صورة">
+          📷
+          <input type="file" id="ssh-photo-file" accept="image/*" style="display:none" onchange="handleSshPhotoUpload(this)">
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="fsep">📍 الميلاد</div>
+  <div class="date-type-toggle">
+    <button class="dtt-btn active" onclick="setDateType('ssh-birth','هجري',this)">هجري</button>
+    <button class="dtt-btn" onclick="setDateType('ssh-birth','ميلادي',this)">ميلادي</button>
+  </div>
+  <div class="frow">
+    <div class="fg"><label>مكان الميلاد</label><input type="text" id="ssh-bplace"></div>
+    <div class="date-group" style="flex:1">
+      <div class="fg"><label>يوم/ليلة</label>
+        <select id="ssh-bday-name" style="flex:0.6"><option value="">—</option><option>يوم</option><option>ليلة</option></select><select id="ssh-bday-wday" style="flex:1"><option value="">—</option><option>السبت</option><option>الأحد</option><option>الاثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option></select><select id="ssh-bday-num" style="flex:0.6"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select>
+      </div>
+      <div class="fg"><label>الشهر</label>
+        <select id="ssh-bmonth"><option value="">—</option></select>
+      </div>
+      <div class="fg"><label>السنة</label><input type="text" id="ssh-byear" placeholder="١٣٥٠"></div>
+    </div>
+  </div>
+  <input type="hidden" id="ssh-btype" value="هجري">
+
+  <div class="fsep">🕊️ الوفاة</div>
+  <div class="date-type-toggle">
+    <button class="dtt-btn active" onclick="setDateType('ssh-death','هجري',this)">هجري</button>
+    <button class="dtt-btn" onclick="setDateType('ssh-death','ميلادي',this)">ميلادي</button>
+  </div>
+  <div class="frow">
+    <div class="fg"><label>مكان الوفاة</label><input type="text" id="ssh-dplace"></div>
+    <div class="date-group" style="flex:1">
+      <div class="fg"><label>يوم/ليلة</label>
+        <select id="ssh-dday-name" style="flex:0.6"><option value="">—</option><option>يوم</option><option>ليلة</option></select><select id="ssh-dday-wday" style="flex:1"><option value="">—</option><option>السبت</option><option>الأحد</option><option>الاثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option></select><select id="ssh-dday-num" style="flex:0.6"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option></select>
+      </div>
+      <div class="fg"><label>الشهر</label>
+        <select id="ssh-dmonth"><option value="">—</option></select>
+      </div>
+      <div class="fg"><label>السنة</label><input type="text" id="ssh-dyear" placeholder="١٤٤٠"></div>
+    </div>
+  </div>
+  <div class="fg"><label>تفاصيل الوفاة</label><input type="text" id="ssh-ddesc" placeholder="صلي عليه بجامع..."></div>
+  <input type="hidden" id="ssh-dtype" value="هجري">
+
+  <div class="fsep">📝 الترجمة والملاحظات</div>
+  <div class="fg"><label>ترجمة مطولة</label><textarea id="ssh-tarjama" style="min-height:100px"></textarea></div>
+  <div class="fg"><label>ملاحظات</label><input type="text" id="ssh-notes"></div>
+
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeModal('modal-sheikh-sh')">إلغاء</button>
+    <button class="btn btn-gold" id="btn-save-ssh" onclick="saveSheikhSh()">حفظ ←</button>
+  </div>
+</div>
+</div>
+
+<!-- IMAGE VIEWER -->
+<div class="modal-bg" id="modal-img">
+<div class="modal" style="background:transparent;border:none;box-shadow:none;padding:8px;max-width:90vw">
+  <img id="modal-img-src" src="" style="max-width:100%;max-height:85vh;border-radius:var(--r3);display:block;margin:0 auto;box-shadow:var(--sh2)">
+  <div style="text-align:center;margin-top:12px">
+    <button class="btn btn-ghost" onclick="closeModal('modal-img')">إغلاق</button>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════
+// SUPABASE
+// ═══════════════════════════════
+const SURL = 'https://azjcymjsmolrwerghiew.supabase.co';
+const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6amN5bWpzbW9scndlcmdoaWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMjAxNTEsImV4cCI6MjA4OTg5NjE1MX0.oLgR1aWOAUWmjipv1XnBDKkxvTbSk5h1FIsHxqxRDLY';
+const IMGBB_KEY = 'f6622dcb17e96356fb387a2ff6f30a1a';
+const sb = supabase.createClient(SURL, SKEY);
+
+// ═══════════════════════════════
+// MONTHS
+// ═══════════════════════════════
+const MONTHS_H = ['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
+const MONTHS_M = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+function fillMonthSelect(selId, type) {
+  const sel = document.getElementById(selId);
+  if (!sel) return;
+  const months = type==='ميلادي' ? MONTHS_M : MONTHS_H;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">—</option>' + months.map(m=>`<option${m===cur?' selected':''}>${m}</option>`).join('');
+}
+
+function fillDaySelect(numSelId, type) {
+  const sel = document.getElementById(numSelId);
+  if (!sel) return;
+  const max = type==='ميلادي' ? 31 : 30;
+  const cur = sel.value;
+  let opts = '<option value="">—</option>';
+  for(let i=1;i<=max;i++){
+    opts += `<option${String(i)===cur?' selected':''}>${i}</option>`;
+  }
+  sel.innerHTML = opts;
+}
+
+function setDateType(group, type, btn) {
+  const groupMap = {
+    'birth':  {hidden:'ms-btype', month:'ms-bmonth', day:'ms-bday-num'},
+    'death':  {hidden:'ms-dtype', month:'ms-dmonth', day:'ms-dday-num'},
+    'akhz':   {hidden:'ak-dtype', month:'ak-month',  day:'ak-day-num'},
+    'riwaya': {hidden:'rw-dtype', month:'rw-month',  day:'rw-day-num'},
+    'ssh-birth': {hidden:'ssh-btype', month:'ssh-bmonth', day:'ssh-bday-num'},
+    'ssh-death': {hidden:'ssh-dtype', month:'ssh-dmonth', day:'ssh-dday-num'},
+  };
+  const g = groupMap[group];
+  if (!g) return;
+  document.getElementById(g.hidden).value = type;
+  fillMonthSelect(g.month, type);
+  fillDaySelect(g.day, type);
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.dtt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// init months
+window.addEventListener('DOMContentLoaded', () => {
+  ['ms-bmonth','ms-dmonth','ak-month','rw-month','ssh-bmonth','ssh-dmonth'].forEach(id => fillMonthSelect(id,'هجري'));
+});
+
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+let allShuyookh=[], allShuyookhSh=[], currentView='grid', currentFilter='all';
+let sortEnabled=false, editingSheikhId=null, detailSheikhId=null;
+let currentPage='shuyookh', editingSheikhShId=null;
+
+// ═══════════════════════════════
+// LOAD
+// ═══════════════════════════════
+window.onload = () => loadAll();
+
+async function loadAll() {
+  await Promise.all([loadShuyookh(), loadShuyookhSh()]);
+}
+
+async function loadShuyookh() {
+  const { data, error } = await sb.from('shuyookh').select('*').order('id');
+  if (error) { showToast('خطأ: '+error.message, true); return; }
+  allShuyookh = data || [];
+  updateStats();
+  if (currentPage==='shuyookh') renderShuyookh();
+}
+
+async function loadShuyookhSh() {
+  const { data, error } = await sb.from('shuyookh_shuyookh').select('*').order('id');
+  if (error) return;
+  allShuyookhSh = data || [];
+  if (currentPage==='shuyookh-sh') renderShuyookhSh();
+  // fill riwaya dropdown
+  const sel = document.getElementById('rw-sheikh-id');
+  if (sel) {
+    sel.innerHTML = '<option value="">— اختر من شيوخ الشيوخ —</option>' +
+      allShuyookhSh.map(s=>`<option value="${s.id}">${esc(s.name_short||'')}</option>`).join('');
+  }
+}
+
+function updateStats() {
+  const wi = allShuyookh.filter(s=>s.photo_url&&s.photo_url.trim()).length;
+  document.getElementById('st-total').textContent = allShuyookh.length;
+  document.getElementById('st-img').textContent = wi;
+  document.getElementById('st-shsh').textContent = allShuyookhSh.length;
+  document.getElementById('nb-total').textContent = allShuyookh.length;
+  // update akhz count async
+  sb.from('akhz').select('id',{count:'exact',head:true}).then(({count})=>{
+    const el=document.getElementById('st-akhz');
+    if(el) el.textContent=count||0;
+  });
+}
+
+// ═══════════════════════════════
+// NAV
+// ═══════════════════════════════
+const pageTitles = {
+  shuyookh:'معجم الشيوخ','shuyookh-sh':'شيوخ الشيوخ',
+  masmouat:'المسموعات',ejazat:'الإجازات',
+  reports:'التقارير',search:'البحث المتقدم'
+};
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('topbar-title').textContent = pageTitles[id]||'';
+  currentPage = id;
+  if(id==='shuyookh') renderShuyookh();
+  if(id==='shuyookh-sh') renderShuyookhSh();
+}
+
+// ═══════════════════════════════
+// FILTER & SORT
+// ═══════════════════════════════
+function setFilter(f, el) {
+  currentFilter=f;
+  document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderShuyookh();
+}
+
+function toggleSort(btn) {
+  sortEnabled = !sortEnabled;
+  btn.textContent = sortEnabled?'↕ الترتيب الأصلي':'أ-ي ترتيب';
+  btn.style.color = sortEnabled?'var(--gold1)':'';
+  renderShuyookh();
+}
+
+function applyFilterSort(data) {
+  let d = data;
+  const q = document.getElementById('search-inp').value.toLowerCase().trim();
+  if (q) d = d.filter(s=>((s.name_short||'')+(s.name_full||'')+(s.notes||'')+(s.tarjama_mine||'')).toLowerCase().includes(q));
+  if (currentFilter==='img') d = d.filter(s=>s.photo_url&&s.photo_url.trim());
+  if (currentFilter==='noimg') d = d.filter(s=>!s.photo_url||!s.photo_url.trim());
+  if (sortEnabled) d = [...d].sort((a,b)=>{
+    const ka=(a.sort_key||a.name_short||'').replace(/[\u064B-\u065F]/g,'');
+    const kb=(b.sort_key||b.name_short||'').replace(/[\u064B-\u065F]/g,'');
+    return ka.localeCompare(kb,'ar');
+  });
+  return d;
+}
+
+// ═══════════════════════════════
+// RENDER SHUYOOKH
+// ═══════════════════════════════
+function renderShuyookh(q='') {
+  const data = applyFilterSort(allShuyookh);
+  const qq = document.getElementById('search-inp').value.toLowerCase().trim();
+  document.getElementById('res-count').textContent = 'النتائج: '+data.length+' من '+allShuyookh.length+' شيخ';
+  if (currentView==='grid') renderGrid(data, qq);
+  else renderTable(data, qq);
+}
+
+function setView(v, el) {
+  currentView=v;
+  document.getElementById('view-grid').style.display=v==='grid'?'':'none';
+  document.getElementById('view-table').style.display=v==='table'?'':'none';
+  document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderShuyookh();
+}
+
+function renderGrid(data, q='') {
+  if (!data.length) {
+    document.getElementById('s-grid').innerHTML='<div class="empty-state" style="grid-column:1/-1"><span class="es-ic">🧑‍🏫</span><p>لا توجد نتائج</p><div class="es-sub">أضف شيخاً أو غيّر معايير البحث</div></div>';
+    return;
+  }
+  document.getElementById('s-grid').innerHTML = data.map(s => {
+    const imgBlock = s.photo_url&&s.photo_url.trim()
+      ? `<div class="s-card-img" onclick="openDetail(${s.id})"><img src="${esc(fixDriveUrl(s.photo_url))}" loading="lazy" onerror="this.parentElement.innerHTML='🧑‍🏫'"></div>`
+      : `<div class="s-card-img" onclick="openDetail(${s.id})"><svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="70" height="90" style="opacity:0.35"><ellipse cx="50" cy="38" rx="22" ry="24" fill="#c9a227"/><ellipse cx="50" cy="105" rx="38" ry="30" fill="#c9a227"/></svg></div>`;
+    const nameHtml = q?hlText(esc(s.name_short||''),q):esc(s.name_short||'');
+    const subHtml  = q?hlText(esc(s.name_full||''),q):esc(s.name_full||'');
+    const birthStr = s.birth_date ? [s.birth_day,s.birth_month,s.birth_date,s.birth_type].filter(Boolean).join(' ') : '';
+    const deathStr = s.death_date ? 'ت '+[s.death_day,s.death_month,s.death_date].filter(Boolean).join(' ') : '';
+    return `<div class="s-card">
+      ${imgBlock}
+      <div class="s-card-body" onclick="openDetail(${s.id})">
+        <div class="s-card-name">${nameHtml}</div>
+        ${s.name_full?`<div class="s-card-sub">${subHtml}</div>`:''}
+        <div class="s-card-badges">
+          ${birthStr?`<span class="badge badge-gold">📅 ${birthStr}</span>`:''}
+          ${deathStr?`<span class="badge badge-blue">${deathStr}</span>`:''}
+        </div>
+      </div>
+      <div class="s-card-actions">
+        <button class="btn btn-soft btn-sm" onclick="openDetail(${s.id})">عرض</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEditSheikh(${s.id})">تعديل</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelSheikh(${s.id},'${esc(s.name_short||'')}')">حذف</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTable(data, q='') {
+  if (!data.length) {
+    document.getElementById('s-table').innerHTML='<div class="empty-state"><span class="es-ic">🧑‍🏫</span><p>لا توجد نتائج</p></div>';
+    return;
+  }
+  let html=`<table><thead><tr><th style="width:30px">#</th><th style="width:44px">صورة</th><th style="width:220px">الشيخ</th><th>التواريخ</th><th style="width:160px">إجراء</th></tr></thead><tbody>`;
+  data.forEach((s,i)=>{
+    const imgH=s.photo_url&&s.photo_url.trim()
+      ?`<img class="av" src="${esc(s.photo_url)}" onclick="viewImg('${esc(s.photo_url)}')" onerror="this.outerHTML='<div class=av-ph><svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="22" height="28"><ellipse cx="50" cy="38" rx="24" ry="26" fill="#c9a227" opacity="0.4"/><ellipse cx="50" cy="110" rx="42" ry="35" fill="#c9a227" opacity="0.4"/></svg></div>'">`
+      :`<div class="av-ph" onclick="openDetail(${s.id})"><svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="22" height="28"><ellipse cx="50" cy="38" rx="24" ry="26" fill="#c9a227" opacity="0.4"/><ellipse cx="50" cy="110" rx="42" ry="35" fill="#c9a227" opacity="0.4"/></svg></div>`;
+    const nameH=q?hlText(esc(s.name_short||''),q):esc(s.name_short||'');
+    const birthStr=s.birth_date?[s.birth_day,s.birth_month,s.birth_date,s.birth_type].filter(Boolean).join(' '):'—';
+    const deathStr=s.death_date?[s.death_day,s.death_month,s.death_date].filter(Boolean).join(' '):'—';
+    html+=`<tr>
+      <td style="color:var(--cream3);font-size:11px">${i+1}</td>
+      <td>${imgH}</td>
+      <td><div class="td-name" onclick="openDetail(${s.id})">${nameH}</div>
+        ${s.name_full?`<div class="td-sub">${esc(s.name_full)}</div>`:''}</td>
+      <td><div style="font-size:11px;color:var(--cream3)">م: ${birthStr}<br>و: ${deathStr}</div></td>
+      <td><div style="display:flex;gap:4px">
+        <button class="btn btn-soft btn-sm" onclick="openDetail(${s.id})">عرض</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEditSheikh(${s.id})">تعديل</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelSheikh(${s.id},'${esc(s.name_short||'')}')">حذف</button>
+      </div></td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  document.getElementById('s-table').innerHTML=html;
+}
+
+// ═══════════════════════════════
+// RENDER SHUYOOKH SH
+// ═══════════════════════════════
+function renderShuyookhSh() {
+  document.getElementById('res-count-sh').textContent = 'عدد شيوخ الشيوخ: '+allShuyookhSh.length;
+  if (!allShuyookhSh.length) {
+    document.getElementById('tbl-sh').innerHTML='<div class="empty-state"><span class="es-ic">👥</span><p>لا يوجد شيوخ شيوخ بعد</p><div class="es-sub">أضف شيخ شيوخ للبدء</div></div>';
+    return;
+  }
+  let html=`<table><thead><tr><th>#</th><th>صورة</th><th>الاسم</th><th>الميلاد</th><th>الوفاة</th><th>إجراء</th></tr></thead><tbody>`;
+  allShuyookhSh.forEach((s,i)=>{
+    const imgH=s.photo_url?`<img class="av" src="${esc(s.photo_url)}" onerror="this.outerHTML='<div class=av-ph>👤</div>'">`:`<div class="av-ph">👤</div>`;
+    html+=`<tr>
+      <td style="color:var(--cream3);font-size:11px">${i+1}</td>
+      <td>${imgH}</td>
+      <td><div class="td-name" onclick="openDetailSh(${s.id})">${esc(s.name_short||'')}</div>${s.name_full?`<div class="td-sub">${esc(s.name_full)}</div>`:''}</td>
+      <td style="font-size:11px;color:var(--cream3)">${[s.birth_day,s.birth_date].filter(Boolean).join(' ')||'—'}</td>
+      <td style="font-size:11px;color:var(--cream3)">${[s.death_day,s.death_month,s.death_date].filter(Boolean).join(' ')||'—'}</td>
+      <td><div style="display:flex;gap:4px">
+        <button class="btn btn-soft btn-sm" onclick="openDetailSh(${s.id})">عرض</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEditSheikhSh(${s.id})">تعديل</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelSheikhSh(${s.id},'${esc(s.name_short||'')}')">حذف</button>
+      </div></td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  document.getElementById('tbl-sh').innerHTML=html;
+}
+
+// ═══════════════════════════════
+// DETAIL PAGE
+// ═══════════════════════════════
+async function openDetail(id) {
+  detailSheikhId = id;
+  const s = allShuyookh.find(x=>x.id===id);
+  if (!s) return;
+
+  document.getElementById('detail-hdr-name').textContent = s.name_short||'';
+  document.getElementById('d-name').textContent = s.name_full||s.name_short||'';
+  document.getElementById('d-notes').textContent = s.notes||'';
+
+  // photo
+  const ph = document.getElementById('d-photo');
+  if (s.photo_url&&s.photo_url.trim()) {
+    ph.innerHTML=`<img src="${esc(fixDriveUrl(s.photo_url))}" style="width:100%;height:100%;object-fit:cover">`;
+    ph.onclick=()=>viewImg(s.photo_url);
+  } else { ph.innerHTML='<svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="100" height="130"><ellipse cx="50" cy="40" rx="24" ry="26" fill="#c9a227" opacity="0.35"/><ellipse cx="50" cy="110" rx="42" ry="35" fill="#c9a227" opacity="0.35"/></svg>'; ph.onclick=null; }
+
+  // meta badges
+  const meta = document.getElementById('d-meta');
+  meta.innerHTML='';
+  if(s.birth_date) meta.innerHTML+=`<span class="badge badge-gold">📅 ${[s.birth_day,s.birth_month,s.birth_date,s.birth_type].filter(Boolean).join(' ')}</span>`;
+  if(s.death_date) meta.innerHTML+=`<span class="badge badge-blue">🕊️ ${[s.death_day,s.death_month,s.death_date].filter(Boolean).join(' ')}</span>`;
+
+  // basic fields
+  const basicGrid = document.getElementById('d-basic-grid');
+  const fields=[
+    ['الاسم الكامل',s.name_full],['مفتاح الترتيب',s.sort_key],
+    ['مكان الميلاد',s.birth_place],['تاريخ الميلاد',[s.birth_day,s.birth_month,s.birth_date,s.birth_type].filter(Boolean).join(' ')],
+    ['مكان الوفاة',s.death_place],['تاريخ الوفاة',[s.death_day,s.death_month,s.death_date,s.death_type].filter(Boolean).join(' ')],
+    ['تفاصيل الوفاة',s.death_detail],['ملاحظات',s.notes]
+  ].filter(([,v])=>v&&v.trim());
+  basicGrid.innerHTML = fields.map(([l,v])=>`<div class="detail-field"><div class="detail-field-label">${l}</div><div class="detail-field-val">${esc(v)}</div></div>`).join('');
+
+  // riwaya anhu
+  const riwAnhuSec = document.getElementById('d-sec-riwaya-anhu');
+  if (s.riwaya_anhu&&s.riwaya_anhu.trim()) {
+    riwAnhuSec.style.display='';
+    document.getElementById('d-riwaya-anhu-content').textContent = s.riwaya_anhu;
+  } else { riwAnhuSec.style.display='none'; }
+
+  // tarjama
+  const tarjSec = document.getElementById('d-sec-tarjama');
+  if (s.tarjama_mine&&s.tarjama_mine.trim()) {
+    tarjSec.style.display='';
+    document.getElementById('d-tarjama-content').textContent = s.tarjama_mine;
+  } else { tarjSec.style.display='none'; }
+
+  // load akhz
+  await loadDetailAkhz(id);
+  await loadDetailRiwaya(id);
+  await loadDetailWathaeq(id);
+
+  document.getElementById('detail-page').classList.add('open');
+  document.getElementById('detail-page').scrollTop=0;
+}
+
+async function loadDetailAkhz(id) {
+  const { data } = await sb.from('akhz').select('*').eq('sheikh_id',id).order('id');
+  const container = document.getElementById('d-akhz-list');
+  if (!data||!data.length) {
+    container.innerHTML='<div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">📜</span><div class="es-sub">لا توجد إجازات أو مسموعات مضافة بعد</div></div>';
+    return;
+  }
+  container.innerHTML = data.map(a=>{
+    const mujaz = a.mujaz_lahum ? JSON.parse(a.mujaz_lahum||'[]').join('، ') : '';
+    const dateStr = [a.date_day,a.date_month,a.date_year,a.date_type].filter(Boolean).join(' ');
+    const typeColor = a.akhz_type==='مسموع'?'badge-green':a.akhz_type==='إنشادة'?'badge-blue':'badge-gold';
+    return `<div class="akhz-item">
+      <span class="badge ${typeColor} akhz-type-badge">${esc(a.akhz_type)}</span>
+      <div style="margin-top:4px;padding-top:4px">
+        ${a.content?`<div class="akhz-content">${esc(a.content)}</div>`:''}
+        <div class="akhz-meta">
+          ${a.subtype?`<span>🔹 ${esc(a.subtype)}</span>`:''}
+          ${a.mustadei?`<span>📞 باستدعاء: ${esc(a.mustadei)}</span>`:''}
+          ${a.reader?`<span>📖 بقراءة: ${esc(a.reader)}</span>`:''}
+          ${dateStr?`<span>📅 ${dateStr}</span>`:''}
+          ${mujaz?`<span>👥 ${mujaz}</span>`:''}
+        </div>
+      </div>
+      <div style="margin-top:8px;text-align:left;display:flex;gap:6px">
+        <button class="btn btn-xs" onclick="editAkhz(${a.id})" style="background:var(--gold2);color:#000;padding:2px 8px;font-size:11px">✏️ تعديل</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteAkhz(${a.id})">حذف</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadDetailRiwaya(id) {
+  const { data } = await sb.from('sheikh_riwaya').select('*').eq('sheikh_id',id).order('id');
+  const container = document.getElementById('d-riwaya-list');
+  if (!data||!data.length) {
+    container.innerHTML='<div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">🔗</span><div class="es-sub">لم يُضف شيوخ رواية بعد</div></div>';
+    return;
+  }
+  container.innerHTML = data.map(r=>{
+    const dateStr=[r.date_day,r.date_month,r.date_year,r.date_type].filter(Boolean).join(' ');
+    const name = r.rawi_name || (allShuyookhSh.find(s=>s.id===r.rawi_id)||{}).name_short || '—';
+    return `<div class="riwaya-item">
+      <div class="riwaya-item-name">${esc(name)}</div>
+      <div class="riwaya-item-meta">
+        ${r.ijaza_type?`<span class="badge badge-gold" style="margin-left:6px">${esc(r.ijaza_type)}</span>`:''}
+        ${dateStr?`<span style="margin-left:6px">📅 ${dateStr}</span>`:''}
+        ${r.masmouat?`<span>🎧 مسموعات</span>`:''}
+      </div>
+      <div style="padding:6px 12px;font-size:13px;color:var(--cream3);line-height:1.7;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:flex-start;gap:8px">
+        <span id="rw-mas-text-${r.id}" style="flex:1">${r.masmouat?esc(r.masmouat):'<span style="opacity:.4">لا توجد مسموعات</span>'}</span>
+        <button class="btn btn-xs" onclick="editRiwayaFull(${r.id})" style="flex-shrink:0;background:var(--gold2);color:#000;padding:2px 8px;font-size:11px" title="تعديل">✏️ تعديل</button>
+      </div>
+      <button class="btn btn-danger btn-xs" onclick="deleteRiwaya(${r.id})" style="flex-shrink:0;margin:4px 8px">حذف</button>
+    </div>`;
+  }).join('');
+}
+
+async function loadDetailWathaeq(id) {
+  const { data } = await sb.from('wathaeq').select('*').eq('sheikh_id',id).order('id');
+  const container = document.getElementById('d-wathaeq-list');
+  if (!data||!data.length) {
+    container.innerHTML='<div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">🖼️</span><div class="es-sub">لم تُضف وثائق بعد</div></div>';
+    return;
+  }
+  container.innerHTML = data.map(w => {
+    const origUrl = w.url||'';
+    const imgUrl = fixDriveUrl(origUrl);
+    const isImg = /\.(jpg|jpeg|png|gif|webp|svg)/i.test(origUrl) || origUrl.includes('imgbb') || origUrl.includes('ibb.co');
+    const thumb = isImg
+      ? `<img src="${esc(imgUrl)}" style="width:60px;height:60px;object-fit:cover;border-radius:var(--r1);flex-shrink:0" onerror="this.outerHTML='<div style=width:60px;height:60px;background:var(--bg3);border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0>📄</div>'">`
+      : `<div style="width:60px;height:60px;background:var(--bg3);border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">📄</div>`;
+    return `<div style="background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r1);overflow:hidden;transition:all .15s;margin-bottom:8px;display:flex;align-items:center;gap:10px;padding:8px 10px;cursor:pointer" onclick="openFile('${esc(origUrl)}')">
+      ${thumb}
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:500;color:var(--cream1)">${esc(w.label||'')}</div>
+        <div style="font-size:10px;color:var(--cream3);margin-top:2px">${esc(w.wthq_type||'')}</div>
+        <div style="font-size:10px;color:var(--gold3);margin-top:2px">اضغط للعرض</div>
+      </div>
+      <button class="btn btn-danger btn-xs" onclick="event.stopPropagation();deleteWthq(${w.id},${id})">حذف</button>
+    </div>`;
+  }).join('');
+}
+
+
+async function deleteWthq(id, sheikhId) {
+  if (!confirm('حذف هذه الوثيقة؟')) return;
+  const { data } = await sb.from('wathaeq').select('wthq_type,url').eq('id',id).single();
+  await sb.from('wathaeq').delete().eq('id',id);
+  // إذا كانت صورة شخصية → امسح photo_url
+  if (data && data.wthq_type==='صورة شخصية') {
+    await sb.from('shuyookh').update({photo_url:null}).eq('id',sheikhId);
+    const s = allShuyookh.find(x=>x.id===sheikhId);
+    if (s) { s.photo_url=null; renderShuyookh(); }
+    const ph = document.getElementById('d-photo');
+    if (ph) ph.innerHTML = '<svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="100" height="130"><ellipse cx="50" cy="40" rx="24" ry="26" fill="#c9a227" opacity="0.35"/><ellipse cx="50" cy="110" rx="42" ry="35" fill="#c9a227" opacity="0.35"/></svg>';
+  }
+  showToast('✓ تم الحذف');
+  await loadDetailWathaeq(sheikhId);
+}
+
+function closeDetail() {
+  document.getElementById('detail-page').classList.remove('open');
+  detailSheikhId=null;
+}
+
+function openEditFromDetail() { if(detailSheikhId) openEditSheikh(detailSheikhId); }
+function openAddAkhzFromDetail() { if(detailSheikhId) openAddAkhz(detailSheikhId); }
+function openAddRiwayaFromDetail() { if(detailSheikhId) openAddRiwaya(detailSheikhId); }
+function openAddWthqFromDetail() { if(detailSheikhId) openAddWthq(detailSheikhId); }
+async function deleteFromDetail() {
+  const s=allShuyookh.find(x=>x.id===detailSheikhId);
+  if(!s)return;
+  closeDetail();
+  confirmDelSheikh(s.id,s.name_short||'');
+}
+
+// ═══════════════════════════════
+// ADD / EDIT SHEIKH
+// ═══════════════════════════════
+function openAddSheikh() {
+  editingSheikhId=null;
+  document.getElementById('modal-sheikh-title').textContent='➕ إضافة شيخ جديد';
+  clearSheikhForm();
+  openModal('modal-sheikh');
+}
+
+function openEditSheikh(id) {
+  const s=allShuyookh.find(x=>x.id===id);
+  if(!s)return;
+  editingSheikhId=id;
+  document.getElementById('modal-sheikh-title').textContent='✏️ تعديل: '+(s.name_short||'');
+  clearSheikhForm();
+  document.getElementById('ms-short').value=s.name_short||'';
+  document.getElementById('ms-full').value=s.name_full||'';
+  document.getElementById('ms-sort').value=s.sort_key||'';
+  document.getElementById('ms-photo').value=s.photo_url||'';
+  document.getElementById('ms-bplace').value=s.birth_place||'';
+  document.getElementById('ms-byear').value=s.birth_year||s.birth_date||'';
+  document.getElementById('ms-dplace').value=s.death_place||'';
+  document.getElementById('ms-dyear').value=s.death_year||s.death_date||'';
+  document.getElementById('ms-ddesc').value=s.death_detail||'';
+  document.getElementById('ms-tarjama').value=s.tarjama_mine||'';
+  document.getElementById('ms-riwaya-anhu').value=s.riwaya_anhu||'';
+  document.getElementById('ms-notes').value=s.notes||'';
+  openModal('modal-sheikh');
+}
+
+function clearSheikhForm() {
+  ['ms-short','ms-full','ms-sort','ms-photo','ms-bplace','ms-byear','ms-dplace','ms-dyear','ms-ddesc','ms-tarjama','ms-riwaya-anhu','ms-notes']
+    .forEach(id=>{ const el=document.getElementById(id); if(el)el.value=''; });
+  ['ms-bday','ms-bmonth','ms-dday','ms-dmonth'].forEach(id=>{
+    const el=document.getElementById(id); if(el)el.value='';
+  });
+}
+
+
+async function handleMsPhotoUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const btn = document.getElementById('btn-save-sheikh');
+  const origText = btn.textContent;
+  btn.textContent = '⏳ جارٍ رفع الصورة...';
+  btn.disabled = true;
+  const url = await uploadToImgBB(file);
+  btn.textContent = origText;
+  btn.disabled = false;
+  if (url) {
+    document.getElementById('ms-photo').value = url;
+    showToast('✓ تم رفع الصورة');
+  }
+  input.value = '';
+}
+
+async function saveSheikh() {
+  const btn=document.getElementById('btn-save-sheikh');
+  const name=document.getElementById('ms-short').value.trim();
+  if(!name){showToast('أدخل اسم الشيخ',true);return;}
+  btn.textContent='جارٍ الحفظ...';btn.disabled=true;
+
+  const btype=document.getElementById('ms-btype').value;
+  const dtype=document.getElementById('ms-dtype').value;
+
+  const record={
+    name_short:name,
+    name_full:document.getElementById('ms-full').value||null,
+    sort_key:document.getElementById('ms-sort').value||null,
+    photo_url:document.getElementById('ms-photo').value||null,
+    birth_place:document.getElementById('ms-bplace').value||null,
+    birth_day:[document.getElementById('ms-bday-name').value,document.getElementById('ms-bday-wday').value,document.getElementById('ms-bday-num').value].filter(Boolean).join(' ')||null,
+    birth_date:document.getElementById('ms-byear').value||null,
+    birth_month:document.getElementById('ms-bmonth').value||null,
+    birth_type:btype,
+    death_place:document.getElementById('ms-dplace').value||null,
+    death_day:[document.getElementById('ms-dday-name').value,document.getElementById('ms-dday-wday').value,document.getElementById('ms-dday-num').value].filter(Boolean).join(' ')||null,
+    death_date:document.getElementById('ms-dyear').value||null,
+    death_month:document.getElementById('ms-dmonth').value||null,
+    death_type:dtype,
+    death_detail:document.getElementById('ms-ddesc').value||null,
+    tarjama_mine:document.getElementById('ms-tarjama').value||null,
+    riwaya_anhu:document.getElementById('ms-riwaya-anhu').value||null,
+    notes:document.getElementById('ms-notes').value||null,
+  };
+
+  let error;
+  if(editingSheikhId){
+    ({error}=await sb.from('shuyookh').update(record).eq('id',editingSheikhId));
+  } else {
+    ({error}=await sb.from('shuyookh').insert(record));
+  }
+
+  btn.textContent='حفظ ←';btn.disabled=false;
+  if(error){showToast('خطأ: '+error.message,true);return;}
+  showToast(editingSheikhId?'✓ تم التعديل':'✓ تمت الإضافة');
+  const wasInDetail = detailSheikhId === editingSheikhId;
+  const savedId = editingSheikhId;
+  closeModal('modal-sheikh');
+  await loadShuyookh();
+  if(wasInDetail && savedId) openDetail(savedId);
+}
+
+async function confirmDelSheikh(id, name) {
+  if(!confirm('حذف الشيخ: '+name+'؟\nسيُحذف مع جميع بياناته.'))return;
+  const{error}=await sb.from('shuyookh').delete().eq('id',id);
+  if(error){showToast('خطأ: '+error.message,true);return;}
+  showToast('✓ تم الحذف');
+  await loadShuyookh();
+}
+
+// ═══════════════════════════════
+// ADD AKHZ
+// ═══════════════════════════════
+let currentAkhzSheikhId=null;
+
+function openAddAkhz(sheikhId) {
+  currentAkhzSheikhId=sheikhId;
+  document.getElementById('modal-akhz-title').textContent='➕ إضافة أخذ — '+(allShuyookh.find(s=>s.id===sheikhId)||{}).name_short||'';
+  // reset
+  ['ak-content','ak-reader','ak-mustadei','ak-year'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ak-type').value='إجازة عامة';
+  document.getElementById('ak-subtype').value='بنفسي';
+  ['ak-day-name','ak-day-wday','ak-day-num','ak-month'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('ak-reader-wrap').style.display='none';
+  document.getElementById('ak-mustadei-wrap').style.display='none';
+  document.querySelectorAll('#ak-mujaz-grid .mujaz-opt').forEach(o=>o.classList.remove('selected'));
+  openModal('modal-akhz');
+}
+
+function onAkhzTypeChange(type) {
+  const mujazSep=document.getElementById('ak-mujaz-sep');
+  const mujazGrid=document.getElementById('ak-mujaz-grid');
+  if(type==='مسموع'){mujazSep.style.display='none';mujazGrid.style.display='none';}
+  else{mujazSep.style.display='';mujazGrid.style.display='';}
+}
+
+function onSubtypeChange(val) {
+  document.getElementById('ak-reader-wrap').style.display=val==='سماعاً بقراءة'?'':'none';
+  document.getElementById('ak-mustadei-wrap').style.display=val==='باستدعاء'?'':'none';
+}
+
+function toggleMujaz(el) { el.classList.toggle('selected'); }
+
+async function saveAkhz() {
+  const btn=document.getElementById('btn-save-akhz');
+  btn.textContent='جارٍ الحفظ...';btn.disabled=true;
+  const mujaz=Array.from(document.querySelectorAll('#ak-mujaz-grid .mujaz-opt.selected')).map(o=>o.dataset.v);
+  const record={
+    sheikh_id:currentAkhzSheikhId,
+    akhz_type:document.getElementById('ak-type').value,
+    content:document.getElementById('ak-content').value||null,
+    subtype:document.getElementById('ak-subtype').value,
+    mustadei:document.getElementById('ak-mustadei').value||null,
+    reader:document.getElementById('ak-reader').value||null,
+    date_day:[document.getElementById('ak-day-name').value,document.getElementById('ak-day-wday').value,document.getElementById('ak-day-num').value].filter(Boolean).join(' ')||null,
+    date_month:document.getElementById('ak-month').value||null,
+    date_year:document.getElementById('ak-year').value||null,
+    date_type:document.getElementById('ak-dtype').value,
+    mujaz_lahum:JSON.stringify(mujaz),
+  };
+  const{error}=await sb.from('akhz').insert(record);
+  btn.textContent='حفظ ←';btn.disabled=false;
+  if(error){showToast('خطأ: '+error.message,true);return;}
+  showToast('✓ تم الحفظ');
+  closeModal('modal-akhz');
+  if(detailSheikhId && detailSheikhId===currentAkhzSheikhId) await loadDetailAkhz(currentAkhzSheikhId);
+}
+
+async function editAkhz(id) {
+  const {data:a} = await sb.from('akhz').select('*').eq('id',id).single();
+  if(!a) return;
+  const mujaz = a.mujaz_lahum ? JSON.parse(a.mujaz_lahum||'[]').join('، ') : '';
+  const html = `
+    <div style="display:grid;gap:10px;direction:rtl;text-align:right">
+      <label>نوع الأخذ:<select id="ea-type" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)">
+        <option ${a.akhz_type==='إجازة عامة'?'selected':''}>إجازة عامة</option>
+        <option ${a.akhz_type==='إجازة خاصة'?'selected':''}>إجازة خاصة</option>
+        <option ${a.akhz_type==='مسموع'?'selected':''}>مسموع</option>
+        <option ${a.akhz_type==='مناولة'?'selected':''}>مناولة</option>
+        <option ${a.akhz_type==='مكاتبة'?'selected':''}>مكاتبة</option>
+      </select></label>
+      <label>المحتوى:<textarea id="ea-content" rows="3" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)">${esc(a.content||'')}</textarea></label>
+      <label>الطريقة:<select id="ea-subtype" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)">
+        <option ${a.subtype==='بنفسي'?'selected':''}>بنفسي</option>
+        <option ${a.subtype==='باستدعاء'?'selected':''}>باستدعاء</option>
+        <option ${a.subtype==='سماعاً بقراءة'?'selected':''}>سماعاً بقراءة</option>
+        <option ${a.subtype==='مكاتبة'?'selected':''}>مكاتبة</option>
+      </select></label>
+      <label>المستدعي:<input id="ea-mustadei" value="${esc(a.mustadei||'')}" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)"></label>
+      <label>القارئ:<input id="ea-reader" value="${esc(a.reader||'')}" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)"></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">
+        <label>اليوم:<input id="ea-dd" value="${esc(a.date_day||'')}" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)"></label>
+        <label>الشهر:<input id="ea-dm" value="${esc(a.date_month||'')}" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)"></label>
+        <label>السنة:<input id="ea-dy" value="${esc(a.date_year||'')}" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)"></label>
+        <label>النوع:<select id="ea-dt" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)">
+          <option ${a.date_type==='هجري'?'selected':''}>هجري</option>
+          <option ${a.date_type==='ميلادي'?'selected':''}>ميلادي</option>
+        </select></label>
+      </div>
+      <label>المُجاز لهم (مفصولون بفاصلة):<input id="ea-mujaz" value="${esc(mujaz)}" style="width:100%;padding:6px;border-radius:6px;border:1px solid var(--gold2);background:var(--dark2);color:var(--cream1)"></label>
+    </div>`;
+
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center';
+  modal.innerHTML = `<div style="background:var(--dark1);border:1px solid var(--gold2);border-radius:12px;padding:20px;max-width:550px;width:90%;max-height:90vh;overflow-y:auto">
+    <h3 style="color:var(--gold1);margin-bottom:12px;text-align:right">✏️ تعديل الأخذ</h3>
+    ${html}
+    <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+      <button onclick="this.closest('.modal-overlay').remove()" class="btn btn-xs" style="background:var(--dark3);color:var(--cream1);padding:6px 16px">إلغاء</button>
+      <button onclick="saveAkhzEdit(${id},this)" class="btn btn-xs" style="background:var(--gold2);color:#000;padding:6px 16px">💾 حفظ</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+}
+
+async function saveAkhzEdit(id, btn) {
+  const mujazStr = document.getElementById('ea-mujaz').value.trim();
+  const mujazArr = mujazStr ? mujazStr.split('،').map(s=>s.trim()).filter(Boolean) : [];
+  const updates = {
+    akhz_type: document.getElementById('ea-type').value,
+    content: document.getElementById('ea-content').value.trim(),
+    subtype: document.getElementById('ea-subtype').value,
+    mustadei: document.getElementById('ea-mustadei').value.trim() || null,
+    reader: document.getElementById('ea-reader').value.trim() || null,
+    date_day: document.getElementById('ea-dd').value.trim() || null,
+    date_month: document.getElementById('ea-dm').value.trim() || null,
+    date_year: document.getElementById('ea-dy').value.trim() || null,
+    date_type: document.getElementById('ea-dt').value,
+    mujaz_lahum: JSON.stringify(mujazArr),
+  };
+  const {error} = await sb.from('akhz').update(updates).eq('id',id);
+  if(error) { showToast('❌ '+error.message); return; }
+  btn.closest('.modal-overlay').remove();
+  showToast('✅ تم التحديث');
+  if(detailSheikhId) await loadDetailAkhz(detailSheikhId);
+}
+
+async function deleteAkhz(id) {
+  if(!confirm('حذف هذا الأخذ؟'))return;
+  await sb.from('akhz').delete().eq('id',id);
+  showToast('✓ تم الحذف');
+  if(detailSheikhId) await loadDetailAkhz(detailSheikhId);
+}
+
+// ═══════════════════════════════
+// ADD RIWAYA
+// ═══════════════════════════════
+let currentRiwayaSheikhId=null;
+
+function openAddRiwaya(sheikhId) {
+  currentRiwayaSheikhId=sheikhId;
+  editingRiwayaId = null;
+  ['rw-new-name','rw-masmouat','rw-year'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rw-sheikh-id').value='';
+  document.getElementById('rw-new-name').style.display='';
+  ['rw-day-name','rw-day-wday','rw-day-num','rw-month'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('rw-type').value='إجازة عامة';
+  document.querySelector('#modal-riwaya .modal h3').textContent = '+ إضافة شيخ رواية';
+  openModal('modal-riwaya');
+}
+
+function onRiwayaSheikhChange(val) {
+  document.getElementById('rw-new-name').style.display=val?'none':'';
+}
+
+async function saveRiwaya() {
+  const rawId=document.getElementById('rw-sheikh-id').value;
+  const newName=document.getElementById('rw-new-name').value.trim();
+  if(!rawId&&!newName){showToast('أدخل اسم الشيخ',true);return;}
+
+  let rawiId=rawId?parseInt(rawId):null;
+  let rawiName=newName||null;
+
+  if(newName&&!rawId){
+    const{data,error}=await sb.from('shuyookh_shuyookh').insert({name_short:newName}).select().single();
+    if(!error){rawiId=data.id;await loadShuyookhSh();}
+  }
+
+  const record={
+    rawi_id:rawiId,
+    rawi_name:rawiName,
+    ijaza_type:document.getElementById('rw-type').value,
+    masmouat:document.getElementById('rw-masmouat').value||null,
+    date_day:[document.getElementById('rw-day-name').value,document.getElementById('rw-day-wday').value,document.getElementById('rw-day-num').value].filter(Boolean).join(' ')||null,
+    date_month:document.getElementById('rw-month').value||null,
+    date_year:document.getElementById('rw-year').value||null,
+    date_type:document.getElementById('rw-dtype').value,
+  };
+
+  let error;
+  if(editingRiwayaId) {
+    // تعديل
+    ({error} = await sb.from('sheikh_riwaya').update(record).eq('id',editingRiwayaId));
+    editingRiwayaId = null;
+  } else {
+    // إضافة جديدة
+    record.sheikh_id = currentRiwayaSheikhId;
+    ({error} = await sb.from('sheikh_riwaya').insert(record));
+  }
+  if(error){showToast('خطأ: '+error.message,true);return;}
+  showToast('✓ تم الحفظ');
+  closeModal('modal-riwaya');
+  document.querySelector('#modal-riwaya .modal h3').textContent = '+ إضافة شيخ رواية';
+  if(detailSheikhId) await loadDetailRiwaya(detailSheikhId);
+}
+
+async function deleteRiwaya(id) {
+  if(!confirm('حذف شيخ الرواية هذا؟'))return;
+  await sb.from('sheikh_riwaya').delete().eq('id',id);
+  showToast('✓ تم الحذف');
+  if(detailSheikhId) await loadDetailRiwaya(detailSheikhId);
+}
+
+let editingRiwayaId = null;
+
+async function editRiwayaFull(riwayaId) {
+  const {data} = await sb.from('sheikh_riwaya').select('*').eq('id',riwayaId).single();
+  if(!data) return;
+  editingRiwayaId = riwayaId;
+
+  // Fill modal fields
+  document.getElementById('rw-sheikh-id').value = data.rawi_id || '';
+  document.getElementById('rw-new-name').value = data.rawi_name || '';
+  document.getElementById('rw-type').value = data.ijaza_type || 'إجازة عامة';
+  document.getElementById('rw-masmouat').value = data.masmouat || '';
+
+  // Parse date_day (e.g. "يوم الأربعاء ١٦")
+  const dayParts = (data.date_day||'').split(' ');
+  if(dayParts.length>=3) {
+    document.getElementById('rw-day-name').value = dayParts[0];
+    document.getElementById('rw-day-wday').value = dayParts[1];
+    document.getElementById('rw-day-num').value = dayParts[2];
+  } else if(dayParts.length===2) {
+    document.getElementById('rw-day-name').value = dayParts[0];
+    document.getElementById('rw-day-num').value = dayParts[1];
+  } else if(dayParts.length===1 && dayParts[0]) {
+    document.getElementById('rw-day-num').value = dayParts[0];
+  }
+
+  document.getElementById('rw-month').value = data.date_month || '';
+  document.getElementById('rw-year').value = data.date_year || '';
+  document.getElementById('rw-dtype').value = data.date_type || 'هجري';
+
+  // Update modal title
+  document.querySelector('#modal-riwaya .modal h3').textContent = '✏️ تعديل شيخ رواية';
+  openModal('modal-riwaya');
+}
+
+// Keep old name for backward compat
+async function editMasmouat(riwayaId) { return editRiwayaFull(riwayaId); }
+
+// ═══════════════════════════════
+// ADD WTHQ
+// ═══════════════════════════════
+let currentWthqSheikhId=null;
+
+function openAddWthq(sheikhId) {
+  currentWthqSheikhId=sheikhId;
+  ['wq-url','wq-label'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('wq-type').value='صورة شخصية';
+  openModal('modal-wthq');
+}
+
+
+async function handleWthqUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const status = document.getElementById('wq-upload-status');
+  status.style.display = 'block';
+  status.textContent = '⏳ جارٍ رفع الصورة...';
+  const url = await uploadToImgBB(file);
+  if (url) {
+    document.getElementById('wq-url').value = url;
+    status.textContent = '✓ تم الرفع بنجاح';
+    status.style.color = 'var(--green-c)';
+  } else {
+    status.textContent = '✗ فشل الرفع';
+    status.style.color = 'var(--red-c)';
+  }
+  input.value = '';
+}
+
+async function saveWthq() {
+  const url=fixDriveUrl(document.getElementById('wq-url').value.trim());
+  if(!url){showToast('أدخل رابط الصورة',true);return;}
+  const wthqType=document.getElementById('wq-type').value;
+  const record={
+    sheikh_id:currentWthqSheikhId,
+    wthq_type:wthqType,
+    url,
+    label:document.getElementById('wq-label').value||null,
+  };
+  const{error}=await sb.from('wathaeq').insert(record);
+  if(error){showToast('خطأ: '+error.message,true);return;}
+
+  // إذا صورة شخصية → حدّث photo_url في جدول الشيوخ تلقائياً
+  if(wthqType==='صورة شخصية'){
+    await sb.from('shuyookh').update({photo_url:url}).eq('id',currentWthqSheikhId);
+    const s=allShuyookh.find(x=>x.id===currentWthqSheikhId);
+    if(s){ s.photo_url=url; renderShuyookh(); }
+    if(detailSheikhId===currentWthqSheikhId){
+      const ph=document.getElementById('d-photo');
+      ph.innerHTML='<img src="'+url+'" style="width:100%;height:100%;object-fit:cover">';
+      ph.onclick=()=>viewImg(url);
+    }
+  }
+
+  showToast('✓ تم الحفظ');
+  closeModal('modal-wthq');
+  if(detailSheikhId===currentWthqSheikhId) await loadDetailWathaeq(currentWthqSheikhId);
+}
+
+// ═══════════════════════════════
+// SHEIKH SH
+// ═══════════════════════════════
+function clearSheikhShForm() {
+  ['ssh-short','ssh-full','ssh-sort','ssh-photo','ssh-bplace','ssh-byear','ssh-dplace','ssh-dyear','ssh-ddesc','ssh-tarjama','ssh-notes']
+    .forEach(id=>{ const el=document.getElementById(id); if(el)el.value=''; });
+  ['ssh-bday-name','ssh-bday-wday','ssh-bday-num','ssh-bmonth','ssh-dday-name','ssh-dday-wday','ssh-dday-num','ssh-dmonth']
+    .forEach(id=>{ const el=document.getElementById(id); if(el)el.value=''; });
+}
+
+function openAddSheikhSh() {
+  editingSheikhShId=null;
+  document.getElementById('modal-sh-title').textContent='+ إضافة شيخ شيوخ';
+  clearSheikhShForm();
+  openModal('modal-sheikh-sh');
+}
+
+function openEditSheikhSh(id) {
+  const s=allShuyookhSh.find(x=>x.id===id);
+  if(!s)return;
+  editingSheikhShId=id;
+  document.getElementById('modal-sh-title').textContent='✏️ تعديل: '+(s.name_short||'');
+  clearSheikhShForm();
+  document.getElementById('ssh-short').value=s.name_short||'';
+  document.getElementById('ssh-full').value=s.name_full||'';
+  document.getElementById('ssh-sort').value=s.sort_key||'';
+  document.getElementById('ssh-photo').value=s.photo_url||'';
+  document.getElementById('ssh-bplace').value=s.birth_place||'';
+  document.getElementById('ssh-byear').value=s.birth_year||s.birth_date||'';
+  document.getElementById('ssh-dplace').value=s.death_place||'';
+  document.getElementById('ssh-dyear').value=s.death_year||s.death_date||'';
+  document.getElementById('ssh-ddesc').value=s.death_detail||'';
+  document.getElementById('ssh-tarjama').value=s.tarjama_mine||'';
+  document.getElementById('ssh-notes').value=s.notes||'';
+  openModal('modal-sheikh-sh');
+}
+
+async function handleSshPhotoUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const btn = document.getElementById('btn-save-ssh');
+  const origText = btn.textContent;
+  btn.textContent = '⏳ جارٍ رفع الصورة...';
+  btn.disabled = true;
+  const url = await uploadToImgBB(file);
+  btn.textContent = origText;
+  btn.disabled = false;
+  if (url) {
+    document.getElementById('ssh-photo').value = url;
+    showToast('✓ تم رفع الصورة');
+  }
+  input.value = '';
+}
+
+async function saveSheikhSh() {
+  const btn=document.getElementById('btn-save-ssh');
+  const name=document.getElementById('ssh-short').value.trim();
+  if(!name){showToast('أدخل الاسم',true);return;}
+  btn.textContent='جارٍ الحفظ...';btn.disabled=true;
+
+  const btype=document.getElementById('ssh-btype').value;
+  const dtype=document.getElementById('ssh-dtype').value;
+
+  const record={
+    name_short:name,
+    name_full:document.getElementById('ssh-full').value||null,
+    sort_key:document.getElementById('ssh-sort').value||null,
+    photo_url:document.getElementById('ssh-photo').value||null,
+    birth_place:document.getElementById('ssh-bplace').value||null,
+    birth_day:[document.getElementById('ssh-bday-name').value,document.getElementById('ssh-bday-wday').value,document.getElementById('ssh-bday-num').value].filter(Boolean).join(' ')||null,
+    birth_date:document.getElementById('ssh-byear').value||null,
+    birth_month:document.getElementById('ssh-bmonth').value||null,
+    birth_type:btype,
+    death_place:document.getElementById('ssh-dplace').value||null,
+    death_day:[document.getElementById('ssh-dday-name').value,document.getElementById('ssh-dday-wday').value,document.getElementById('ssh-dday-num').value].filter(Boolean).join(' ')||null,
+    death_date:document.getElementById('ssh-dyear').value||null,
+    death_month:document.getElementById('ssh-dmonth').value||null,
+    death_type:dtype,
+    death_detail:document.getElementById('ssh-ddesc').value||null,
+    tarjama_mine:document.getElementById('ssh-tarjama').value||null,
+    notes:document.getElementById('ssh-notes').value||null,
+  };
+
+  btn.textContent='حفظ ←';btn.disabled=false;
+  let error;
+  if(editingSheikhShId){({error}=await sb.from('shuyookh_shuyookh').update(record).eq('id',editingSheikhShId));}
+  else{({error}=await sb.from('shuyookh_shuyookh').insert(record));}
+  if(error){showToast('خطأ: '+error.message,true);return;}
+  showToast('✓ تم الحفظ');
+  closeModal('modal-sheikh-sh');
+  await loadShuyookhSh();
+}
+
+async function confirmDelSheikhSh(id,name) {
+  if(!confirm('حذف: '+name+'؟'))return;
+  await sb.from('shuyookh_shuyookh').delete().eq('id',id);
+  showToast('✓ تم الحذف');
+  await loadShuyookhSh();
+}
+
+// ═══════════════════════════════
+// DETAIL SHEIKH SH
+// ═══════════════════════════════
+let detailSheikhShId=null;
+
+async function openDetailSh(id) {
+  detailSheikhShId=id;
+  const s=allShuyookhSh.find(x=>x.id===id);
+  if(!s)return;
+
+  document.getElementById('detail-hdr-name-sh').textContent=s.name_short||'';
+  document.getElementById('d-name-sh').textContent=s.name_full||s.name_short||'';
+  document.getElementById('d-notes-sh').textContent=s.notes||'';
+
+  const ph=document.getElementById('d-photo-sh');
+  if(s.photo_url&&s.photo_url.trim()){
+    ph.innerHTML=`<img src="${esc(fixDriveUrl(s.photo_url))}" style="width:100%;height:100%;object-fit:cover">`;
+    ph.onclick=()=>viewImg(s.photo_url);
+  } else { ph.innerHTML='<svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" width="100" height="130"><ellipse cx="50" cy="40" rx="24" ry="26" fill="#c9a227" opacity="0.35"/><ellipse cx="50" cy="110" rx="42" ry="35" fill="#c9a227" opacity="0.35"/></svg>'; ph.onclick=null; }
+
+  const meta=document.getElementById('d-meta-sh');
+  meta.innerHTML='';
+  if(s.birth_date) meta.innerHTML+=`<span class="badge badge-gold">📅 ${[s.birth_day,s.birth_month,s.birth_date,s.birth_type].filter(Boolean).join(' ')}</span>`;
+  if(s.death_date) meta.innerHTML+=`<span class="badge badge-blue">🕊️ ${[s.death_day,s.death_month,s.death_date].filter(Boolean).join(' ')}</span>`;
+
+  const basicGrid=document.getElementById('d-basic-grid-sh');
+  const fields=[
+    ['الاسم الكامل',s.name_full],['مفتاح الترتيب',s.sort_key],
+    ['مكان الميلاد',s.birth_place],['تاريخ الميلاد',[s.birth_day,s.birth_month,s.birth_date,s.birth_type].filter(Boolean).join(' ')],
+    ['مكان الوفاة',s.death_place],['تاريخ الوفاة',[s.death_day,s.death_month,s.death_date,s.death_type].filter(Boolean).join(' ')],
+    ['تفاصيل الوفاة',s.death_detail],['ملاحظات',s.notes]
+  ].filter(([,v])=>v&&v.trim());
+  basicGrid.innerHTML=fields.map(([l,v])=>`<div class="detail-field"><div class="detail-field-label">${l}</div><div class="detail-field-val">${esc(v)}</div></div>`).join('');
+
+  const tarjSec=document.getElementById('d-sec-tarjama-sh');
+  if(s.tarjama_mine&&s.tarjama_mine.trim()){
+    tarjSec.style.display='';
+    document.getElementById('d-tarjama-content-sh').textContent=s.tarjama_mine;
+  } else { tarjSec.style.display='none'; }
+
+  // الشيوخ الذين يروون عنه (من جدول sheikh_riwaya)
+  const{data:riwData}=await sb.from('sheikh_riwaya').select('*,shuyookh(name_short)').eq('rawi_id',id).order('id');
+  const container=document.getElementById('d-rawu-anhu-list');
+  if(!riwData||!riwData.length){
+    container.innerHTML='<div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">🔗</span><div class="es-sub">لا يوجد شيوخ مرتبطون بعد</div></div>';
+  } else {
+    container.innerHTML=riwData.map(r=>{
+      const sheikhName=r.shuyookh?.name_short||'—';
+      return `<div class="riwaya-item">
+        <div class="riwaya-item-name" style="cursor:pointer" onclick="closeDetailSh();openDetail(${r.sheikh_id})">${esc(sheikhName)}</div>
+        <div class="riwaya-item-meta">
+          ${r.ijaza_type?`<span class="badge badge-gold" style="margin-left:6px">${esc(r.ijaza_type)}</span>`:''}
+          ${r.masmouat?`<span>🎧 مسموعات</span>`:''}
+        </div>
+        ${r.masmouat?`<div style="padding:6px 12px;font-size:13px;color:var(--cream3);line-height:1.7;border-top:1px solid rgba(255,255,255,.08)">${esc(r.masmouat)}</div>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('detail-page-sh').classList.add('open');
+  document.getElementById('detail-page-sh').scrollTop=0;
+}
+
+function closeDetailSh(){
+  document.getElementById('detail-page-sh').classList.remove('open');
+  detailSheikhShId=null;
+}
+
+async function deleteFromDetailSh(){
+  const s=allShuyookhSh.find(x=>x.id===detailSheikhShId);
+  if(!s)return;
+  closeDetailSh();
+  confirmDelSheikhSh(s.id,s.name_short||'');
+}
+
+// ═══════════════════════════════
+// SEARCH
+// ═══════════════════════════════
+let st;
+function onSearch(q){clearTimeout(st);st=setTimeout(()=>renderShuyookh(),260);}
+
+function doAdvSearch() {
+  const q=document.getElementById('adv-q').value.trim();
+  const inF=document.getElementById('adv-in').value;
+  if(!q){showToast('أدخل كلمة للبحث',true);return;}
+  const lower=q.toLowerCase();
+  const result=allShuyookh.filter(s=>{
+    if(inF==='name') return (s.name_short||'').toLowerCase().includes(lower)||(s.name_full||'').toLowerCase().includes(lower);
+    if(inF==='tarjama') return (s.tarjama_mine||'').toLowerCase().includes(lower);
+    return ((s.name_short||'')+(s.name_full||'')+(s.tarjama_mine||'')+(s.notes||'')).toLowerCase().includes(lower);
+  });
+  let html=`<div style="margin-bottom:14px"><span class="res-count">${result.length} نتيجة لـ "<strong style="color:var(--gold1)">${esc(q)}</strong>"</span></div>`;
+  if(!result.length){html+='<div class="empty-state"><p>لا توجد نتائج</p></div>';}
+  else{
+    html+='<div class="tbl-wrap"><table><thead><tr><th>#</th><th>الشيخ</th><th>المعلومات</th><th>إجراء</th></tr></thead><tbody>';
+    result.forEach((s,i)=>{
+      const snippet=inF==='tarjama'?getSnippet(s.tarjama_mine||'',lower):'';
+      html+=`<tr><td style="color:var(--cream3);font-size:11px">${i+1}</td>
+        <td><div class="td-name" onclick="openDetail(${s.id})">${hlText(esc(s.name_short||''),lower)}</div>
+          ${s.name_full?`<div class="td-sub">${hlText(esc(s.name_full),lower)}</div>`:''}</td>
+        <td><div style="font-size:12px;color:var(--cream2);max-width:400px">${snippet}</div></td>
+        <td><button class="btn btn-ghost btn-sm" onclick="openDetail(${s.id})">عرض</button></td></tr>`;
+    });
+    html+='</tbody></table></div>';
+  }
+  document.getElementById('adv-results').innerHTML=html;
+}
+
+function getSnippet(text,q){
+  const idx=text.toLowerCase().indexOf(q);if(idx<0)return '';
+  const s=Math.max(0,idx-70),e=Math.min(text.length,idx+q.length+70);
+  return(s>0?'…':'')+hlText(esc(text.slice(s,e)),q)+(e<text.length?'…':'');
+}
+
+// ═══════════════════════════════
+// REPORTS
+// ═══════════════════════════════
+async function runReport(type) {
+  let content='',title='تقرير';
+  const data=allShuyookh;
+
+  if(type==='names'){
+    title='أسماء الشيوخ';
+    content='<ol>'+data.map(s=>`<li>${s.name_short||''}</li>`).join('')+'</ol>';
+  } else if(type==='names-dates'){
+    title='الشيوخ مع التواريخ';
+    content=`<table border="1" style="width:100%;border-collapse:collapse;direction:rtl">
+      <tr><th style="padding:8px">الاسم</th><th style="padding:8px">الميلاد</th><th style="padding:8px">الوفاة</th></tr>`+
+      data.map(s=>`<tr>
+        <td style="padding:8px">${s.name_short||''}</td>
+        <td style="padding:8px">${[s.birth_day,s.birth_date].filter(Boolean).join(' ')||'—'}</td>
+        <td style="padding:8px">${[s.death_day,s.death_month,s.death_date].filter(Boolean).join(' ')||'—'}</td>
+      </tr>`).join('')+'</table>';
+  } else if(type==='stats'){
+    const wi=data.filter(s=>s.photo_url).length;
+    title='إحصائيات عامة';
+    content=`<table border="1" style="width:100%;max-width:400px;border-collapse:collapse">
+      <tr><td style="padding:10px">إجمالي الشيوخ</td><td style="padding:10px"><b>${data.length}</b></td></tr>
+      <tr><td style="padding:10px">لديهم صور</td><td style="padding:10px"><b>${wi}</b></td></tr>
+      <tr><td style="padding:10px">بدون صور</td><td style="padding:10px"><b>${data.length-wi}</b></td></tr>
+    </table>`;
+  } else {
+    // reports requiring akhz data
+    const memberMap={'ejaza-zawja':'الزوجة','ejaza-seraj':'سراج','ejaza-layan':'ليان','ejaza-banan':'بنان'};
+    if(memberMap[type]||type==='masmouat'||type==='istidaa'||type==='istidaa-family'||type==='riwaya'||type==='riwaya-full'){
+      const{data:akhzData}=await sb.from('akhz').select('*,shuyookh(name_short)').order('sheikh_id');
+      const{data:riwData}=await sb.from('sheikh_riwaya').select('*,shuyookh(name_short)').order('sheikh_id');
+
+      if(memberMap[type]){
+        const member=memberMap[type];
+        title=`إجازات ${member}`;
+        const relevant=akhzData.filter(a=>{
+          const mujaz=JSON.parse(a.mujaz_lahum||'[]');
+          return mujaz.includes(member)||mujaz.includes('من يُدرك');
+        });
+        content=relevant.map((a,i)=>`<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #ccc">
+          <b>${i+1}. ${a.shuyookh?.name_short||''}</b><br>
+          النوع: ${a.akhz_type||''} — ${a.subtype||''}<br>
+          ${a.content?'المحتوى: '+a.content+'<br>':''}
+          ${a.mustadei?'باستدعاء: '+a.mustadei+'<br>':''}
+          التاريخ: ${[a.date_day,a.date_month,a.date_year,a.date_type].filter(Boolean).join(' ')||'—'}
+        </div>`).join('');
+      } else if(type==='istidaa'||type==='istidaa-family'){
+        title=type==='istidaa'?'الاستدعاءات الكاملة':'استدعاءات الأسرة';
+        const relevant=akhzData.filter(a=>a.subtype==='باستدعاء');
+        content=relevant.map((a,i)=>`<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #ccc">
+          <b>${i+1}. ${a.shuyookh?.name_short||''}</b><br>
+          المستدعي: ${a.mustadei||'—'}<br>
+          ${a.content?'المحتوى: '+a.content+'<br>':''}
+          التاريخ: ${[a.date_day,a.date_month,a.date_year].filter(Boolean).join(' ')||'—'}<br>
+          المُجاز لهم: ${JSON.parse(a.mujaz_lahum||'[]').join('، ')||'—'}
+        </div>`).join('');
+      } else if(type==='masmouat'){
+        title='مسموعاتي تفصيلاً';
+        const relevant=akhzData.filter(a=>a.akhz_type==='مسموع');
+        content=relevant.map((a,i)=>`<div style="margin-bottom:12px"><b>${i+1}. ${a.shuyookh?.name_short||''}</b>: ${a.content||''}</div>`).join('');
+      } else if(type==='riwaya'||type==='riwaya-full'){
+        title=type==='riwaya'?'الشيوخ مع شيوخ الرواية':'الشيوخ مع شيوخ الرواية والتفاصيل';
+        content=data.map((s,i)=>{
+          const rw=riwData.filter(r=>r.sheikh_id===s.id);
+          return`<div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #ccc">
+            <b>${i+1}. ${s.name_short||''}</b><br>
+            ${rw.length?rw.map(r=>`— ${r.rawi_name||''} (${r.ijaza_type||''})${type==='riwaya-full'&&r.masmouat?' | '+r.masmouat:''}`).join('<br>'):'لا يوجد'}
+          </div>`;
+        }).join('');
+      }
+    }
+  }
+
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>${title}</title>
+    <style>body{font-family:serif;padding:30px;direction:rtl;line-height:2;max-width:960px;margin:0 auto}
+    @media print{.np{display:none}}</style></head><body>
+    <div class="np" style="margin-bottom:20px"><button onclick="window.print()" style="padding:8px 16px;cursor:pointer;font-size:14px">🖨️ طباعة</button></div>
+    <h1 style="color:#8a6a1e;margin-bottom:24px;font-family:serif">${title}</h1>${content}</body></html>`);
+  w.document.close();
+}
+
+// رفع صورة إلى ImgBB
+async function uploadToImgBB(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+  formData.append('key', IMGBB_KEY);
+  try {
+    const res = await fetch('https://api.imgbb.com/1/upload', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if (data.success) return data.data.url;
+    showToast('خطأ في رفع الصورة: ' + data.error.message, true);
+    return null;
+  } catch(e) {
+    showToast('خطأ في الاتصال بـ ImgBB', true);
+    return null;
+  }
+}
+
+// تحويل روابط Google Drive لروابط مباشرة
+function fixDriveUrl(url) {
+  if (!url) return url;
+  const m1 = url.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/);
+  if (m1) return 'https://drive.google.com/uc?export=view&id=' + m1[1];
+  const m2 = url.match(/drive\.google\.com\/open\?id=([^&]+)/);
+  if (m2) return 'https://drive.google.com/uc?export=view&id=' + m2[1];
+  return url;
+}
+
+// فتح الملف بالطريقة الصحيحة
+function openFile(url) {
+  if (!url || !url.trim()) return;
+  // PDF من Google Drive → افتح بصيغة preview
+  const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/);
+  if (driveMatch) {
+    window.open('https://drive.google.com/file/d/' + driveMatch[1] + '/preview', '_blank');
+    return;
+  }
+  // PDF عادي → افتح في Google Docs Viewer
+  if (url.toLowerCase().includes('.pdf')) {
+    window.open('https://docs.google.com/viewer?url=' + encodeURIComponent(url) + '&embedded=false', '_blank');
+    return;
+  }
+  // غير ذلك → افتح مباشرة
+  window.open(url, '_blank');
+}
+
+// ═══════════════════════════════
+// UTILS
+// ═══════════════════════════════
+function openModal(id){
+  const el = document.getElementById(id);
+  // نقل المودال لـ body مباشرة لتجنب مشاكل stacking context
+  if(el.parentElement !== document.body) {
+    document.body.appendChild(el);
+  }
+  el.classList.add('open');
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+function viewImg(url){
+  if(!url||!url.trim()) return;
+  window.open(url, '_blank');
+}
+
+function showToast(msg,isError=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(isError?' error':'');
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function hlText(text,q){
+  if(!q)return text;
+  return text.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark class="hl">$1</mark>');
+}
+
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// close modals on backdrop click
+['modal-sheikh','modal-akhz','modal-riwaya','modal-wthq','modal-sheikh-sh','modal-img'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)closeModal(id);});
+});
+</script>
+</body>
+</html>
