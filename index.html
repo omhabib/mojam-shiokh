@@ -1994,26 +1994,48 @@ async function runReport(type) {
   let content='',title='تقرير';
   const data=allShuyookh;
 
+  const cardStyle='background:#fff;border:1px solid #e0d9c8;border-radius:10px;padding:14px;margin-bottom:10px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;direction:rtl';
+  const numStyle='background:#f5f0e0;color:#6b5a1e;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px';
+  const searchBox='<input type="text" id="rpt-filter" placeholder="🔍 ابحث في الأسماء..." oninput="filterReportCards(this.value)" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;margin-bottom:16px;font-size:14px;direction:rtl">';
+  const statBox=(label,val)=>`<span style="background:#f5f0e0;padding:6px 14px;border-radius:8px"><b>${label}:</b> ${val}</span>`;
+
   if(type==='names'){
     title='أسماء الشيوخ';
-    content='<ol>'+data.map(s=>`<li>${s.name_short||''}</li>`).join('')+'</ol>';
+    content=`<div style="margin-bottom:16px;padding:14px;background:#f9f6ee;border-radius:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:15px">${statBox('الإجمالي',data.length)}</div>${searchBox}`+
+      data.map((s,i)=>`<div class="rpt-card" data-name="${(s.name_short||'').toLowerCase()}" style="${cardStyle}">
+        <span style="${numStyle}">${i+1}</span>
+        <div style="font-weight:700;font-size:15px;color:#333">${s.name_short||''}</div>
+        <div></div>
+      </div>`).join('');
   } else if(type==='names-dates'){
     title='الشيوخ مع التواريخ';
-    content=`<table border="1" style="width:100%;border-collapse:collapse;direction:rtl">
-      <tr><th style="padding:8px">الاسم</th><th style="padding:8px">الميلاد</th><th style="padding:8px">الوفاة</th></tr>`+
-      data.map(s=>`<tr>
-        <td style="padding:8px">${s.name_short||''}</td>
-        <td style="padding:8px">${[s.birth_day,s.birth_date].filter(Boolean).join(' ')||'—'}</td>
-        <td style="padding:8px">${[s.death_day,s.death_month,s.death_date].filter(Boolean).join(' ')||'—'}</td>
-      </tr>`).join('')+'</table>';
+    content=`<div style="margin-bottom:16px;padding:14px;background:#f9f6ee;border-radius:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:15px">${statBox('الإجمالي',data.length)}</div>${searchBox}`+
+      data.map((s,i)=>{
+        const birth=[s.birth_day,s.birth_month,s.birth_date].filter(Boolean).join(' ')||'—';
+        const death=[s.death_day,s.death_month,s.death_date].filter(Boolean).join(' ')||'—';
+        return`<div class="rpt-card" data-name="${(s.name_short||'').toLowerCase()}" style="${cardStyle}">
+          <span style="${numStyle}">${i+1}</span>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:#333">${s.name_short||''}</div>
+            <div style="font-size:12px;color:#888;margin-top:3px">🎂 ${birth} · ☠️ ${death}</div>
+          </div>
+          <div></div>
+        </div>`;
+      }).join('');
   } else if(type==='stats'){
     const wi=data.filter(s=>s.photo_url).length;
+    const dead=data.filter(s=>s.death_date).length;
     title='إحصائيات عامة';
-    content=`<table border="1" style="width:100%;max-width:400px;border-collapse:collapse">
-      <tr><td style="padding:10px">إجمالي الشيوخ</td><td style="padding:10px"><b>${data.length}</b></td></tr>
-      <tr><td style="padding:10px">لديهم صور</td><td style="padding:10px"><b>${wi}</b></td></tr>
-      <tr><td style="padding:10px">بدون صور</td><td style="padding:10px"><b>${data.length-wi}</b></td></tr>
-    </table>`;
+    content=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px">
+      <div style="background:#fff;border:1px solid #e0d9c8;border-radius:12px;padding:20px;text-align:center">
+        <div style="font-size:36px;font-weight:700;color:#8a6a1e">${data.length}</div><div style="color:#888;font-size:14px">إجمالي الشيوخ</div></div>
+      <div style="background:#fff;border:1px solid #e0d9c8;border-radius:12px;padding:20px;text-align:center">
+        <div style="font-size:36px;font-weight:700;color:#2e7d32">${wi}</div><div style="color:#888;font-size:14px">لديهم صور</div></div>
+      <div style="background:#fff;border:1px solid #e0d9c8;border-radius:12px;padding:20px;text-align:center">
+        <div style="font-size:36px;font-weight:700;color:#c62828">${dead}</div><div style="color:#888;font-size:14px">متوفون</div></div>
+      <div style="background:#fff;border:1px solid #e0d9c8;border-radius:12px;padding:20px;text-align:center">
+        <div style="font-size:36px;font-weight:700;color:#1565c0">${data.length-dead}</div><div style="color:#888;font-size:14px">أحياء (لم يُذكر وفاة)</div></div>
+    </div>`;
   } else {
     // reports requiring akhz data
     const memberMap={'ejaza-zawja':'الزوجة','ejaza-seraj':'سراج','ejaza-layan':'ليان','ejaza-banan':'بنان','ejaza-linah':'لينة'};
@@ -2030,16 +2052,11 @@ async function runReport(type) {
           return mujaz.includes(member)||mujaz.includes('من يُدرك')||mujaz.includes('من يدرك');
         });
         const childObj=isChild?DHURRIYA.find(c=>c.name===member):null;
-        content=`
-          <div style="margin-bottom:16px;padding:14px;background:#f9f6ee;border-radius:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:15px">
-            <span><b>إجمالي الإجازات:</b> ${relevant.length}</span>
-            ${isChild?`<span><b>تاريخ الميلاد:</b> ${childObj.birthDay||''} ${childObj.birthMonth||''} ${childObj.birthYear||''} هـ</span>`:''}
-          </div>
-          <input type="text" id="rpt-filter" placeholder="🔍 ابحث في الأسماء..." oninput="filterReportCards(this.value)" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;margin-bottom:16px;font-size:14px;direction:rtl">
-        `+relevant.map((a,i)=>{
+        // حساب الحالات مسبقًا
+        const cardData=relevant.map((a,i)=>{
           const sh=data.find(s=>s.id===a.sheikh_id)||{};
           const dateStr=[a.date_day,a.date_month,a.date_year].filter(Boolean).join(' ')||'—';
-          let statusHtml='';
+          let status='';
           if(isChild&&childObj){
             let dY=toArabicNum(sh.death_date),dM=hijriMonthNum(sh.death_month)||gregMonthNum(sh.death_month);
             if(sh.death_type==='ميلادي'&&dY>0&&dY<2100){const h=gregToHijriApprox(dY,dM);dY=h.year;dM=h.month;}
@@ -2048,11 +2065,37 @@ async function runReport(type) {
             const mujazArr=JSON.parse(a.mujaz_lahum||'[]');
             const hasManyudrik=mujazArr.some(m=>m.includes('يُدرك')||m.includes('يدرك'));
             const st=getChildStatus(childObj,dY,dM,aY,aM,hasManyudrik);
-            const bg=st.status==='مجاز'?'#2e7d32':st.status==='معدوم'?'#e65100':'#c62828';
-            statusHtml=`<span style="background:${bg};color:#fff;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700">${st.icon} ${st.status}</span>`;
+            status=st.status;
           }
-          return`<div class="rpt-card" data-name="${(sh.name_short||'').toLowerCase()}" style="background:#fff;border:1px solid #e0d9c8;border-radius:10px;padding:14px;margin-bottom:10px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;direction:rtl">
-            <span style="background:#f5f0e0;color:#6b5a1e;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">${i+1}</span>
+          return{sh,dateStr,a,status,i};
+        });
+        const cntMujaz=cardData.filter(c=>c.status==='مجاز').length;
+        const cntMadum=cardData.filter(c=>c.status==='معدوم').length;
+        const cntNo=cardData.filter(c=>c.status==='لا يدخل').length;
+        const filterBtnStyle='padding:6px 14px;border-radius:20px;border:1px solid #ccc;cursor:pointer;font-size:13px;font-weight:600';
+        content=`
+          <div style="margin-bottom:16px;padding:14px;background:#f9f6ee;border-radius:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:15px;align-items:center">
+            ${statBox('الإجمالي',relevant.length)}
+            ${isChild?statBox('الميلاد',`${childObj.birthDay||''} ${childObj.birthMonth||''} ${childObj.birthYear||''} هـ`):''}
+            ${isChild?`${statBox('✅ مجاز',cntMujaz)} ${statBox('⏳ معدوم',cntMadum)} ${statBox('❌ لا يدخل',cntNo)}`:''}
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+            ${searchBox}
+            ${isChild?`<div style="display:flex;gap:6px;margin-bottom:16px">
+              <button onclick="filterByStatus('')" style="${filterBtnStyle};background:#f5f0e0;color:#6b5a1e">الكل</button>
+              <button onclick="filterByStatus('مجاز')" style="${filterBtnStyle};background:#e8f5e9;color:#2e7d32">✅ مجاز</button>
+              <button onclick="filterByStatus('معدوم')" style="${filterBtnStyle};background:#fff3e0;color:#e65100">⏳ معدوم</button>
+              <button onclick="filterByStatus('لا يدخل')" style="${filterBtnStyle};background:#fce4ec;color:#c62828">❌ لا يدخل</button>
+            </div>`:''}
+          </div>
+        `+cardData.map(({sh,dateStr,a,status,i})=>{
+          let statusHtml='';
+          if(status){
+            const bg=status==='مجاز'?'#2e7d32':status==='معدوم'?'#e65100':'#c62828';
+            statusHtml=`<span style="background:${bg};color:#fff;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700">${status==='مجاز'?'✅':status==='معدوم'?'⏳':'❌'} ${status}</span>`;
+          }
+          return`<div class="rpt-card" data-name="${(sh.name_short||'').toLowerCase()}" data-status="${status}" style="${cardStyle}">
+            <span style="${numStyle}">${i+1}</span>
             <div>
               <div style="font-weight:700;font-size:15px;color:#333">${sh.name_short||''}</div>
               <div style="font-size:12px;color:#888;margin-top:3px">📅 ${dateStr}${a.mustadei?` · 📞 ${a.mustadei}`:''}</div>
@@ -2063,17 +2106,31 @@ async function runReport(type) {
       } else if(type==='istidaa'||type==='istidaa-family'){
         title=type==='istidaa'?'الاستدعاءات الكاملة':'استدعاءات الأسرة';
         const relevant=akhzData.filter(a=>a.subtype==='باستدعاء');
-        content=relevant.map((a,i)=>`<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #ccc">
-          <b>${i+1}. ${a.shuyookh?.name_short||''}</b><br>
-          المستدعي: ${a.mustadei||'—'}<br>
-          ${a.content?'المحتوى: '+a.content+'<br>':''}
-          التاريخ: ${[a.date_day,a.date_month,a.date_year].filter(Boolean).join(' ')||'—'}<br>
-          المُجاز لهم: ${JSON.parse(a.mujaz_lahum||'[]').join('، ')||'—'}
-        </div>`).join('');
+        content=`<div style="margin-bottom:16px;padding:14px;background:#f9f6ee;border-radius:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:15px">${statBox('الإجمالي',relevant.length)}</div>${searchBox}`+
+          relevant.map((a,i)=>{
+            const mujaz=JSON.parse(a.mujaz_lahum||'[]').join('، ')||'—';
+            return`<div class="rpt-card" data-name="${(a.shuyookh?.name_short||'').toLowerCase()}" style="${cardStyle}">
+              <span style="${numStyle}">${i+1}</span>
+              <div>
+                <div style="font-weight:700;font-size:15px;color:#333">${a.shuyookh?.name_short||''}</div>
+                <div style="font-size:12px;color:#888;margin-top:3px">📅 ${[a.date_day,a.date_month,a.date_year].filter(Boolean).join(' ')||'—'} · 📞 ${a.mustadei||'—'}</div>
+                <div style="font-size:11px;color:#666;margin-top:2px">👥 ${mujaz}</div>
+              </div>
+              <div></div>
+            </div>`;
+          }).join('');
       } else if(type==='masmouat'){
         title='مسموعاتي تفصيلاً';
         const relevant=akhzData.filter(a=>a.akhz_type==='مسموع');
-        content=relevant.map((a,i)=>`<div style="margin-bottom:12px"><b>${i+1}. ${a.shuyookh?.name_short||''}</b>: ${a.content||''}</div>`).join('');
+        content=`<div style="margin-bottom:16px;padding:14px;background:#f9f6ee;border-radius:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:15px">${statBox('الإجمالي',relevant.length)}</div>${searchBox}`+
+          relevant.map((a,i)=>`<div class="rpt-card" data-name="${(a.shuyookh?.name_short||'').toLowerCase()}" style="${cardStyle}">
+            <span style="${numStyle}">${i+1}</span>
+            <div>
+              <div style="font-weight:700;font-size:15px;color:#333">${a.shuyookh?.name_short||''}</div>
+              <div style="font-size:13px;color:#555;margin-top:3px">${a.content||''}</div>
+            </div>
+            <div></div>
+          </div>`).join('');
       } else if(type==='dhurriya'){
         title='حالة الذرية في الإجازات';
         const relevant=akhzData.filter(a=>{
@@ -2103,13 +2160,24 @@ async function runReport(type) {
           </div>`;
       } else if(type==='riwaya'||type==='riwaya-full'){
         title=type==='riwaya'?'الشيوخ مع شيوخ الرواية':'الشيوخ مع شيوخ الرواية والتفاصيل';
-        content=data.map((s,i)=>{
-          const rw=riwData.filter(r=>r.sheikh_id===s.id);
-          return`<div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #ccc">
-            <b>${i+1}. ${s.name_short||''}</b><br>
-            ${rw.length?rw.map(r=>`— ${r.rawi_name||''} (${r.ijaza_type||''})${type==='riwaya-full'&&r.masmouat?' | '+r.masmouat:''}`).join('<br>'):'لا يوجد'}
-          </div>`;
-        }).join('');
+        const withRw=data.filter(s=>riwData.some(r=>r.sheikh_id===s.id));
+        content=`<div style="margin-bottom:16px;padding:14px;background:#f9f6ee;border-radius:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:15px">${statBox('الشيوخ',data.length)} ${statBox('لديهم رواية',withRw.length)}</div>${searchBox}`+
+          data.map((s,i)=>{
+            const rw=riwData.filter(r=>r.sheikh_id===s.id);
+            if(!rw.length) return '';
+            return`<div class="rpt-card" data-name="${(s.name_short||'').toLowerCase()}" style="background:#fff;border:1px solid #e0d9c8;border-radius:10px;padding:14px;margin-bottom:10px;direction:rtl">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <span style="${numStyle}">${i+1}</span>
+                <b style="font-size:15px;color:#333">${s.name_short||''}</b>
+                <span style="background:#f5f0e0;padding:2px 8px;border-radius:10px;font-size:11px;color:#6b5a1e">${rw.length} شيخ</span>
+              </div>
+              ${rw.map(r=>`<div style="padding:4px 0 4px 40px;font-size:13px;color:#555;border-top:1px solid #f0ece0">
+                <span style="color:#333;font-weight:600">${r.rawi_name||''}</span>
+                <span style="background:#eee;padding:1px 6px;border-radius:8px;font-size:11px;margin:0 4px">${r.ijaza_type||''}</span>
+                ${type==='riwaya-full'&&r.masmouat?`<div style="font-size:12px;color:#888;margin-top:2px">📚 ${r.masmouat}</div>`:''}
+              </div>`).join('')}
+            </div>`;
+          }).join('');
       }
     }
   }
@@ -2122,7 +2190,10 @@ async function runReport(type) {
     @media print{.np{display:none}}</style></head><body>
     <div class="np" style="margin-bottom:20px"><button onclick="window.print()" style="padding:8px 16px;cursor:pointer;font-size:14px">🖨️ طباعة</button></div>
     <h1 style="color:#8a6a1e;margin-bottom:24px;font-family:'Amiri',serif">${title}</h1>${content}
-    <scr`+`ipt>function filterReportCards(q){document.querySelectorAll('.rpt-card').forEach(c=>{c.style.display=!q||c.dataset.name.includes(q.toLowerCase())?'':'none'})}</scr`+`ipt>
+    <scr`+`ipt>
+    function filterReportCards(q){document.querySelectorAll('.rpt-card').forEach(c=>{c.style.display=(!q||c.dataset.name.includes(q.toLowerCase()))&&(!window._statusFilter||c.dataset.status===window._statusFilter)?'':'none'})}
+    function filterByStatus(s){window._statusFilter=s;document.querySelectorAll('.rpt-card').forEach(c=>{c.style.display=(!s||c.dataset.status===s)?'':'none'});var inp=document.getElementById('rpt-filter');if(inp)inp.value=''}
+    </scr`+`ipt>
     </body></html>`);
   w.document.close();
 }
