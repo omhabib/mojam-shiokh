@@ -862,18 +862,13 @@ mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;pad
   </div>
   <div class="fg"><label>ملاحظات</label><input type="text" id="ih-inp-notes" placeholder="ملاحظات إضافية..."></div>
 
-  <div class="fg"><label>صورة الاستدعاء</label>
+  <div class="fg"><label>مرفقات الاستدعاء</label>
     <div style="display:flex;gap:6px;align-items:center">
-      <input type="text" id="ih-inp-img" placeholder="رابط الصورة أو ارفع مباشرة ←" style="flex:1">
-      <label style="background:linear-gradient(135deg,var(--gold2),var(--gold3));color:var(--bg2);border-radius:var(--r1);padding:0 12px;cursor:pointer;font-size:12px;font-weight:700;display:inline-flex;align-items:center;height:38px;white-space:nowrap;gap:4px" title="رفع صورة">
-        📷 رفع
-        <input type="file" id="ih-inp-img-file" accept="image/*" style="display:none" onchange="handleIhPhotoUpload(this)">
-      </label>
-      <button type="button" onclick="clearIhPhoto()" style="background:var(--red-bg);border:1px solid var(--red-b);color:var(--red-c);border-radius:var(--r1);padding:0 10px;cursor:pointer;font-size:13px;white-space:nowrap;height:38px" title="حذف الصورة">✕</button>
+      <input type="text" id="ih-inp-link" placeholder="الصق رابط الملف من Google Drive أو غيره..." style="flex:1">
+      <button type="button" class="btn btn-gold btn-sm" onclick="addIhLink()" style="white-space:nowrap;height:38px">+ أضف</button>
     </div>
-    <div id="ih-img-preview" style="margin-top:8px;display:none">
-      <img id="ih-img-preview-src" src="" style="max-height:120px;border-radius:var(--r1);border:1px solid var(--b1);cursor:pointer" onclick="viewImg(this.src)">
-    </div>
+    <span id="ih-imgs-count" style="font-size:12px;color:var(--gold4);font-weight:600;display:block;margin-top:4px"></span>
+    <div id="ih-imgs-preview" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px"></div>
   </div>
 
   <div class="modal-footer">
@@ -2540,11 +2535,22 @@ function renderIstidaa(items) {
     }
 
     // Actions row
-    const origIdx = istidaaData.indexOf(item);
-    html += '<div style="display:flex;gap:6px;margin-top:8px;align-items:center">';
-    if (item.img) {
-      html += '<button class="btn btn-soft btn-xs" onclick="event.stopPropagation();viewImg(\'' + esc(item.img) + '\')">🖼️ صورة الاستدعاء</button>';
+    // عرض المرفقات (صور + PDF)
+    const imgs = item.imgs && item.imgs.length ? item.imgs : (item.img ? [item.img] : []);
+    if (imgs.length) {
+      html += '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center">';
+      imgs.forEach(url => {
+        if (isPdf(url)) {
+          html += '<a href="' + esc(url) + '" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r1);padding:6px 10px;text-decoration:none;color:var(--cream2);font-size:12px"><span style="font-size:18px">📄</span>PDF</a>';
+        } else {
+          html += '<img src="' + esc(url) + '" style="height:60px;border-radius:var(--r1);border:1px solid var(--b1);cursor:pointer;object-fit:cover" onclick="event.stopPropagation();viewImg(\'' + esc(url) + '\')">';
+        }
+      });
+      html += '</div>';
     }
+
+    const origIdx = istidaaData.indexOf(item);
+    html += '<div style="display:flex;gap:6px;margin-top:6px;align-items:center">';
     html += '<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openEditIstidaa(' + origIdx + ')">✏️ تعديل</button>';
     html += '</div>';
 
@@ -2574,16 +2580,50 @@ function getTawabiBadgeInline(t) {
 
 // ═══════ إضافة استدعاء ═══════
 let editingIstidaaIdx = null;
+let ihTempImgs = []; // مصفوفة روابط الصور المؤقتة
+
+function isPdf(url) { return url && (url.toLowerCase().endsWith('.pdf') || url.includes('/pdf') || url.includes('type=pdf')); }
+
+function renderIhImgsPreview() {
+  const cont = document.getElementById('ih-imgs-preview');
+  const countEl = document.getElementById('ih-imgs-count');
+  const nPdf = ihTempImgs.filter(isPdf).length;
+  const nImg = ihTempImgs.length - nPdf;
+  let label = '';
+  if (nImg) label += nImg + ' صورة';
+  if (nImg && nPdf) label += ' + ';
+  if (nPdf) label += nPdf + ' PDF';
+  countEl.textContent = label;
+  if (!ihTempImgs.length) { cont.innerHTML = ''; return; }
+  cont.innerHTML = ihTempImgs.map((url, i) => {
+    if (isPdf(url)) {
+      return '<div style="position:relative;display:inline-flex;flex-direction:column;align-items:center;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r1);padding:8px 12px;cursor:pointer;gap:4px" onclick="window.open(\'' + esc(url) + '\',\'_blank\')">' +
+        '<span style="font-size:28px">📄</span>' +
+        '<span style="font-size:10px;color:var(--cream3)">PDF</span>' +
+        '<button onclick="event.stopPropagation();removeIhImg(' + i + ')" style="position:absolute;top:-6px;left:-6px;background:var(--red-bg);border:1px solid var(--red-b);color:var(--red-c);border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:11px;line-height:20px;text-align:center;padding:0">✕</button>' +
+      '</div>';
+    }
+    return '<div style="position:relative;display:inline-block">' +
+      '<img src="' + esc(url) + '" style="height:90px;border-radius:var(--r1);border:1px solid var(--b1);cursor:pointer;object-fit:cover" onclick="viewImg(\'' + esc(url) + '\')">' +
+      '<button onclick="removeIhImg(' + i + ')" style="position:absolute;top:-6px;left:-6px;background:var(--red-bg);border:1px solid var(--red-b);color:var(--red-c);border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:11px;line-height:20px;text-align:center;padding:0">✕</button>' +
+    '</div>';
+  }).join('');
+}
+
+function removeIhImg(i) {
+  ihTempImgs.splice(i, 1);
+  renderIhImgsPreview();
+}
 
 function openAddIstidaa() {
   editingIstidaaIdx = null;
+  ihTempImgs = [];
   document.getElementById('modal-istidaa-title').textContent = '📩 إضافة استدعاء جديد';
   document.getElementById('ih-inp-name').value = '';
   document.getElementById('ih-inp-date').value = '';
   document.getElementById('ih-inp-tawabi').value = 'شامل';
   document.getElementById('ih-inp-notes').value = '';
-  document.getElementById('ih-inp-img').value = '';
-  document.getElementById('ih-img-preview').style.display = 'none';
+  renderIhImgsPreview();
   document.getElementById('btn-save-istidaa').textContent = 'حفظ ←';
   document.getElementById('btn-save-istidaa').disabled = false;
   openModal('modal-istidaa');
@@ -2592,46 +2632,33 @@ function openAddIstidaa() {
 function openEditIstidaa(idx) {
   editingIstidaaIdx = idx;
   const item = istidaaData[idx];
+  // دعم الصيغة القديمة (img سلسلة) والجديدة (imgs مصفوفة)
+  if (item.imgs && item.imgs.length) {
+    ihTempImgs = [...item.imgs];
+  } else if (item.img) {
+    ihTempImgs = [item.img];
+  } else {
+    ihTempImgs = [];
+  }
   document.getElementById('modal-istidaa-title').textContent = '✏️ تعديل استدعاء';
   document.getElementById('ih-inp-name').value = item.n || '';
   document.getElementById('ih-inp-date').value = (item.d || '').replace(/\n/g, ' | ');
   document.getElementById('ih-inp-tawabi').value = (item.t || '').split('\n')[0].trim() || 'شامل';
   document.getElementById('ih-inp-notes').value = item.x || '';
-  document.getElementById('ih-inp-img').value = item.img || '';
-  if (item.img) {
-    document.getElementById('ih-img-preview').style.display = 'block';
-    document.getElementById('ih-img-preview-src').src = item.img;
-  } else {
-    document.getElementById('ih-img-preview').style.display = 'none';
-  }
+  renderIhImgsPreview();
   document.getElementById('btn-save-istidaa').textContent = 'تحديث ←';
   document.getElementById('btn-save-istidaa').disabled = false;
   openModal('modal-istidaa');
 }
 
-async function handleIhPhotoUpload(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const btn = document.getElementById('btn-save-istidaa');
-  const origText = btn.textContent;
-  btn.textContent = '⏳ جارٍ رفع الصورة...';
-  btn.disabled = true;
-  const url = await uploadToImgBB(file);
-  btn.textContent = origText;
-  btn.disabled = false;
-  if (url) {
-    document.getElementById('ih-inp-img').value = url;
-    document.getElementById('ih-img-preview').style.display = 'block';
-    document.getElementById('ih-img-preview-src').src = url;
-    showToast('✓ تم رفع الصورة');
-  }
-  input.value = '';
-}
-
-function clearIhPhoto() {
-  document.getElementById('ih-inp-img').value = '';
-  document.getElementById('ih-img-preview').style.display = 'none';
-  document.getElementById('ih-img-preview-src').src = '';
+function addIhLink() {
+  const inp = document.getElementById('ih-inp-link');
+  const url = inp.value.trim();
+  if (!url) { showToast('الصق رابط الملف أولاً', true); return; }
+  ihTempImgs.push(url);
+  inp.value = '';
+  renderIhImgsPreview();
+  showToast('✓ تمت إضافة الرابط');
 }
 
 function saveIstidaa() {
@@ -2642,17 +2669,17 @@ function saveIstidaa() {
 
   const tawabi = document.getElementById('ih-inp-tawabi').value;
   const notes = document.getElementById('ih-inp-notes').value.trim();
-  const img = document.getElementById('ih-inp-img').value.trim();
 
   if (editingIstidaaIdx !== null) {
     istidaaData[editingIstidaaIdx].n = name;
     istidaaData[editingIstidaaIdx].d = date.replace(/\s*\|\s*/g, '\n');
     istidaaData[editingIstidaaIdx].t = tawabi;
     istidaaData[editingIstidaaIdx].x = notes;
-    istidaaData[editingIstidaaIdx].img = img || '';
+    istidaaData[editingIstidaaIdx].imgs = [...ihTempImgs];
+    istidaaData[editingIstidaaIdx].img = ihTempImgs[0] || '';
     showToast('✓ تم تحديث الاستدعاء');
   } else {
-    istidaaData.push({ n: name, d: date, t: tawabi, x: notes, img: img || '' });
+    istidaaData.push({ n: name, d: date, t: tawabi, x: notes, imgs: [...ihTempImgs], img: ihTempImgs[0] || '' });
     showToast('✓ تم إضافة الاستدعاء');
   }
 
