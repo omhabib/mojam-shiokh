@@ -288,6 +288,7 @@ mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;pad
 
   <div class="nav-item" onclick="showPage('istidaa-hindi',this)"><span class="nav-ic">📩</span>الاستدعاء الهندي<span class="nav-badge" id="nb-istidaa">—</span></div>
   <div class="nav-item" onclick="showPage('istidaa-gen',this)"><span class="nav-ic">📜</span>إصدار استدعاء</div>
+  <div class="nav-item" onclick="showPage('mujazoon',this)"><span class="nav-ic">🎓</span>المجازون<span class="nav-badge" id="nb-mujazoon">—</span></div>
   <div class="nav-item" onclick="showPage('reports',this)"><span class="nav-ic">📊</span>التقارير</div>
   <div class="nav-section">الأدوات</div>
   <div class="nav-item" onclick="showPage('search',this)"><span class="nav-ic">🔍</span>البحث المتقدم</div>
@@ -409,6 +410,30 @@ mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;pad
         <button class="btn btn-gold btn-sm" onclick="openAddIstidaa()" style="margin-right:auto">+ إضافة استدعاء</button>
       </div>
       <div id="ih-list"></div>
+    </div>
+
+    <!-- المجازون -->
+    <div class="page" id="page-mujazoon">
+      <p style="font-family:var(--font-d);font-size:19px;color:var(--gold1);margin-bottom:6px">المجازون</p>
+      <p style="font-size:12px;color:var(--cream3);margin-bottom:18px">الذين أجزتهم — الإجمالي: <strong id="mj-total" style="color:var(--gold4)">0</strong></p>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+        <div class="search-wrap" style="max-width:340px;flex:1">
+          <input class="search-inp" id="mj-search" type="text" placeholder="ابحث بالاسم..." oninput="filterMujazoon()">
+          <span class="search-ico">🔍</span>
+        </div>
+        <select class="search-inp" id="mj-sort" style="width:auto;max-width:180px;border-radius:var(--r1)" onchange="filterMujazoon()">
+          <option value="default">الترتيب الأصلي</option>
+          <option value="alpha">أ-ي ألفبائي</option>
+          <option value="date-asc">التاريخ: الأقدم أولاً</option>
+          <option value="date-desc">التاريخ: الأحدث أولاً</option>
+        </select>
+        <span class="res-count" id="mj-res-count">—</span>
+        <div style="display:flex;gap:6px;margin-right:auto">
+          <button class="btn btn-gold btn-sm" onclick="openAddMujaz()">+ إضافة مُجاز</button>
+          <button class="btn btn-soft btn-sm" onclick="openAddMujazGroup()">+ إضافة استدعاء</button>
+        </div>
+      </div>
+      <div id="mj-list"></div>
     </div>
 
     <!-- إصدار استدعاء -->
@@ -899,6 +924,55 @@ mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;pad
 </div>
 </div>
 
+<!-- ═══════ MODAL: إضافة مُجاز ═══════ -->
+<div class="modal-bg" id="modal-mujaz">
+<div class="modal" style="width:560px">
+  <button class="modal-close" onclick="closeModal('modal-mujaz')">✕</button>
+  <h3 id="modal-mujaz-title">🎓 إضافة مُجاز</h3>
+
+  <div class="fg"><label>الاسم *</label><input type="text" id="mj-inp-name" placeholder="الاسم الكامل"></div>
+  <div class="fg"><label>تاريخ الإجازة *</label><input type="text" id="mj-inp-date" placeholder="مثال: 15 رمضان 1440هـ"></div>
+  <div class="fg"><label>المسموع</label><input type="text" id="mj-inp-masmu" placeholder="ما سمعه عليك (إن وجد)"></div>
+  <div class="fg"><label>ملاحظات</label><input type="text" id="mj-inp-notes" placeholder="ملاحظات إضافية..."></div>
+  <div class="fg"><label>مرفق الإجازة</label>
+    <div style="display:flex;gap:6px;align-items:center">
+      <input type="text" id="mj-inp-link" placeholder="الصق رابط صورة أو PDF..." style="flex:1">
+      <button type="button" class="btn btn-gold btn-sm" onclick="addMjLink()" style="white-space:nowrap;height:38px">+ أضف</button>
+    </div>
+    <span id="mj-imgs-count" style="font-size:12px;color:var(--gold4);font-weight:600;display:block;margin-top:4px"></span>
+    <div id="mj-imgs-preview" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px"></div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeModal('modal-mujaz')">إلغاء</button>
+    <button class="btn btn-gold" id="btn-save-mujaz" onclick="saveMujaz()">حفظ ←</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL: إضافة مجموعة مجازين ═══════ -->
+<div class="modal-bg" id="modal-mujaz-group">
+<div class="modal" style="width:600px">
+  <button class="modal-close" onclick="closeModal('modal-mujaz-group')">✕</button>
+  <h3>📩 إضافة استدعاء (عدة مجازين)</h3>
+
+  <div class="fg"><label>الأسماء * (اسم في كل سطر)</label><textarea id="mjg-inp-names" style="min-height:120px" placeholder="أحمد الفلاني&#10;خالد العلاني&#10;محمد بن عبدالله"></textarea></div>
+  <div class="fg"><label>تاريخ الإجازة *</label><input type="text" id="mjg-inp-date" placeholder="مثال: 15 رمضان 1440هـ"></div>
+  <div class="fg"><label>المسموع</label><input type="text" id="mjg-inp-masmu" placeholder="ما سمعوه عليك"></div>
+  <div class="fg"><label>ملاحظات</label><input type="text" id="mjg-inp-notes" placeholder="ملاحظات مشتركة..."></div>
+  <div class="fg"><label>مرفق الإجازة المشترك</label>
+    <div style="display:flex;gap:6px;align-items:center">
+      <input type="text" id="mjg-inp-link" placeholder="رابط صورة أو PDF مشترك..." style="flex:1">
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeModal('modal-mujaz-group')">إلغاء</button>
+    <button class="btn btn-gold" onclick="saveMujazGroup()">حفظ الكل ←</button>
+  </div>
+</div>
+</div>
+
 <!-- ═══════ MODAL: إضافة استدعاء ═══════ -->
 <div class="modal-bg" id="modal-istidaa">
 <div class="modal" style="width:560px">
@@ -1136,6 +1210,7 @@ const pageTitles = {
   masmouat:'المسموعات',ejazat:'الإجازات',
   'istidaa-hindi':'الاستدعاء الهندي',
   'istidaa-gen':'إصدار استدعاء',
+  mujazoon:'المجازون',
   reports:'التقارير',search:'البحث المتقدم'
 };
 
@@ -1150,6 +1225,7 @@ function showPage(id, el) {
   if(id==='shuyookh-sh') renderShuyookhSh();
   if(id==='istidaa-hindi') initIstidaa();
   if(id==='istidaa-gen') renderIstidaaNames();
+  if(id==='mujazoon') initMujazoon();
 }
 
 // ═══════════════════════════════
@@ -2811,8 +2887,237 @@ async function saveIstidaa() {
 setTimeout(initIstidaa, 100);
 
 
+// ═══════════════════════════════
+// المجازون
+// ═══════════════════════════════
+let mujazoonData = [];
+let mujazoonFiltered = [];
+let editingMujazIdx = null;
+let mjTempImgs = [];
+
+function initMujazoon() {
+  document.getElementById('mj-total').textContent = mujazoonData.length;
+  document.getElementById('nb-mujazoon').textContent = mujazoonData.length || '—';
+  filterMujazoon();
+}
+
+function filterMujazoon() {
+  const q = (document.getElementById('mj-search').value || '').trim().toLowerCase();
+  mujazoonFiltered = mujazoonData.filter(item => {
+    if (!q) return true;
+    return item.name.toLowerCase().includes(q) || (item.notes && item.notes.toLowerCase().includes(q)) || (item.masmu && item.masmu.toLowerCase().includes(q));
+  });
+
+  const sortMode = document.getElementById('mj-sort').value;
+  if (sortMode === 'alpha') {
+    mujazoonFiltered.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+  } else if (sortMode === 'date-asc' || sortMode === 'date-desc') {
+    mujazoonFiltered.sort((a, b) => {
+      const da = parseHijriDate(a.date);
+      const db = parseHijriDate(b.date);
+      return sortMode === 'date-asc' ? da - db : db - da;
+    });
+  }
+
+  renderMujazoon(mujazoonFiltered);
+}
+
+function renderMujazoon(items) {
+  const container = document.getElementById('mj-list');
+  document.getElementById('mj-res-count').textContent = items.length + ' نتيجة';
+  document.getElementById('mj-total').textContent = mujazoonData.length;
+  document.getElementById('nb-mujazoon').textContent = mujazoonData.length || '—';
+
+  if (items.length === 0) {
+    container.innerHTML = '<div class="empty-state"><span class="es-ic">🎓</span><p>لا يوجد مجازون بعد</p><div class="es-sub">أضف مُجازًا أو مجموعة</div></div>';
+    return;
+  }
+
+  const q = (document.getElementById('mj-search').value || '').trim();
+  let html = '';
+  items.forEach((item, i) => {
+    const nameHl = q ? hlText(esc(item.name), q) : esc(item.name);
+    const isGroup = item.group && item.group.length > 0;
+
+    html += '<div class="ih-card">';
+    html += '<div class="ih-num">' + (i + 1) + '</div>';
+    html += '<div class="ih-info">';
+    html += '<div class="ih-name">' + nameHl;
+    if (isGroup) html += ' <span style="background:var(--bg3);border:1px solid var(--b1);border-radius:10px;padding:1px 8px;font-size:11px;color:var(--cream3)">📩 استدعاء ' + item.group.length + '</span>';
+    html += '</div>';
+
+    html += '<div class="ih-meta">';
+    if (item.date) html += '<span>📅 ' + esc(item.date) + '</span>';
+    html += '</div>';
+
+    if (item.masmu) {
+      html += '<div style="font-size:12px;color:var(--cream3);margin-top:3px">📖 ' + esc(item.masmu) + '</div>';
+    }
+
+    if (item.notes) {
+      html += '<div class="ih-note">💬 ' + esc(item.notes) + '</div>';
+    }
+
+    // مرفقات
+    if (item.imgs && item.imgs.length) {
+      html += '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center">';
+      item.imgs.forEach(url => {
+        if (isPdf(url)) {
+          html += '<a href="' + esc(url) + '" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r1);padding:6px 10px;text-decoration:none;color:var(--cream2);font-size:12px"><span style="font-size:18px">📄</span>PDF</a>';
+        } else {
+          html += '<img src="' + esc(url) + '" style="height:60px;border-radius:var(--r1);border:1px solid var(--b1);cursor:pointer;object-fit:cover" onclick="event.stopPropagation();viewImg(\'' + esc(url) + '\')">';
+        }
+      });
+      html += '</div>';
+    }
+
+    // أسماء المجموعة
+    if (isGroup) {
+      html += '<div style="margin-top:8px;padding:8px;background:var(--bg3);border-radius:var(--r1);border:1px solid var(--b1);font-size:12px;color:var(--cream2)">';
+      html += '<strong style="color:var(--gold3)">أعضاء الاستدعاء:</strong> ';
+      html += item.group.map(n => esc(n)).join('، ');
+      html += '</div>';
+    }
+
+    const origIdx = mujazoonData.indexOf(item);
+    html += '<div style="display:flex;gap:6px;margin-top:6px;align-items:center">';
+    html += '<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openEditMujaz(' + origIdx + ')">✏️ تعديل</button>';
+    html += '<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();deleteMujaz(' + origIdx + ')" style="color:var(--red-c)">🗑️ حذف</button>';
+    html += '</div>';
+
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+function openAddMujaz() {
+  editingMujazIdx = null;
+  mjTempImgs = [];
+  document.getElementById('modal-mujaz-title').textContent = '🎓 إضافة مُجاز';
+  document.getElementById('mj-inp-name').value = '';
+  document.getElementById('mj-inp-date').value = '';
+  document.getElementById('mj-inp-masmu').value = '';
+  document.getElementById('mj-inp-notes').value = '';
+  document.getElementById('mj-inp-link').value = '';
+  document.getElementById('mj-imgs-count').textContent = '';
+  document.getElementById('mj-imgs-preview').innerHTML = '';
+  document.getElementById('btn-save-mujaz').textContent = 'حفظ ←';
+  openModal('modal-mujaz');
+}
+
+function openEditMujaz(idx) {
+  editingMujazIdx = idx;
+  const item = mujazoonData[idx];
+  mjTempImgs = item.imgs ? [...item.imgs] : [];
+  document.getElementById('modal-mujaz-title').textContent = '✏️ تعديل مُجاز';
+  document.getElementById('mj-inp-name').value = item.name || '';
+  document.getElementById('mj-inp-date').value = item.date || '';
+  document.getElementById('mj-inp-masmu').value = item.masmu || '';
+  document.getElementById('mj-inp-notes').value = item.notes || '';
+  document.getElementById('mj-inp-link').value = '';
+  document.getElementById('btn-save-mujaz').textContent = 'تحديث ←';
+  renderMjImgsPreview();
+  openModal('modal-mujaz');
+}
+
+function addMjLink() {
+  const inp = document.getElementById('mj-inp-link');
+  const url = inp.value.trim();
+  if (!url) { showToast('الصق رابط الملف أولاً', true); return; }
+  mjTempImgs.push(url);
+  inp.value = '';
+  renderMjImgsPreview();
+  showToast('✓ تمت إضافة الرابط');
+}
+
+function removeMjImg(idx) {
+  mjTempImgs.splice(idx, 1);
+  renderMjImgsPreview();
+}
+
+function renderMjImgsPreview() {
+  const container = document.getElementById('mj-imgs-preview');
+  const countEl = document.getElementById('mj-imgs-count');
+  countEl.textContent = mjTempImgs.length ? mjTempImgs.length + ' مرفق' : '';
+  let html = '';
+  mjTempImgs.forEach((url, i) => {
+    if (isPdf(url)) {
+      html += '<div style="position:relative;display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r1);padding:6px 10px;font-size:12px;color:var(--cream2)"><span style="font-size:16px">📄</span>PDF<button onclick="removeMjImg(' + i + ')" style="position:absolute;top:-6px;right:-6px;background:var(--red-bg);border:1px solid var(--red-b);color:var(--red-c);border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>';
+    } else {
+      html += '<div style="position:relative;display:inline-block"><img src="' + esc(url) + '" style="height:50px;border-radius:var(--r1);border:1px solid var(--b1);object-fit:cover"><button onclick="removeMjImg(' + i + ')" style="position:absolute;top:-6px;right:-6px;background:var(--red-bg);border:1px solid var(--red-b);color:var(--red-c);border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>';
+    }
+  });
+  container.innerHTML = html;
+}
+
+function saveMujaz() {
+  const name = document.getElementById('mj-inp-name').value.trim();
+  const date = document.getElementById('mj-inp-date').value.trim();
+  if (!name) { showToast('أدخل الاسم', true); return; }
+  if (!date) { showToast('أدخل تاريخ الإجازة', true); return; }
+
+  const masmu = document.getElementById('mj-inp-masmu').value.trim();
+  const notes = document.getElementById('mj-inp-notes').value.trim();
+
+  if (editingMujazIdx !== null) {
+    mujazoonData[editingMujazIdx].name = name;
+    mujazoonData[editingMujazIdx].date = date;
+    mujazoonData[editingMujazIdx].masmu = masmu;
+    mujazoonData[editingMujazIdx].notes = notes;
+    mujazoonData[editingMujazIdx].imgs = [...mjTempImgs];
+    showToast('✓ تم تحديث المُجاز');
+  } else {
+    mujazoonData.push({ name, date, masmu, notes, imgs: [...mjTempImgs], group: null });
+    showToast('✓ تمت إضافة «' + name + '»');
+  }
+
+  closeModal('modal-mujaz');
+  filterMujazoon();
+}
+
+function openAddMujazGroup() {
+  document.getElementById('mjg-inp-names').value = '';
+  document.getElementById('mjg-inp-date').value = '';
+  document.getElementById('mjg-inp-masmu').value = '';
+  document.getElementById('mjg-inp-notes').value = '';
+  document.getElementById('mjg-inp-link').value = '';
+  openModal('modal-mujaz-group');
+}
+
+function saveMujazGroup() {
+  const namesText = document.getElementById('mjg-inp-names').value.trim();
+  const date = document.getElementById('mjg-inp-date').value.trim();
+  if (!namesText) { showToast('أدخل الأسماء', true); return; }
+  if (!date) { showToast('أدخل التاريخ', true); return; }
+
+  const names = namesText.split('\n').map(n => n.trim()).filter(n => n);
+  if (names.length < 2) { showToast('أدخل اسمين على الأقل', true); return; }
+
+  const masmu = document.getElementById('mjg-inp-masmu').value.trim();
+  const notes = document.getElementById('mjg-inp-notes').value.trim();
+  const link = document.getElementById('mjg-inp-link').value.trim();
+  const imgs = link ? [link] : [];
+
+  // أضف اسمًا لكل شخص مع ربطهم بالمجموعة
+  const groupLabel = 'استدعاء ' + date;
+  names.forEach(name => {
+    mujazoonData.push({ name, date, masmu, notes: notes || groupLabel, imgs: [...imgs], group: [...names] });
+  });
+
+  closeModal('modal-mujaz-group');
+  showToast('✓ تمت إضافة ' + names.length + ' مجاز');
+  filterMujazoon();
+}
+
+function deleteMujaz(idx) {
+  const name = mujazoonData[idx].name;
+  mujazoonData.splice(idx, 1);
+  filterMujazoon();
+  showToast('تم حذف «' + name + '»');
+}
+
 // close modals on backdrop click
-['modal-sheikh','modal-akhz','modal-riwaya','modal-wthq','modal-sheikh-sh','modal-img','modal-istidaa'].forEach(id=>{
+['modal-sheikh','modal-akhz','modal-riwaya','modal-wthq','modal-sheikh-sh','modal-img','modal-istidaa','modal-mujaz','modal-mujaz-group'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){if(e.target===this)closeModal(id);});
 });
 
