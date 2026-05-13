@@ -267,6 +267,36 @@ mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;pad
 </style>
 </head>
 <body>
+
+<!-- شاشة تسجيل الدخول -->
+<div id="login-screen" style="position:fixed;inset:0;z-index:99999;background:var(--bg1);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;">
+  <div style="text-align:center;padding:40px;background:var(--bg4);border:1px solid var(--b1);border-radius:var(--r3);max-width:360px;width:90%;">
+    <div style="font-size:48px;margin-bottom:16px;">📜</div>
+    <h2 style="font-family:var(--font-d);color:var(--gold1);font-size:22px;margin-bottom:8px;">فيض الإله</h2>
+    <p style="color:var(--cream3);font-size:13px;margin-bottom:24px;">في معجم شيوخ ابن حبيب الله</p>
+    <input id="login-pass" type="password" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')doLogin()"
+      style="width:100%;padding:12px 16px;border:1px solid var(--b1);border-radius:var(--r2);background:var(--bg2);color:var(--cream1);font-family:var(--font-b);font-size:16px;text-align:center;outline:none;margin-bottom:12px;">
+    <button onclick="doLogin()"
+      style="width:100%;padding:10px;border:none;border-radius:var(--r2);background:linear-gradient(135deg,var(--gold3),var(--gold2));color:var(--bg1);font-family:var(--font-b);font-size:15px;font-weight:700;cursor:pointer;">
+      دخول
+    </button>
+    <p id="login-err" style="color:var(--red-c);font-size:13px;margin-top:10px;display:none;">كلمة المرور غير صحيحة</p>
+  </div>
+</div>
+<script>
+function doLogin(){
+  const p=document.getElementById('login-pass').value;
+  if(btoa(p)==='NDI1MDIzNjg='){
+    document.getElementById('login-screen').style.display='none';
+    sessionStorage.setItem('_auth','1');
+  } else {
+    document.getElementById('login-err').style.display='block';
+    document.getElementById('login-pass').value='';
+  }
+}
+if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen').style.display='none';
+</script>
+
 <div class="app">
 
 <!-- SIDEBAR -->
@@ -3242,7 +3272,7 @@ function generateIstidaaPDF() {
         position: relative;
       }
 
-      /* إطار زخرفي */
+      /* إطار زخرفي بسيط أنيق */
       .border-box {
         position: absolute; inset: 10mm;
         border: 2.5px solid #000;
@@ -3250,8 +3280,24 @@ function generateIstidaaPDF() {
       }
       .border-box::before {
         content: ''; position: absolute; inset: 3mm;
-        border: 0.8px solid #555;
+        border: 0.8px solid #000;
       }
+      /* أركان مزخرفة */
+      .corner-orn {
+        position: absolute; width: 18mm; height: 18mm; border: 2px solid #000;
+      }
+      .co-tr { top: 10mm; right: 10mm; border-left: none; border-bottom: none; }
+      .co-tl { top: 10mm; left: 10mm; border-right: none; border-bottom: none; }
+      .co-br { bottom: 10mm; right: 10mm; border-left: none; border-top: none; }
+      .co-bl { bottom: 10mm; left: 10mm; border-right: none; border-top: none; }
+      .diamond {
+        position: absolute; width: 8mm; height: 8mm; border: 1.5px solid #000;
+        transform: rotate(45deg);
+      }
+      .d-tr { top: 7mm; right: 7mm; }
+      .d-tl { top: 7mm; left: 7mm; }
+      .d-br { bottom: 7mm; right: 7mm; }
+      .d-bl { bottom: 7mm; left: 7mm; }
 
       .content-area {
         position: absolute;
@@ -3301,6 +3347,14 @@ function generateIstidaaPDF() {
     <button class="print-btn no-print" onclick="window.print()">&#x1F5A8;&#xFE0F; طباعة / حفظ PDF</button>
     <div class="page-frame">
       <div class="border-box"></div>
+      <div class="corner-orn co-tr"></div>
+      <div class="corner-orn co-tl"></div>
+      <div class="corner-orn co-br"></div>
+      <div class="corner-orn co-bl"></div>
+      <div class="diamond d-tr"></div>
+      <div class="diamond d-tl"></div>
+      <div class="diamond d-br"></div>
+      <div class="diamond d-bl"></div>
       <div class="content-area">
         <div class="bismillah">بسم الله الرحمن الرحيم</div>
         <div class="text-body">
