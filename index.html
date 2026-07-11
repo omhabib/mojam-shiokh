@@ -324,6 +324,7 @@ if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen'
   <div class="nav-item" onclick="showPage('search',this)"><span class="nav-ic">🔍</span>البحث المتقدم</div>
   <div class="nav-item" onclick="openAddSheikh()"><span class="nav-ic">➕</span>إضافة شيخ</div>
   <div class="nav-item" onclick="loadAll()"><span class="nav-ic">↻</span>تحديث</div>
+  <div class="nav-item" onclick="downloadBackup(this)"><span class="nav-ic">💾</span>نسخة احتياطية</div>
 </div>
 
 <!-- MAIN -->
@@ -1195,6 +1196,52 @@ window.onload = () => loadAll();
 
 async function loadAll() {
   await Promise.all([loadShuyookh(), loadShuyookhSh()]);
+}
+
+// ── نسخة احتياطية محلية: تنزّل كل البيانات كملف JSON على الجهاز ──
+async function fetchAllRows(table) {
+  const pageSize = 1000;
+  let from = 0, out = [];
+  while (true) {
+    const { data, error } = await sb.from(table).select('*').order('id').range(from, from + pageSize - 1);
+    if (error) throw new Error(table + ': ' + error.message);
+    if (!data || data.length === 0) break;
+    out = out.concat(data);
+    if (data.length < pageSize) break;
+    from += pageSize;
+  }
+  return out;
+}
+
+async function downloadBackup(el) {
+  const label = el ? el.innerHTML : '';
+  if (el) el.innerHTML = '<span class="nav-ic">⏳</span>جارٍ التصدير...';
+  try {
+    const tables = ['shuyookh', 'shuyookh_shuyookh', 'akhz', 'sheikh_riwaya', 'wathaeq'];
+    const backup = { app: 'معجم شيوخ ابن حبيب الله', exported_at: new Date().toISOString(), tables: {} };
+    const counts = {};
+    for (const t of tables) {
+      const rows = await fetchAllRows(t);
+      backup.tables[t] = rows;
+      counts[t] = rows.length;
+    }
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const stamp = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `نسخة_احتياطية_المشيخة_${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    const total = Object.values(counts).reduce((s, n) => s + n, 0);
+    showToast(`تم حفظ النسخة الاحتياطية ✅ (${total} سجل: ${counts.shuyookh} شيخ)`);
+  } catch (e) {
+    showToast('تعذّر التصدير: ' + e.message, true);
+  } finally {
+    if (el) el.innerHTML = label;
+  }
 }
 
 async function loadShuyookh() {
