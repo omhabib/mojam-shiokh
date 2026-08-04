@@ -748,6 +748,7 @@ if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen'
     </div>
     <div class="detail-actions-bar">
       <button class="btn btn-soft" onclick="openEditSheikhSh(detailSheikhShId)">✏️ تعديل</button>
+      <button class="btn btn-soft" onclick="openMergeSh()">🔗 دمج مع شيخ آخر</button>
       <button class="btn btn-danger" onclick="deleteFromDetailSh()">🗑️ حذف</button>
     </div>
     <div class="detail-sec" id="d-sec-basic-sh">
@@ -914,14 +915,13 @@ if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen'
   <button class="modal-close" onclick="closeModal('modal-riwaya')">✕</button>
   <h3>+ إضافة شيخ رواية</h3>
 
-  <div class="fg"><label>اسم الشيخ (من القائمة أو جديد)</label>
-    <select id="rw-sheikh-id" onchange="onRiwayaSheikhChange(this.value)">
-      <option value="">— اختر من شيوخ الشيوخ —</option>
-    </select>
-  </div>
-  <div class="fg" id="rw-new-name-wrap">
-    <label>أو أدخل اسماً جديداً</label>
-    <input type="text" id="rw-new-name" placeholder="اسم الشيخ إن لم يكن في القائمة">
+  <div class="fg"><label>الشيخ الذي يروي عنه <span style="color:var(--cream3);font-weight:400">(اكتب للبحث — يظهر المطابق تلقائيًا فيتوحّد الاسم)</span></label>
+    <div style="position:relative">
+      <input type="text" id="rw-rawi-input" autocomplete="off" placeholder="اكتب اسم الشيخ..." oninput="onRawiInput(this.value)" onfocus="onRawiInput(this.value)" onblur="setTimeout(function(){var b=document.getElementById('rw-suggest');if(b)b.style.display='none'},200)">
+      <input type="hidden" id="rw-sheikh-id" value="">
+      <div id="rw-suggest" style="display:none;position:absolute;top:100%;right:0;left:0;z-index:60;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r2);margin-top:4px;max-height:230px;overflow-y:auto;box-shadow:var(--sh2)"></div>
+    </div>
+    <div id="rw-rawi-hint" style="font-size:11px;margin-top:5px;color:var(--cream3);min-height:15px"></div>
   </div>
 
   <div class="fg"><label>نوع الإجازة</label>
@@ -954,6 +954,26 @@ if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen'
   <div class="modal-footer">
     <button class="btn btn-ghost" onclick="closeModal('modal-riwaya')">إلغاء</button>
     <button class="btn btn-gold" onclick="saveRiwaya()">حفظ ←</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL: دمج شيوخ الشيوخ المكرّرين ═══════ -->
+<div class="modal-bg" id="modal-merge">
+<div class="modal" style="width:560px">
+  <button class="modal-close" onclick="closeModal('modal-merge')">✕</button>
+  <h3>🔗 دمج مع شيخ آخر</h3>
+  <p style="font-size:12px;color:var(--cream3);margin-bottom:14px;line-height:1.7">السجل الحالي: <b id="merge-keep-name" style="color:var(--gold1)"></b>. ابحث عن السجل المكرّر (الاسم الآخر لنفس الشخص) واختره — ستُنقل رواياته إلى هنا، ويبقى الاسم الأكمل، ثم يُحذف المكرّر.</p>
+  <div class="fg"><label>ابحث عن السجل المكرّر</label>
+    <div style="position:relative">
+      <input type="text" id="merge-input" autocomplete="off" placeholder="اكتب اسم الشيخ المكرّر..." oninput="onMergeInput(this.value)" onblur="setTimeout(function(){var b=document.getElementById('merge-suggest');if(b)b.style.display='none'},200)">
+      <div id="merge-suggest" style="display:none;position:absolute;top:100%;right:0;left:0;z-index:60;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r2);margin-top:4px;max-height:230px;overflow-y:auto;box-shadow:var(--sh2)"></div>
+    </div>
+  </div>
+  <div id="merge-summary" style="display:none;background:var(--bg4);border:1px solid var(--b1);border-radius:var(--r2);padding:14px;margin-top:8px;font-size:13px;line-height:1.9"></div>
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeModal('modal-merge')">إلغاء</button>
+    <button class="btn btn-gold" id="btn-confirm-merge" onclick="confirmMerge()" disabled style="opacity:.5">تأكيد الدمج</button>
   </div>
 </div>
 </div>
@@ -1377,12 +1397,6 @@ async function loadShuyookhSh() {
   catch (e) { return; }
   allShuyookhSh = data || [];
   if (currentPage==='shuyookh-sh') renderShuyookhSh();
-  // fill riwaya dropdown
-  const sel = document.getElementById('rw-sheikh-id');
-  if (sel) {
-    sel.innerHTML = '<option value="">— اختر من شيوخ الشيوخ —</option>' +
-      allShuyookhSh.map(s=>`<option value="${s.id}">${esc(s.name_short||'')}</option>`).join('');
-  }
   updateStats();
 }
 
@@ -1615,8 +1629,9 @@ function renderShuyookhSh() {
     document.getElementById('tbl-sh').innerHTML='<div class="empty-state"><span class="es-ic">👥</span><p>لا يوجد شيوخ شيوخ بعد</p><div class="es-sub">أضف شيخ شيوخ للبدء</div></div>';
     return;
   }
-  let html=`<table><thead><tr><th>#</th><th>صورة</th><th>الاسم</th><th>الميلاد</th><th>الوفاة</th><th>إجراء</th></tr></thead><tbody>`;
-  allShuyookhSh.forEach((s,i)=>{
+  let html=`<div class="tbl-wrap"><table><thead><tr><th>#</th><th>صورة</th><th>الاسم</th><th>الميلاد</th><th>الوفاة</th><th>إجراء</th></tr></thead><tbody>`;
+  const sortedSh = [...allShuyookhSh].sort((a,b)=>shSortKey(a).localeCompare(shSortKey(b),'ar'));
+  sortedSh.forEach((s,i)=>{
     const imgH=s.photo_url?`<img class="av" src="${esc(s.photo_url)}" onerror="this.outerHTML='<div class=av-ph>👤</div>'">`:`<div class="av-ph">👤</div>`;
     html+=`<tr>
       <td style="color:var(--cream3);font-size:11px">${i+1}</td>
@@ -1631,8 +1646,102 @@ function renderShuyookhSh() {
       </div></td>
     </tr>`;
   });
-  html+='</tbody></table>';
+  html+='</tbody></table></div>';
   document.getElementById('tbl-sh').innerHTML=html;
+}
+
+// ═══ أداة دمج شيوخ الشيوخ المكرّرين ═══
+let mergeKeepId = null, mergeDupId = null, mergeFuller = '';
+
+function openMergeSh() {
+  mergeKeepId = detailSheikhShId;
+  mergeDupId = null; mergeFuller = '';
+  const keep = allShuyookhSh.find(s => s.id === mergeKeepId);
+  document.getElementById('merge-keep-name').textContent = keep ? (keep.name_short || '') : '';
+  document.getElementById('merge-input').value = '';
+  document.getElementById('merge-suggest').style.display = 'none';
+  document.getElementById('merge-summary').style.display = 'none';
+  const btn = document.getElementById('btn-confirm-merge'); btn.disabled = true; btn.style.opacity = '.5';
+  openModal('modal-merge');
+}
+
+function onMergeInput(v) {
+  const q = (v || '').trim();
+  mergeDupId = null;
+  document.getElementById('merge-summary').style.display = 'none';
+  const btn = document.getElementById('btn-confirm-merge'); btn.disabled = true; btn.style.opacity = '.5';
+  const box = document.getElementById('merge-suggest');
+  if (!q) { box.style.display = 'none'; return; }
+  const ql = q.toLowerCase();
+  const matches = allShuyookhSh.filter(s => s.id !== mergeKeepId &&
+    ((s.name_short || '') + ' ' + (s.name_full || '')).toLowerCase().includes(ql)
+  ).sort((a, b) => shSortKey(a).localeCompare(shSortKey(b), 'ar')).slice(0, 10);
+  if (matches.length) {
+    box.innerHTML = matches.map(s => `<div onmousedown="pickMergeTarget(${s.id})" style="padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--b2);color:var(--cream1)" onmouseover="this.style.background='var(--bg5)'" onmouseout="this.style.background=''">${esc(s.name_short || '')}</div>`).join('');
+    box.style.display = 'block';
+  } else { box.style.display = 'none'; }
+}
+
+async function pickMergeTarget(id) {
+  mergeDupId = id;
+  document.getElementById('merge-suggest').style.display = 'none';
+  const dup = allShuyookhSh.find(s => s.id === id);
+  const keep = allShuyookhSh.find(s => s.id === mergeKeepId);
+  document.getElementById('merge-input').value = dup ? (dup.name_short || '') : '';
+  const cnt = async (rid) => { const { count } = await sb.from('sheikh_riwaya').select('id', { count: 'exact', head: true }).eq('rawi_id', rid); return count || 0; };
+  const [ck, cd] = await Promise.all([cnt(mergeKeepId), cnt(mergeDupId)]);
+  const keepName = keep ? (keep.name_short || '') : '';
+  const dupName = dup ? (dup.name_short || '') : '';
+  mergeFuller = (dupName.length > keepName.length) ? dupName : keepName; // الاسم الأكمل = الأطول
+  const sum = document.getElementById('merge-summary');
+  sum.innerHTML = `سيُدمج «<b>${esc(dupName)}</b>» (${cd} روايات) في «<b>${esc(keepName)}</b>» (${ck} روايات).<br>` +
+    `الناتج: <b>${ck + cd}</b> روايات، بالاسم الأكمل: «<b style="color:var(--gold1)">${esc(mergeFuller)}</b>».<br>` +
+    `<span style="color:var(--red-c)">⚠️ يُحذف السجل المكرّر نهائيًا — لا يمكن التراجع.</span>`;
+  sum.style.display = 'block';
+  const btn = document.getElementById('btn-confirm-merge'); btn.disabled = false; btn.style.opacity = '1';
+}
+
+async function confirmMerge() {
+  if (!mergeKeepId || !mergeDupId || mergeKeepId === mergeDupId) { showToast('اختر السجل المكرّر أولاً', true); return; }
+  const dup = allShuyookhSh.find(s => s.id === mergeDupId);
+  const keep = allShuyookhSh.find(s => s.id === mergeKeepId);
+  if (!confirm('دمج «' + (dup ? dup.name_short : '') + '» في «' + (keep ? keep.name_short : '') + '»؟\nالاسم الباقي: «' + mergeFuller + '».\n⚠️ لا يمكن التراجع.')) return;
+  const btn = document.getElementById('btn-confirm-merge'); btn.disabled = true; btn.textContent = 'جارٍ الدمج...';
+  try {
+    let { error: e1 } = await sb.from('sheikh_riwaya').update({ rawi_id: mergeKeepId, rawi_name: mergeFuller }).eq('rawi_id', mergeDupId);
+    if (e1) throw e1;
+    let { error: e2 } = await sb.from('shuyookh_shuyookh').update({ name_short: mergeFuller, name_full: mergeFuller }).eq('id', mergeKeepId);
+    if (e2) throw e2;
+    let { error: e3 } = await sb.from('shuyookh_shuyookh').delete().eq('id', mergeDupId);
+    if (e3) throw e3;
+    await loadShuyookhSh();
+    closeModal('modal-merge');
+    showToast('✅ تم الدمج باسم «' + mergeFuller + '»');
+    if (detailSheikhShId === mergeKeepId) openDetailSh(mergeKeepId);
+    else if (currentPage === 'shuyookh-sh') renderShuyookhSh();
+  } catch (e) {
+    showToast('خطأ في الدمج: ' + e.message, true);
+  } finally {
+    btn.disabled = false; btn.textContent = 'تأكيد الدمج';
+  }
+}
+
+// مفتاح ترتيب شيوخ الشيوخ — ألفبائي مع مراعاة الأسماء المركبة (مثل المعجم)
+function shSortKey(s) {
+  const sk = s.sort_key || '';
+  const arrow = sk.indexOf('→');
+  let base;
+  if (arrow > -1) {
+    const shortName = sk.substring(arrow + 1).trim();
+    const fullPart = sk.substring(0, arrow).trim().replace(/[.…]+$/, '').trim();
+    const idx = fullPart.indexOf(shortName);
+    const rest = idx > -1 ? fullPart.substring(idx + shortName.length).trim() : fullPart;
+    base = shortName + ' ' + rest;
+  } else {
+    base = s.name_short || '';
+  }
+  // تطبيع: إزالة التشكيل + توحيد الألف بأشكالها ليجتمع المتشابه
+  return base.replace(/[ً-ٟ]/g, '').replace(/^[أإآ]/, 'ا').trim();
 }
 
 // ═══════════════════════════════
@@ -1763,7 +1872,8 @@ async function loadDetailRiwaya(id) {
   }
   container.innerHTML = data.map(r=>{
     const dateStr=[r.date_day,r.date_month,r.date_year,r.date_type].filter(Boolean).join(' ');
-    const name = r.rawi_name || (allShuyookhSh.find(s=>s.id===r.rawi_id)||{}).name_short || '—';
+    const rwLink = allShuyookhSh.find(s=>s.id===r.rawi_id);
+    const name = (rwLink && rwLink.name_short) || r.rawi_name || '—';
     return `<div class="riwaya-item">
       <div class="riwaya-item-name">${esc(name)}</div>
       <div class="riwaya-item-meta">
@@ -2101,31 +2211,70 @@ let currentRiwayaSheikhId=null;
 function openAddRiwaya(sheikhId) {
   currentRiwayaSheikhId=sheikhId;
   editingRiwayaId = null;
-  ['rw-new-name','rw-masmouat','rw-year'].forEach(id=>document.getElementById(id).value='');
+  ['rw-rawi-input','rw-masmouat','rw-year'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('rw-sheikh-id').value='';
-  document.getElementById('rw-new-name').style.display='';
+  document.getElementById('rw-suggest').style.display='none';
+  document.getElementById('rw-rawi-hint').textContent='';
   ['rw-day-name','rw-day-wday','rw-day-num','rw-month'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('rw-type').value='إجازة عامة';
   document.querySelector('#modal-riwaya .modal h3').textContent = '+ إضافة شيخ رواية';
   openModal('modal-riwaya');
 }
 
-function onRiwayaSheikhChange(val) {
-  document.getElementById('rw-new-name').style.display=val?'none':'';
+// بحث ذكي عن شيخ الرواية مع اقتراح تلقائي لتوحيد الاسم
+function onRawiInput(v) {
+  const q = (v || '').trim();
+  document.getElementById('rw-sheikh-id').value = ''; // الكتابة تُلغي الربط حتى يُختار
+  const box = document.getElementById('rw-suggest');
+  const hint = document.getElementById('rw-rawi-hint');
+  if (!q) { box.style.display = 'none'; hint.textContent = ''; return; }
+  const ql = q.toLowerCase();
+  const matches = allShuyookhSh.filter(s =>
+    ((s.name_short || '') + ' ' + (s.name_full || '')).toLowerCase().includes(ql)
+  ).sort((a, b) => shSortKey(a).localeCompare(shSortKey(b), 'ar')).slice(0, 10);
+  if (matches.length) {
+    box.innerHTML = matches.map(s => {
+      const sub = (s.name_full && s.name_full !== s.name_short) ? `<div style="font-size:10px;color:var(--cream3);margin-top:2px">${esc(s.name_full)}</div>` : '';
+      return `<div onmousedown="pickRawi(${s.id})" style="padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--b2);color:var(--cream1)" onmouseover="this.style.background='var(--bg5)'" onmouseout="this.style.background=''">${esc(s.name_short || '')}${sub}</div>`;
+    }).join('');
+    box.style.display = 'block';
+    const exact = allShuyookhSh.find(s => (s.name_short || '').trim() === q);
+    if (exact) { hint.innerHTML = '✅ سيُربط بالشيخ الموجود «' + esc(exact.name_short) + '» (اسم موحّد)'; hint.style.color = 'var(--green-c)'; }
+    else { hint.innerHTML = '🔎 اختر من القائمة لتوحيد الاسم، أو أكمل الكتابة لإضافة شيخ جديد'; hint.style.color = 'var(--cream3)'; }
+  } else {
+    box.style.display = 'none';
+    hint.innerHTML = '➕ لا يوجد مطابق — سيُضاف «' + esc(q) + '» كشيخ شيوخ جديد';
+    hint.style.color = 'var(--gold3)';
+  }
+}
+
+function pickRawi(id) {
+  const s = allShuyookhSh.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('rw-sheikh-id').value = id;
+  document.getElementById('rw-rawi-input').value = s.name_short || '';
+  document.getElementById('rw-suggest').style.display = 'none';
+  const hint = document.getElementById('rw-rawi-hint');
+  hint.innerHTML = '✅ مربوط بـ «' + esc(s.name_short || '') + '» (اسم موحّد)';
+  hint.style.color = 'var(--green-c)';
 }
 
 async function saveRiwaya() {
   const rawId=document.getElementById('rw-sheikh-id').value;
-  const newName=document.getElementById('rw-new-name').value.trim();
-  if(!rawId&&!newName){showToast('أدخل اسم الشيخ',true);return;}
+  const typed=document.getElementById('rw-rawi-input').value.trim();
+  if(!rawId&&!typed){showToast('أدخل اسم الشيخ',true);return;}
 
   let rawiId=rawId?parseInt(rawId):null;
-  let rawiName=newName||null;
-
-  if(newName&&!rawId){
-    const{data,error}=await sb.from('shuyookh_shuyookh').insert({name_short:newName}).select().single();
+  // توحيد: إن لم يُختَر من القائمة، طابق اسمًا موجودًا بالضبط قبل إنشاء جديد
+  if(!rawiId&&typed){
+    const exact=allShuyookhSh.find(s=>(s.name_short||'').trim()===typed);
+    if(exact) rawiId=exact.id;
+  }
+  if(!rawiId&&typed){
+    const{data,error}=await sb.from('shuyookh_shuyookh').insert({name_short:typed}).select().single();
     if(!error){rawiId=data.id;await loadShuyookhSh();}
   }
+  const rawiName=(allShuyookhSh.find(s=>s.id===rawiId)||{}).name_short||typed||null;
 
   const record={
     rawi_id:rawiId,
@@ -2171,7 +2320,10 @@ async function editRiwayaFull(riwayaId) {
 
   // Fill modal fields
   document.getElementById('rw-sheikh-id').value = data.rawi_id || '';
-  document.getElementById('rw-new-name').value = data.rawi_name || '';
+  const rwLinked = allShuyookhSh.find(s=>s.id===data.rawi_id);
+  document.getElementById('rw-rawi-input').value = (rwLinked&&rwLinked.name_short) || data.rawi_name || '';
+  document.getElementById('rw-suggest').style.display='none';
+  const rwh=document.getElementById('rw-rawi-hint'); rwh.innerHTML = data.rawi_id ? '✅ مربوط باسم موحّد' : ''; rwh.style.color='var(--green-c)';
   document.getElementById('rw-type').value = data.ijaza_type || 'إجازة عامة';
   document.getElementById('rw-masmouat').value = data.masmouat || '';
 
