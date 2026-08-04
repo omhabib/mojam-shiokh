@@ -332,6 +332,12 @@ body{transition:background .4s ease,color .3s ease}
 .report-card:hover,.ih-card:hover{box-shadow:var(--sh2)}
 .report-card{background:var(--bg6)}
 
+/* الحواشي (المراجع) داخل النص */
+.fn-ref{color:var(--red-c);font-weight:700;font-size:.7em;vertical-align:super;padding:0 1px;font-family:var(--font-b)}
+.fn-list{margin-top:8px;padding-top:8px;border-top:1px dashed var(--b1);display:flex;flex-direction:column;gap:5px}
+.fn-list .fn-item{display:flex;gap:7px;font-size:11.5px;color:var(--cream3);line-height:1.7}
+.fn-list .fn-n{color:var(--red-c);font-weight:700;flex-shrink:0;min-width:16px}
+
 /* شارة تاريخ الوفاة — أخضر بتدرّج واضح */
 .badge-death{background:linear-gradient(135deg,#dcefe0,#c1e4cd);color:#176b39;border:1px solid #a6d6b9;font-weight:600}
 
@@ -463,10 +469,23 @@ if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen'
     <div class="page" id="page-shuyookh-sh">
       <div class="toolbar">
         <span class="res-count" id="res-count-sh">جارٍ التحميل...</span>
+        <div id="sh-sort-bar" style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:11px;color:var(--cream3)">ترتيب:</span>
+          <button class="f-btn active" data-m="name" onclick="setShSort('name')">أ-ي</button>
+          <button class="f-btn" data-m="count" onclick="setShSort('count')">الأكثر رواةً</button>
+        </div>
         <div class="toolbar-r">
+          <button class="btn btn-soft btn-sm" onclick="openDupFinder()">🔍 كشف المكرّرات</button>
           <button class="btn btn-gold btn-sm" onclick="openAddSheikhSh()">+ إضافة شيخ شيوخ</button>
         </div>
       </div>
+      <div id="sh-filter-bar" class="filter-bar" style="margin-bottom:10px">
+        <span class="f-label">تصفية:</span>
+        <button class="f-btn active" data-f="all" onclick="setShFilter('all')">الكل</button>
+        <button class="f-btn" data-f="norawi" onclick="setShFilter('norawi')">🚫 بلا رواة</button>
+        <button class="f-btn" data-f="incomplete" onclick="setShFilter('incomplete')">📝 ناقص البيانات</button>
+      </div>
+      <div id="sh-letter-bar" class="filter-bar" style="margin-bottom:12px"></div>
       <div class="tbl-wrap"><div id="tbl-sh"><div class="loading-state"><div class="spinner"></div><p>جارٍ التحميل...</p></div></div></div>
     </div>
 
@@ -761,7 +780,10 @@ if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen'
     </div>
     <!-- الشيوخ الذين يروون عنه -->
     <div class="detail-sec" id="d-sec-rawu-anhu">
-      <div class="detail-sec-title">🔗 الشيوخ الذين يروون عنه</div>
+      <div class="detail-sec-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span>🔗 الشيوخ الذين يروون عنه <span id="d-rawu-count" style="color:var(--gold4);font-size:13px;font-weight:400"></span></span>
+        <button class="btn btn-soft btn-sm" onclick="openAddRawu()" style="font-weight:600">+ إضافة شيخ يروي عنه</button>
+      </div>
       <div id="d-rawu-anhu-list"><div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">🔗</span><div class="es-sub">لا يوجد شيوخ مرتبطون</div></div></div>
     </div>
   </div>
@@ -858,6 +880,10 @@ if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen'
 
   <div class="fg"><label>المحتوى / العنوان</label>
     <textarea id="ak-content" placeholder="صحيح البخاري، الحديث المسلسل بالأولية..."></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
+      <span style="font-size:10.5px;color:var(--cream3)">لإضافة مرجع (حاشية): حدّد الكلمة ثم «إدراج حاشية»، أو اكتب المرجع بين قوسين { }</span>
+      <button type="button" class="btn btn-soft btn-xs" onclick="insertFootnote('ak-content')">➕ إدراج حاشية { }</button>
+    </div>
   </div>
 
   <div class="fsep">📜 طريقة الأخذ</div>
@@ -934,7 +960,11 @@ if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen'
   </div>
 
   <div class="fg"><label>المسموعات عليه</label>
-    <textarea id="rw-masmouat" placeholder="الحديث المسلسل، أوائل الكتب..."></textarea>
+    <textarea id="rw-masmouat" placeholder="مثال: صحيح البخاري: بعضه {مرجع القول الأول} أو جميعه {مرجع القول الثاني}"></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
+      <span style="font-size:10.5px;color:var(--cream3)">لإضافة مرجع (حاشية): حدّد الكلمة ثم «إدراج حاشية»، أو اكتب المرجع بين قوسين { }</span>
+      <button type="button" class="btn btn-soft btn-xs" onclick="insertFootnote('rw-masmouat')">➕ إدراج حاشية { }</button>
+    </div>
   </div>
 
   <div class="fsep">📅 التاريخ</div>
@@ -974,6 +1004,48 @@ if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen'
   <div class="modal-footer">
     <button class="btn btn-ghost" onclick="closeModal('modal-merge')">إلغاء</button>
     <button class="btn btn-gold" id="btn-confirm-merge" onclick="confirmMerge()" disabled style="opacity:.5">تأكيد الدمج</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL: إضافة شيخ (من المعجم) يروي عن شيخ الشيوخ ═══════ -->
+<div class="modal-bg" id="modal-add-rawu">
+<div class="modal" style="width:520px">
+  <button class="modal-close" onclick="closeModal('modal-add-rawu')">✕</button>
+  <h3>+ إضافة شيخ يروي عنه</h3>
+  <p style="font-size:12px;color:var(--cream3);margin-bottom:14px">أضف شيخًا من <b>المعجم</b> يروي عن <b id="rawu-teacher-name" style="color:var(--gold1)"></b> — فيظهر في قائمته.</p>
+  <div class="fg"><label>الشيخ (من المعجم)</label>
+    <div style="position:relative">
+      <input type="text" id="rawu-input" autocomplete="off" placeholder="اكتب اسم الشيخ من المعجم..." oninput="onRawuInput(this.value)" onblur="setTimeout(function(){var b=document.getElementById('rawu-suggest');if(b)b.style.display='none'},200)">
+      <input type="hidden" id="rawu-sheikh-id" value="">
+      <div id="rawu-suggest" style="display:none;position:absolute;top:100%;right:0;left:0;z-index:60;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r2);margin-top:4px;max-height:230px;overflow-y:auto;box-shadow:var(--sh2)"></div>
+    </div>
+    <div id="rawu-hint" style="font-size:11px;margin-top:5px;color:var(--cream3);min-height:15px"></div>
+  </div>
+  <div class="fg"><label>نوع الإجازة</label>
+    <select id="rawu-type">
+      <option value="إجازة عامة">إجازة عامة</option>
+      <option value="سماع">سماع</option>
+      <option value="إجازة خاصة">إجازة خاصة</option>
+      <option value="إجازة في الطريقة">إجازة في الطريقة</option>
+    </select>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeModal('modal-add-rawu')">إلغاء</button>
+    <button class="btn btn-gold" onclick="saveRawu()">حفظ ←</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL: كاشف المكرّرات ═══════ -->
+<div class="modal-bg" id="modal-dup">
+<div class="modal" style="width:600px">
+  <button class="modal-close" onclick="closeModal('modal-dup')">✕</button>
+  <h3>🔍 كشف المكرّرات <span id="dup-count" style="color:var(--gold4);font-size:13px;font-weight:400"></span></h3>
+  <p style="font-size:12px;color:var(--cream3);margin-bottom:14px;line-height:1.7">مجموعات أسماء متشابهة يُرجّح أنها لشخص واحد (اسم مختصر داخل اسم أطول). راجع كل مجموعة، واضغط «دمج المجموعة» لتوحيدها في الاسم الأكمل تلقائيًا.</p>
+  <div id="dup-list" style="max-height:60vh;overflow-y:auto"></div>
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeModal('modal-dup')">إغلاق</button>
   </div>
 </div>
 </div>
@@ -1396,6 +1468,7 @@ async function loadShuyookhSh() {
   try { data = await fetchAllRows('shuyookh_shuyookh'); }
   catch (e) { return; }
   allShuyookhSh = data || [];
+  await loadShRiwayaCounts();
   if (currentPage==='shuyookh-sh') renderShuyookhSh();
   updateStats();
 }
@@ -1623,31 +1696,198 @@ function renderTable(data, q='') {
 // ═══════════════════════════════
 // RENDER SHUYOOKH SH
 // ═══════════════════════════════
+let shFilter='all', shLetter='', shSortMode='name', shRiwayaCounts={};
+function arNum(n){ return String(n).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[+d]); }
+
+// حساب عدد الرواة (من يروي عن كل شيخ شيوخ)
+async function loadShRiwayaCounts() {
+  try {
+    const counts={}; let from=0; const page=1000;
+    while(true){
+      const {data,error}=await sb.from('sheikh_riwaya').select('rawi_id').not('rawi_id','is',null).range(from,from+page-1);
+      if(error) throw error;
+      if(!data||!data.length) break;
+      data.forEach(r=>{ if(r.rawi_id!=null) counts[r.rawi_id]=(counts[r.rawi_id]||0)+1; });
+      if(data.length<page) break; from+=page;
+    }
+    shRiwayaCounts=counts;
+  } catch(e){ console.warn('حساب الرواة:', e.message); }
+}
+
+function shFirstLetter(s){ let f=shSortKey(s).charAt(0); if('أإآ'.includes(f)) f='ا'; return f; }
+function shIsIncomplete(s){ return !(s.name_full&&s.name_full.trim()) || !(s.birth_date||s.death_date); }
+function setShLetter(ch){ shLetter=ch; renderShuyookhSh(); }
+function setShFilter(f){ shFilter=f; renderShuyookhSh(); }
+function setShSort(m){ shSortMode=m; renderShuyookhSh(); }
+
+function buildShLetterBar(){
+  const bar=document.getElementById('sh-letter-bar'); if(!bar) return;
+  const letters={};
+  allShuyookhSh.forEach(s=>{ const f=shFirstLetter(s); if(f) letters[f]=(letters[f]||0)+1; });
+  const order='ابتثجحخدذرزسشصضطظعغفقكلمنهوي', disp={'ه':'هـ'};
+  let html=`<button class="f-btn ${shLetter===''?'active':''}" onclick="setShLetter('')">الكل</button>`;
+  for(const ch of order){ if(letters[ch]) html+=`<button class="f-btn ${shLetter===ch?'active':''}" onclick="setShLetter('${ch}')" title="${letters[ch]} شيخ">${disp[ch]||ch}</button>`; }
+  bar.innerHTML=html;
+}
+
 function renderShuyookhSh() {
-  document.getElementById('res-count-sh').textContent = 'عدد شيوخ الشيوخ: '+allShuyookhSh.length;
   if (!allShuyookhSh.length) {
+    document.getElementById('res-count-sh').textContent='عدد شيوخ الشيوخ: 0';
     document.getElementById('tbl-sh').innerHTML='<div class="empty-state"><span class="es-ic">👥</span><p>لا يوجد شيوخ شيوخ بعد</p><div class="es-sub">أضف شيخ شيوخ للبدء</div></div>';
     return;
   }
-  let html=`<div class="tbl-wrap"><table><thead><tr><th>#</th><th>صورة</th><th>الاسم</th><th>الميلاد</th><th>الوفاة</th><th>إجراء</th></tr></thead><tbody>`;
-  const sortedSh = [...allShuyookhSh].sort((a,b)=>shSortKey(a).localeCompare(shSortKey(b),'ar'));
-  sortedSh.forEach((s,i)=>{
+  buildShLetterBar();
+  // أعداد التصفيات
+  const cAll=allShuyookhSh.length;
+  const cNoRawi=allShuyookhSh.filter(s=>!shRiwayaCounts[s.id]).length;
+  const cIncomplete=allShuyookhSh.filter(shIsIncomplete).length;
+  const fLabels={all:`الكل (${arNum(cAll)})`, norawi:`🚫 بلا رواة (${arNum(cNoRawi)})`, incomplete:`📝 ناقص البيانات (${arNum(cIncomplete)})`};
+  document.querySelectorAll('#sh-filter-bar .f-btn').forEach(b=>{ b.classList.toggle('active', b.dataset.f===shFilter); if(fLabels[b.dataset.f]) b.textContent=fLabels[b.dataset.f]; });
+  document.querySelectorAll('#sh-sort-bar .f-btn').forEach(b=>b.classList.toggle('active', b.dataset.m===shSortMode));
+
+  let list=[...allShuyookhSh];
+  if(shFilter==='norawi') list=list.filter(s=>!shRiwayaCounts[s.id]);
+  else if(shFilter==='incomplete') list=list.filter(shIsIncomplete);
+  if(shLetter) list=list.filter(s=>shFirstLetter(s)===shLetter);
+  if(shSortMode==='count') list.sort((a,b)=>(shRiwayaCounts[b.id]||0)-(shRiwayaCounts[a.id]||0) || shSortKey(a).localeCompare(shSortKey(b),'ar'));
+  else list.sort((a,b)=>shSortKey(a).localeCompare(shSortKey(b),'ar'));
+
+  document.getElementById('res-count-sh').textContent = 'عدد شيوخ الشيوخ: '+allShuyookhSh.length + (list.length!==allShuyookhSh.length?(' — المعروض: '+list.length):'');
+
+  if(!list.length){ document.getElementById('tbl-sh').innerHTML='<div class="empty-state" style="padding:40px"><span class="es-ic">🔍</span><p>لا نتائج بهذه التصفية</p></div>'; return; }
+
+  let html=`<table><thead><tr><th>#</th><th>صورة</th><th>الاسم</th><th>الرواة</th><th>الميلاد</th><th>الوفاة</th><th>إجراء</th></tr></thead><tbody>`;
+  list.forEach((s,i)=>{
     const imgH=s.photo_url?`<img class="av" src="${esc(s.photo_url)}" onerror="this.outerHTML='<div class=av-ph>👤</div>'">`:`<div class="av-ph">👤</div>`;
+    const c=shRiwayaCounts[s.id]||0;
+    const cBadge=c>0?`<span class="badge badge-gold" title="عدد من يروي عنه">${arNum(c)}</span>`:`<span class="badge" style="background:var(--red-bg);color:var(--red-c)" title="لا يروي عنه أحد">٠</span>`;
     html+=`<tr>
-      <td style="color:var(--cream3);font-size:11px">${i+1}</td>
+      <td style="color:var(--cream3);font-size:11px">${arNum(i+1)}</td>
       <td>${imgH}</td>
       <td><div class="td-name" onclick="openDetailSh(${s.id})">${esc(s.name_short||'')}</div>${s.name_full?`<div class="td-sub">${esc(s.name_full)}</div>`:''}</td>
+      <td style="text-align:center">${cBadge}</td>
       <td style="font-size:11px;color:var(--cream3)">${[s.birth_day,s.birth_date].filter(Boolean).join(' ')||'—'}</td>
       <td style="font-size:11px;color:var(--cream3)">${[s.death_day,s.death_month,s.death_date].filter(Boolean).join(' ')||'—'}</td>
       <td><div style="display:flex;gap:4px">
         <button class="btn btn-soft btn-sm" onclick="openDetailSh(${s.id})">عرض</button>
         <button class="btn btn-ghost btn-sm" onclick="openEditSheikhSh(${s.id})">تعديل</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmDelSheikhSh(${s.id},'${esc(s.name_short||'')}')">حذف</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelSheikhSh(${s.id},'${esc((s.name_short||'').replace(/'/g,'’'))}')">حذف</button>
       </div></td>
     </tr>`;
   });
-  html+='</tbody></table></div>';
+  html+='</tbody></table>';
   document.getElementById('tbl-sh').innerHTML=html;
+}
+
+// ═══ كاشف المكرّرات ═══
+function shSigTokens(name){
+  return (name||'').replace(/[ً-ٟ]/g,'').split(/\s+/).map(t=>t.replace(/^[أإآ]/,'ا')).filter(t=>t && !['بن','ابن','بنت','ابنة','ابنه','آل'].includes(t));
+}
+function findShDuplicates(){
+  const buckets={};
+  allShuyookhSh.forEach(s=>{ const toks=shSigTokens(s.name_short); if(!toks.length) return; const key=toks[toks.length-1]; (buckets[key]=buckets[key]||[]).push({s,set:new Set(toks),first:toks[0]}); });
+  const groups=[];
+  Object.values(buckets).forEach(arr=>{
+    if(arr.length<2) return;
+    const parent=arr.map((_,i)=>i); const find=i=>parent[i]===i?i:(parent[i]=find(parent[i]));
+    for(let i=0;i<arr.length;i++)for(let j=i+1;j<arr.length;j++){
+      if(arr[i].first!==arr[j].first) continue; // نفس الاسم الأول (الشخص نفسه) لتفادي جمع الشخص بجدّه
+      const A=arr[i].set,B=arr[j].set;
+      // الاسم الفرعي (الأصغر) يجب أن يكون ٣ كلمات فأكثر ليكون تطابقًا مميّزًا لا عامًّا
+      const AsubB=A.size>=3 && [...A].every(t=>B.has(t));
+      const BsubA=B.size>=3 && [...B].every(t=>A.has(t));
+      if(AsubB||BsubA) parent[find(i)]=find(j);
+    }
+    const byRoot={};
+    arr.forEach((it,i)=>{ const r=find(i); (byRoot[r]=byRoot[r]||[]).push(it.s); });
+    Object.values(byRoot).forEach(g=>{ if(g.length>=2) groups.push(g.sort((a,b)=>(b.name_short||'').length-(a.name_short||'').length)); });
+  });
+  return groups.sort((a,b)=>b.length-a.length);
+}
+function openDupFinder(){
+  const groups=findShDuplicates();
+  const box=document.getElementById('dup-list');
+  document.getElementById('dup-count').textContent='('+groups.length+' مجموعة مرشّحة)';
+  if(!groups.length){ box.innerHTML='<div class="empty-state" style="padding:30px"><span class="es-ic">✅</span><div class="es-sub">لا توجد مكرّرات مرشّحة</div></div>'; }
+  else {
+    box.innerHTML=groups.map(g=>{
+      const ids=g.map(x=>x.id).join(',');
+      const rows=g.map(x=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px;color:var(--cream1)"><span>${esc(x.name_short||'')} <span style="color:var(--cream3);font-size:11px">(${arNum(shRiwayaCounts[x.id]||0)} رواة)</span></span></div>`).join('');
+      return `<div style="background:var(--bg4);border:1px solid var(--b1);border-radius:var(--r2);padding:12px 14px;margin-bottom:10px">
+        ${rows}
+        <button class="btn btn-gold btn-sm" style="margin-top:8px" onclick="mergeDupGroup([${ids}])">🔗 دمج المجموعة في الاسم الأكمل</button>
+      </div>`;
+    }).join('');
+  }
+  openModal('modal-dup');
+}
+async function mergeDupGroup(ids){
+  const recs=ids.map(id=>allShuyookhSh.find(s=>s.id===id)).filter(Boolean);
+  if(recs.length<2) return;
+  const canonical=recs.reduce((a,b)=>(b.name_short||'').length>(a.name_short||'').length?b:a);
+  const others=recs.filter(r=>r.id!==canonical.id);
+  if(!confirm('دمج '+recs.length+' سجلات في «'+canonical.name_short+'»؟\n⚠️ لا يمكن التراجع.')) return;
+  try{
+    for(const o of others){
+      let {error:e1}=await sb.from('sheikh_riwaya').update({rawi_id:canonical.id,rawi_name:canonical.name_short}).eq('rawi_id',o.id); if(e1) throw e1;
+      let {error:e2}=await sb.from('shuyookh_shuyookh').delete().eq('id',o.id); if(e2) throw e2;
+    }
+    await sb.from('shuyookh_shuyookh').update({name_short:canonical.name_short,name_full:canonical.name_short}).eq('id',canonical.id);
+    await loadShuyookhSh();
+    showToast('✅ دُمجت '+recs.length+' سجلات في «'+canonical.name_short+'»');
+    openDupFinder();
+  }catch(e){ showToast('خطأ في الدمج: '+e.message,true); }
+}
+
+// ═══ إضافة شيخ (من المعجم) يروي عن شيخ الشيوخ الحالي ═══
+function openAddRawu() {
+  const t = allShuyookhSh.find(s => s.id === detailSheikhShId);
+  document.getElementById('rawu-teacher-name').textContent = t ? (t.name_short || '') : '';
+  document.getElementById('rawu-input').value = '';
+  document.getElementById('rawu-sheikh-id').value = '';
+  document.getElementById('rawu-suggest').style.display = 'none';
+  document.getElementById('rawu-hint').textContent = '';
+  document.getElementById('rawu-type').value = 'إجازة عامة';
+  openModal('modal-add-rawu');
+}
+
+function onRawuInput(v) {
+  const q = (v || '').trim();
+  document.getElementById('rawu-sheikh-id').value = '';
+  const box = document.getElementById('rawu-suggest');
+  const hint = document.getElementById('rawu-hint');
+  if (!q) { box.style.display = 'none'; hint.textContent = ''; return; }
+  const ql = q.toLowerCase();
+  const matches = allShuyookh.filter(s => ((s.name_short || '') + ' ' + (s.name_full || '')).toLowerCase().includes(ql)).slice(0, 10);
+  if (matches.length) {
+    box.innerHTML = matches.map(s => `<div onmousedown="pickRawu(${s.id})" style="padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--b2);color:var(--cream1)" onmouseover="this.style.background='var(--bg5)'" onmouseout="this.style.background=''">${esc(s.name_short || '')}</div>`).join('');
+    box.style.display = 'block';
+    hint.innerHTML = '🔎 اختر الشيخ من المعجم'; hint.style.color = 'var(--cream3)';
+  } else {
+    box.style.display = 'none';
+    hint.innerHTML = '⚠️ لا يوجد شيخ بهذا الاسم في المعجم — أضِفه أولًا في تبويب المعجم'; hint.style.color = 'var(--gold3)';
+  }
+}
+
+function pickRawu(id) {
+  const s = allShuyookh.find(x => x.id === id); if (!s) return;
+  document.getElementById('rawu-sheikh-id').value = id;
+  document.getElementById('rawu-input').value = s.name_short || '';
+  document.getElementById('rawu-suggest').style.display = 'none';
+  const hint = document.getElementById('rawu-hint');
+  hint.innerHTML = '✅ «' + esc(s.name_short || '') + '»'; hint.style.color = 'var(--green-c)';
+}
+
+async function saveRawu() {
+  const sid = document.getElementById('rawu-sheikh-id').value;
+  if (!sid) { showToast('اختر شيخًا من المعجم', true); return; }
+  const teacher = allShuyookhSh.find(s => s.id === detailSheikhShId);
+  const rec = { sheikh_id: parseInt(sid), rawi_id: detailSheikhShId, rawi_name: teacher ? (teacher.name_short || null) : null, ijaza_type: document.getElementById('rawu-type').value };
+  const { error } = await sb.from('sheikh_riwaya').insert(rec);
+  if (error) { showToast('خطأ: ' + error.message, true); return; }
+  showToast('✓ تمت الإضافة إلى القائمة');
+  closeModal('modal-add-rawu');
+  await openDetailSh(detailSheikhShId);
 }
 
 // ═══ أداة دمج شيوخ الشيوخ المكرّرين ═══
@@ -1754,7 +1994,7 @@ async function openDetail(id) {
 
   document.getElementById('detail-hdr-name').textContent = s.name_short||'';
   document.getElementById('d-name').textContent = s.name_full||s.name_short||'';
-  document.getElementById('d-notes').textContent = s.notes||'';
+  setRefHtml('d-notes', s.notes);
 
   // photo
   const ph = document.getElementById('d-photo');
@@ -1777,7 +2017,7 @@ async function openDetail(id) {
     ['مكان الوفاة',s.death_place],['تاريخ الوفاة',[s.death_day,s.death_month,s.death_date,s.death_type].filter(Boolean).join(' ')],
     ['تفاصيل الوفاة',s.death_detail],['ملاحظات',s.notes]
   ].filter(([,v])=>v&&v.trim());
-  basicGrid.innerHTML = fields.map(([l,v])=>`<div class="detail-field"><div class="detail-field-label">${l}</div><div class="detail-field-val">${esc(v)}</div></div>`).join('');
+  basicGrid.innerHTML = fields.map(([l,v])=>{const rv=renderRefs(v);return `<div class="detail-field"><div class="detail-field-label">${l}</div><div class="detail-field-val">${rv.html}${rv.fnHtml}</div></div>`;}).join('');
 
   // riwaya anhu
   const riwAnhuSec = document.getElementById('d-sec-riwaya-anhu');
@@ -1790,7 +2030,7 @@ async function openDetail(id) {
   const tarjSec = document.getElementById('d-sec-tarjama');
   if (s.tarjama_mine&&s.tarjama_mine.trim()) {
     tarjSec.style.display='';
-    document.getElementById('d-tarjama-content').textContent = s.tarjama_mine;
+    setRefHtml('d-tarjama-content', s.tarjama_mine);
   } else { tarjSec.style.display='none'; }
 
   // load akhz
@@ -1800,6 +2040,29 @@ async function openDetail(id) {
 
   document.getElementById('detail-page').classList.add('open');
   document.getElementById('detail-page').scrollTop=0;
+}
+
+// ═══ الحواشي (المراجع) داخل النص: {نص} → رقم مرفوع + قائمة مراجع ═══
+function renderRefs(rawText){
+  const notes=[];
+  let html = esc(rawText||'');
+  html = html.replace(/\{([^{}]*)\}/g, (m, ref)=>{ notes.push(ref.trim()); return '<sup class="fn-ref">'+arNum(notes.length)+'</sup>'; });
+  let fnHtml='';
+  if(notes.length) fnHtml='<div class="fn-list">'+notes.map((n,i)=>`<div class="fn-item"><span class="fn-n">${arNum(i+1)}</span><span>${n}</span></div>`).join('')+'</div>';
+  return {html, fnHtml, count:notes.length};
+}
+function insertFootnote(textareaId){
+  const ta=document.getElementById(textareaId); if(!ta) return;
+  const s=ta.selectionStart, e=ta.selectionEnd, v=ta.value, sel=v.substring(s,e);
+  ta.value = v.substring(0,s)+'{'+sel+'}'+v.substring(e);
+  ta.focus(); ta.setSelectionRange(s+1, s+1+sel.length);
+}
+function refHtml(t){ const r=renderRefs(t||''); return r.html+r.fnHtml; }
+// عرض نصّ مع الحواشي داخل عنصر (بدل textContent)
+function setRefHtml(elId, text){
+  const el=document.getElementById(elId); if(!el) return;
+  if(text&&String(text).trim()){ const r=renderRefs(text); el.innerHTML=r.html+r.fnHtml; }
+  else el.innerHTML='';
 }
 
 async function loadDetailAkhz(id) {
@@ -1839,10 +2102,11 @@ async function loadDetailAkhz(id) {
       return `<span style="color:${st.color};font-weight:600;white-space:nowrap">${st.icon} ${child.name} <small style="opacity:0.85">${st.status}</small></span>`;
     }).join('<span style="color:#999;margin:0 4px">|</span>');
 
+    const ac = renderRefs(a.content||'');
     return `<div class="akhz-item">
       <span class="badge ${typeColor} akhz-type-badge">${esc(a.akhz_type)}</span>
       <div style="margin-top:4px;padding-top:4px">
-        ${a.content?`<div class="akhz-content">${esc(a.content)}</div>`:''}
+        ${a.content?`<div class="akhz-content">${ac.html}</div>${ac.fnHtml}`:''}
         <div class="akhz-meta">
           ${a.subtype?`<span>🔹 ${esc(a.subtype)}</span>`:''}
           ${a.mustadei?`<span>📞 باستدعاء: ${esc(a.mustadei)}</span>`:''}
@@ -1874,6 +2138,7 @@ async function loadDetailRiwaya(id) {
     const dateStr=[r.date_day,r.date_month,r.date_year,r.date_type].filter(Boolean).join(' ');
     const rwLink = allShuyookhSh.find(s=>s.id===r.rawi_id);
     const name = (rwLink && rwLink.name_short) || r.rawi_name || '—';
+    const mr = renderRefs(r.masmouat||'');
     return `<div class="riwaya-item">
       <div class="riwaya-item-name">${esc(name)}</div>
       <div class="riwaya-item-meta">
@@ -1881,10 +2146,11 @@ async function loadDetailRiwaya(id) {
         ${dateStr?`<span style="margin-left:6px">📅 ${dateStr}</span>`:''}
         ${r.masmouat?`<span>🎧 مسموعات</span>`:''}
       </div>
-      <div style="padding:6px 12px;font-size:13px;color:var(--cream3);line-height:1.7;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:flex-start;gap:8px">
-        <span id="rw-mas-text-${r.id}" style="flex:1">${r.masmouat?esc(r.masmouat):'<span style="opacity:.4">لا توجد مسموعات</span>'}</span>
-        <button class="btn btn-xs" onclick="editRiwayaFull(${r.id})" style="flex-shrink:0;background:var(--gold2);color:#000;padding:2px 8px;font-size:11px" title="تعديل">✏️ تعديل</button>
+      <div style="padding:6px 12px;font-size:13px;color:var(--cream3);line-height:1.9;border-top:1px solid var(--b2);display:flex;align-items:flex-start;gap:8px">
+        <span id="rw-mas-text-${r.id}" style="flex:1">${r.masmouat?mr.html:'<span style="opacity:.4">لا توجد مسموعات</span>'}</span>
+        <button class="btn btn-xs" onclick="editRiwayaFull(${r.id})" style="flex-shrink:0;background:var(--gold2);color:#fff;padding:2px 8px;font-size:11px" title="تعديل">✏️ تعديل</button>
       </div>
+      ${mr.fnHtml?`<div style="padding:0 12px 6px">${mr.fnHtml}</div>`:''}
       <button class="btn btn-danger btn-xs" onclick="deleteRiwaya(${r.id})" style="flex-shrink:0;margin:4px 8px">حذف</button>
     </div>`;
   }).join('');
@@ -2525,7 +2791,7 @@ async function openDetailSh(id) {
 
   document.getElementById('detail-hdr-name-sh').textContent=s.name_short||'';
   document.getElementById('d-name-sh').textContent=s.name_full||s.name_short||'';
-  document.getElementById('d-notes-sh').textContent=s.notes||'';
+  setRefHtml('d-notes-sh', s.notes);
 
   const ph=document.getElementById('d-photo-sh');
   if(s.photo_url&&s.photo_url.trim()){
@@ -2545,29 +2811,31 @@ async function openDetailSh(id) {
     ['مكان الوفاة',s.death_place],['تاريخ الوفاة',[s.death_day,s.death_month,s.death_date,s.death_type].filter(Boolean).join(' ')],
     ['تفاصيل الوفاة',s.death_detail],['ملاحظات',s.notes]
   ].filter(([,v])=>v&&v.trim());
-  basicGrid.innerHTML=fields.map(([l,v])=>`<div class="detail-field"><div class="detail-field-label">${l}</div><div class="detail-field-val">${esc(v)}</div></div>`).join('');
+  basicGrid.innerHTML=fields.map(([l,v])=>{const rv=renderRefs(v);return `<div class="detail-field"><div class="detail-field-label">${l}</div><div class="detail-field-val">${rv.html}${rv.fnHtml}</div></div>`;}).join('');
 
   const tarjSec=document.getElementById('d-sec-tarjama-sh');
   if(s.tarjama_mine&&s.tarjama_mine.trim()){
     tarjSec.style.display='';
-    document.getElementById('d-tarjama-content-sh').textContent=s.tarjama_mine;
+    setRefHtml('d-tarjama-content-sh', s.tarjama_mine);
   } else { tarjSec.style.display='none'; }
 
   // الشيوخ الذين يروون عنه (من جدول sheikh_riwaya)
   const{data:riwData}=await sb.from('sheikh_riwaya').select('*,shuyookh(name_short)').eq('rawi_id',id).order('id');
   const container=document.getElementById('d-rawu-anhu-list');
+  const cntEl=document.getElementById('d-rawu-count'); if(cntEl) cntEl.textContent=riwData&&riwData.length?('('+riwData.length+')'):'';
   if(!riwData||!riwData.length){
     container.innerHTML='<div class="empty-state" style="padding:20px"><span class="es-ic" style="font-size:30px">🔗</span><div class="es-sub">لا يوجد شيوخ مرتبطون بعد</div></div>';
   } else {
     container.innerHTML=riwData.map(r=>{
       const sheikhName=r.shuyookh?.name_short||'—';
+      const mr=renderRefs(r.masmouat||'');
       return `<div class="riwaya-item">
         <div class="riwaya-item-name" style="cursor:pointer" onclick="closeDetailSh();openDetail(${r.sheikh_id})">${esc(sheikhName)}</div>
         <div class="riwaya-item-meta">
           ${r.ijaza_type?`<span class="badge badge-gold" style="margin-left:6px">${esc(r.ijaza_type)}</span>`:''}
           ${r.masmouat?`<span>🎧 مسموعات</span>`:''}
         </div>
-        ${r.masmouat?`<div style="padding:6px 12px;font-size:13px;color:var(--cream3);line-height:1.7;border-top:1px solid rgba(255,255,255,.08)">${esc(r.masmouat)}</div>`:''}
+        ${r.masmouat?`<div style="padding:6px 12px;font-size:13px;color:var(--cream3);line-height:1.9;border-top:1px solid var(--b2)">${mr.html}${mr.fnHtml}</div>`:''}
       </div>`;
     }).join('');
   }
@@ -2765,7 +3033,7 @@ async function runReport(type) {
             <span style="${numStyle}">${i+1}</span>
             <div>
               <div style="font-weight:700;font-size:15px;color:#333">${a.shuyookh?.name_short||''}</div>
-              <div style="font-size:13px;color:#555;margin-top:3px">${a.content||''}</div>
+              <div style="font-size:13px;color:#555;margin-top:3px">${refHtml(a.content)}</div>
             </div>
             <div></div>
           </div>`).join('');
@@ -2812,7 +3080,7 @@ async function runReport(type) {
               ${rw.map(r=>`<div style="padding:4px 0 4px 40px;font-size:13px;color:#555;border-top:1px solid #f0ece0">
                 <span style="color:#333;font-weight:600">${r.rawi_name||''}</span>
                 <span style="background:#eee;padding:1px 6px;border-radius:8px;font-size:11px;margin:0 4px">${r.ijaza_type||''}</span>
-                ${type==='riwaya-full'&&r.masmouat?`<div style="font-size:12px;color:#888;margin-top:2px">📚 ${r.masmouat}</div>`:''}
+                ${type==='riwaya-full'&&r.masmouat?`<div style="font-size:12px;color:#888;margin-top:2px">📚 ${refHtml(r.masmouat)}</div>`:''}
               </div>`).join('')}
             </div>`;
           }).join('');
@@ -3167,8 +3435,9 @@ function renderIstidaa(items) {
     
     // Notes
     if (item.x && item.x.trim() && item.x.trim() !== '؟؟') {
-      const noteHl = q ? hlText(esc(item.x), q) : esc(item.x);
-      html += '<div class="ih-note">💬 ' + noteHl + '</div>';
+      const nrX = renderRefs(item.x);
+      const noteHl = q ? hlText(nrX.html, q) : nrX.html;
+      html += '<div class="ih-note">💬 ' + noteHl + nrX.fnHtml + '</div>';
     }
 
     // Actions row
@@ -3414,11 +3683,13 @@ function renderMujazoon(items) {
     html += '</div>';
 
     if (item.masmu) {
-      html += '<div style="font-size:12px;color:var(--cream3);margin-top:3px">📖 ' + esc(item.masmu) + '</div>';
+      const rm=renderRefs(item.masmu);
+      html += '<div style="font-size:12px;color:var(--cream3);margin-top:3px">📖 ' + rm.html + rm.fnHtml + '</div>';
     }
 
     if (item.notes) {
-      html += '<div class="ih-note">💬 ' + esc(item.notes) + '</div>';
+      const rn=renderRefs(item.notes);
+      html += '<div class="ih-note">💬 ' + rn.html + rn.fnHtml + '</div>';
     }
 
     // مرفقات
