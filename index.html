@@ -365,28 +365,19 @@ try{ localStorage.removeItem('theme'); }catch(e){}
     <div style="font-size:48px;margin-bottom:16px;">📜</div>
     <h2 style="font-family:var(--font-d);color:var(--gold1);font-size:22px;margin-bottom:8px;">فيض الإله</h2>
     <p style="color:var(--cream3);font-size:13px;margin-bottom:24px;">في معجم شيوخ ابن حبيب الله</p>
-    <input id="login-pass" type="password" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')doLogin()"
-      style="width:100%;padding:12px 16px;border:1px solid var(--b1);border-radius:var(--r2);background:var(--bg2);color:var(--cream1);font-family:var(--font-b);font-size:16px;text-align:center;outline:none;margin-bottom:12px;">
-    <button onclick="doLogin()"
+    <input id="login-email" type="email" placeholder="البريد الإلكتروني" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"
+      style="width:100%;padding:12px 16px;border:1px solid var(--b1);border-radius:var(--r2);background:var(--bg2);color:var(--cream1);font-family:var(--font-b);font-size:15px;text-align:center;outline:none;margin-bottom:10px;">
+    <input id="login-pass" type="password" placeholder="كلمة المرور" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"
+      style="width:100%;padding:12px 16px;border:1px solid var(--b1);border-radius:var(--r2);background:var(--bg2);color:var(--cream1);font-family:var(--font-b);font-size:15px;text-align:center;outline:none;margin-bottom:12px;">
+    <button id="login-btn" onclick="doLogin()"
       style="width:100%;padding:10px;border:none;border-radius:var(--r2);background:linear-gradient(135deg,var(--gold3),var(--gold2));color:var(--bg1);font-family:var(--font-b);font-size:15px;font-weight:700;cursor:pointer;">
       دخول
     </button>
-    <p id="login-err" style="color:var(--red-c);font-size:13px;margin-top:10px;display:none;">كلمة المرور غير صحيحة</p>
+    <p id="login-err" style="color:var(--red-c);font-size:13px;margin-top:10px;display:none;">بيانات الدخول غير صحيحة</p>
   </div>
 </div>
-<script>
-function doLogin(){
-  const p=document.getElementById('login-pass').value;
-  if(btoa(p)==='NDI1MDIzNjg='){
-    document.getElementById('login-screen').style.display='none';
-    sessionStorage.setItem('_auth','1');
-  } else {
-    document.getElementById('login-err').style.display='block';
-    document.getElementById('login-pass').value='';
-  }
-}
-if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen').style.display='none';
-</script>
+<!-- تسجيل الدخول الحقيقي (Supabase Auth) مُعرّف في السكربت الرئيسي بعد إنشاء عميل Supabase -->
+
 
 <div class="app">
 
@@ -416,6 +407,7 @@ if(sessionStorage.getItem('_auth')==='1') document.getElementById('login-screen'
   <div class="nav-item" onclick="openAddSheikh()"><span class="nav-ic">➕</span>إضافة شيخ</div>
   <div class="nav-item" onclick="loadAll()"><span class="nav-ic">↻</span>تحديث</div>
   <div class="nav-item" onclick="downloadBackup(this)"><span class="nav-ic">💾</span>نسخة احتياطية</div>
+  <div class="nav-item" onclick="logout()"><span class="nav-ic">🚪</span>تسجيل الخروج</div>
 </div>
 
 <!-- MAIN -->
@@ -1261,6 +1253,36 @@ const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const IMGBB_KEY = 'f6622dcb17e96356fb387a2ff6f30a1a';
 const sb = supabase.createClient(SURL, SKEY);
 
+// ═══ تسجيل الدخول الحقيقي (Supabase Auth) + حماية RLS ═══
+async function initAuth(){
+  try{
+    const { data:{ session } } = await sb.auth.getSession();
+    if(session){ document.getElementById('login-screen').style.display='none'; loadAll(); }
+    else { document.getElementById('login-screen').style.display='flex'; }
+  }catch(e){ document.getElementById('login-screen').style.display='flex'; }
+}
+async function doLogin(){
+  const email=(document.getElementById('login-email').value||'').trim();
+  const pass=document.getElementById('login-pass').value||'';
+  const errEl=document.getElementById('login-err');
+  const btn=document.getElementById('login-btn');
+  errEl.style.display='none';
+  if(!email||!pass){ errEl.textContent='أدخل البريد وكلمة المرور'; errEl.style.display='block'; return; }
+  btn.disabled=true; btn.textContent='جارٍ الدخول...';
+  try{
+    const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if(error){ errEl.textContent='بيانات الدخول غير صحيحة'; errEl.style.display='block'; document.getElementById('login-pass').value=''; return; }
+    document.getElementById('login-screen').style.display='none';
+    loadAll();
+  }catch(e){ errEl.textContent='تعذّر الاتصال، حاول مجددًا'; errEl.style.display='block'; }
+  finally{ btn.disabled=false; btn.textContent='دخول'; }
+}
+async function logout(){
+  if(!confirm('تسجيل الخروج؟')) return;
+  try{ await sb.auth.signOut(); }catch(e){}
+  location.reload();
+}
+
 // ═══════════════════════════════
 // MONTHS
 // ═══════════════════════════════
@@ -1402,7 +1424,7 @@ let currentPage='shuyookh', editingSheikhShId=null;
 // ═══════════════════════════════
 // LOAD
 // ═══════════════════════════════
-window.onload = () => loadAll();
+window.onload = () => initAuth();
 
 async function loadAll() {
   await Promise.all([loadShuyookh(), loadShuyookhSh()]);
@@ -1648,7 +1670,7 @@ function renderGrid(data, q='') {
       ${imgBlock}
       <div class="s-card-body" onclick="openDetail(${s.id})">
         <div class="s-card-name">${nameHtml}</div>
-        ${s.name_full?`<div class="s-card-sub">${subHtml}</div>`:''}
+        ${showFullSub(s)?`<div class="s-card-sub">${subHtml}</div>`:''}
         <div class="s-card-badges">
           ${birthStr?`<span class="badge badge-gold">📅 ${birthStr}</span>`:''}
           ${deathStr?`<span class="badge badge-death">${deathStr}</span>`:''}
@@ -1680,7 +1702,7 @@ function renderTable(data, q='') {
       <td style="color:var(--cream3);font-size:11px">${i+1}</td>
       <td>${imgH}</td>
       <td><div class="td-name" onclick="openDetail(${s.id})">${nameH}</div>
-        ${s.name_full?`<div class="td-sub">${esc(s.name_full)}</div>`:''}</td>
+        ${showFullSub(s)?`<div class="td-sub">${esc(s.name_full)}</div>`:''}</td>
       <td><div style="font-size:11px;color:var(--cream3)">م: ${birthStr}<br>و: ${deathStr}</div></td>
       <td><div style="display:flex;gap:4px">
         <button class="btn btn-soft btn-sm" onclick="openDetail(${s.id})">عرض</button>
@@ -1764,7 +1786,7 @@ function renderShuyookhSh() {
     html+=`<tr>
       <td style="color:var(--cream3);font-size:11px">${arNum(i+1)}</td>
       <td>${imgH}</td>
-      <td><div class="td-name" onclick="openDetailSh(${s.id})">${esc(s.name_short||'')}</div>${s.name_full?`<div class="td-sub">${esc(s.name_full)}</div>`:''}</td>
+      <td><div class="td-name" onclick="openDetailSh(${s.id})">${esc(s.name_short||'')}</div>${showFullSub(s)?`<div class="td-sub">${esc(s.name_full)}</div>`:''}</td>
       <td style="text-align:center">${cBadge}</td>
       <td style="font-size:11px;color:var(--cream3)">${[s.birth_day,s.birth_date].filter(Boolean).join(' ')||'—'}</td>
       <td style="font-size:11px;color:var(--cream3)">${[s.death_day,s.death_month,s.death_date].filter(Boolean).join(' ')||'—'}</td>
@@ -2058,6 +2080,8 @@ function insertFootnote(textareaId){
   ta.focus(); ta.setSelectionRange(s+1, s+1+sel.length);
 }
 function refHtml(t){ const r=renderRefs(t||''); return r.html+r.fnHtml; }
+// يُظهر الاسم الكامل تحت المختصر فقط إذا كان موجودًا ومختلفًا عنه (لتفادي التكرار)
+function showFullSub(s){ return !!(s.name_full && s.name_full.trim() && s.name_full.trim()!==(s.name_short||'').trim()); }
 // عرض نصّ مع الحواشي داخل عنصر (بدل textContent)
 function setRefHtml(elId, text){
   const el=document.getElementById(elId); if(!el) return;
@@ -2880,7 +2904,7 @@ function doAdvSearch() {
       const snippet=inF==='tarjama'?getSnippet(s.tarjama_mine||'',lower):'';
       html+=`<tr><td style="color:var(--cream3);font-size:11px">${i+1}</td>
         <td><div class="td-name" onclick="openDetail(${s.id})">${hlText(esc(s.name_short||''),lower)}</div>
-          ${s.name_full?`<div class="td-sub">${hlText(esc(s.name_full),lower)}</div>`:''}</td>
+          ${showFullSub(s)?`<div class="td-sub">${hlText(esc(s.name_full),lower)}</div>`:''}</td>
         <td><div style="font-size:12px;color:var(--cream2);max-width:400px">${snippet}</div></td>
         <td><button class="btn btn-ghost btn-sm" onclick="openDetail(${s.id})">عرض</button></td></tr>`;
     });
