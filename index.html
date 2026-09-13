@@ -333,6 +333,14 @@ body{transition:background .4s ease,color .3s ease}
 .report-card:hover,.ih-card:hover{box-shadow:var(--sh2)}
 .report-card{background:var(--bg6)}
 
+/* مرفقات Google Drive */
+.gd-tile{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r1);padding:6px 10px;cursor:pointer;max-width:220px;vertical-align:middle}
+.gd-tile:hover{border-color:var(--gold2)}
+.gd-tile-ic{font-size:20px;flex-shrink:0}
+.gd-tile-name{font-size:11px;color:var(--cream2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.picker-dialog-bg{z-index:100000!important}
+.picker-dialog{z-index:100001!important}
+
 /* الحواشي (المراجع) داخل النص */
 .fn-ref{color:var(--red-c);font-weight:700;font-size:.7em;vertical-align:super;padding:0 1px;font-family:var(--font-b)}
 .fn-list{margin-top:8px;padding-top:8px;border-top:1px dashed var(--b1);display:flex;flex-direction:column;gap:5px}
@@ -408,6 +416,7 @@ try{ localStorage.removeItem('theme'); }catch(e){}
   <div class="nav-item" onclick="openAddSheikh()"><span class="nav-ic">➕</span>إضافة شيخ</div>
   <div class="nav-item" onclick="loadAll()"><span class="nav-ic">↻</span>تحديث</div>
   <div class="nav-item" onclick="downloadBackup(this)"><span class="nav-ic">💾</span>نسخة احتياطية</div>
+  <div class="nav-item" onclick="openDriveSettings()"><span class="nav-ic">☁️</span>Google Drive<span class="nav-badge" id="nb-gdrive">—</span></div>
   <div class="nav-item" onclick="logout()"><span class="nav-ic">🚪</span>تسجيل الخروج</div>
 </div>
 
@@ -579,7 +588,7 @@ try{ localStorage.removeItem('theme'); }catch(e){}
             </select>
           </div>
           <div class="fg" style="flex:1"><label>اللقب</label>
-            <select id="ig-sheikh-title" onchange="updateIgPreview()">
+            <select id="ig-sheikh-title" onchange="onIgTitleChange()">
               <option value="الشيخ">الشيخ</option>
               <option value="السيّد">السيّد</option>
               <option value="السيِّدة">السيِّدة</option>
@@ -1051,6 +1060,47 @@ try{ localStorage.removeItem('theme'); }catch(e){}
 </div>
 </div>
 
+<!-- ═══════ MODAL: إعدادات Google Drive ═══════ -->
+<div class="modal-bg" id="modal-gdrive">
+<div class="modal" style="width:520px">
+  <button class="modal-close" onclick="closeModal('modal-gdrive')">✕</button>
+  <h3>☁️ مرفقات Google Drive</h3>
+  <div id="gd-status" style="font-size:13px;color:var(--cream2);margin-bottom:6px"></div>
+  <p style="font-size:11.5px;color:var(--cream3);line-height:1.8;margin-top:10px">تُرفع الملفات إلى المجلد المختار بترتيب: القسم ← صاحب المرفق، وتبقى خاصة بحسابك.</p>
+  <div class="modal-footer" style="flex-wrap:wrap">
+    <button class="btn btn-ghost" id="gd-btn-off" onclick="gdDisconnect()">فصل الجلسة</button>
+    <button class="btn btn-soft" id="gd-btn-folder" onclick="gdFolderClick()">📁 اختيار المجلد</button>
+    <button class="btn btn-gold" id="gd-btn-connect" onclick="gdConnectClick()">🔗 تنشيط الجلسة</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL: تنشيط جلسة درايف (يلزم ضغطة المستخدم) ═══════ -->
+<div class="modal-bg" id="modal-gdrive-auth">
+<div class="modal" style="width:430px;text-align:center">
+  <button class="modal-close" onclick="gdAuthCancel()">✕</button>
+  <h3>☁️ تنشيط Google Drive</h3>
+  <p style="font-size:13px;color:var(--cream2);line-height:1.9">لإكمال الرفع أو المعاينة يحتاج البرنامج إذن حسابك في جوجل.<br>تبقى الملفات خاصة بك، ولا يرى البرنامج إلا ما رفعه هو.</p>
+  <div class="modal-footer" style="justify-content:center">
+    <button class="btn btn-ghost" onclick="gdAuthCancel()">إلغاء</button>
+    <button class="btn btn-gold" onclick="gdAuthClick()">🔗 تنشيط</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ MODAL: معاينة ملف من درايف ═══════ -->
+<div class="modal-bg" id="modal-gdview">
+<div class="modal" style="width:960px">
+  <button class="modal-close" onclick="closeDriveViewer()">✕</button>
+  <h3 id="gdview-title">معاينة</h3>
+  <div id="gdview-body" style="min-height:200px;display:flex;align-items:center;justify-content:center"></div>
+  <div class="modal-footer">
+    <a id="gdview-open" class="btn btn-ghost" target="_blank" rel="noopener" style="text-decoration:none">فتح في Google Drive ↗</a>
+    <button class="btn btn-gold" onclick="closeDriveViewer()">إغلاق</button>
+  </div>
+</div>
+</div>
+
 <!-- ═══════ MODAL: كاشف المكرّرات ═══════ -->
 <div class="modal-bg" id="modal-dup">
 <div class="modal" style="width:600px">
@@ -1078,12 +1128,12 @@ try{ localStorage.removeItem('theme'); }catch(e){}
       <option value="أخرى">أخرى</option>
     </select>
   </div>
-  <div class="fg"><label>رابط الصورة أو الوثيقة</label>
+  <div class="fg"><label>الملف (صورة، PDF، مقطع، أو غيره)</label>
     <div style="display:flex;gap:6px;align-items:center">
       <input type="text" id="wq-url" placeholder="https://... أو ارفع مباشرة ←" style="flex:1">
-      <label style="background:linear-gradient(135deg,var(--gold2),var(--gold3));color:var(--bg2);border-radius:var(--r1);padding:9px 12px;cursor:pointer;font-size:12px;white-space:nowrap;font-weight:700;display:inline-flex;align-items:center;gap:5px" title="رفع صورة مباشرة">
-        📷 رفع
-        <input type="file" id="wq-file" accept="image/*" style="display:none" onchange="handleWthqUpload(this)">
+      <label style="background:linear-gradient(135deg,var(--gold2),var(--gold3));color:#fff;border-radius:var(--r1);padding:9px 12px;cursor:pointer;font-size:12px;white-space:nowrap;font-weight:700;display:inline-flex;align-items:center;gap:5px" title="رفع ملف إلى درايف">
+        📎 رفع
+        <input type="file" id="wq-file" style="display:none" onchange="handleWthqUpload(this)">
       </label>
     </div>
     <div id="wq-upload-status" style="font-size:11px;color:var(--gold3);margin-top:4px;display:none">⏳ جارٍ الرفع...</div>
@@ -1193,7 +1243,9 @@ try{ localStorage.removeItem('theme'); }catch(e){}
     <div style="display:flex;gap:6px;align-items:center">
       <input type="text" id="mj-inp-link" placeholder="الصق رابط صورة أو PDF..." style="flex:1">
       <button type="button" class="btn btn-gold btn-sm" onclick="addMjLink()" style="white-space:nowrap;height:38px">+ أضف</button>
+      <label class="btn btn-soft btn-sm" style="white-space:nowrap;height:38px;cursor:pointer" title="رفع ملفات إلى درايف">📎 رفع<input type="file" multiple style="display:none" onchange="handleMjUpload(this)"></label>
     </div>
+    <div id="mj-upload-status" style="font-size:11px;margin-top:4px;display:none"></div>
     <span id="mj-imgs-count" style="font-size:12px;color:var(--gold4);font-weight:600;display:block;margin-top:4px"></span>
     <div id="mj-imgs-preview" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px"></div>
   </div>
@@ -1218,7 +1270,9 @@ try{ localStorage.removeItem('theme'); }catch(e){}
   <div class="fg"><label>مرفق الإجازة المشترك</label>
     <div style="display:flex;gap:6px;align-items:center">
       <input type="text" id="mjg-inp-link" placeholder="رابط صورة أو PDF مشترك..." style="flex:1">
+      <label class="btn btn-soft btn-sm" style="white-space:nowrap;height:38px;cursor:pointer" title="رفع ملف إلى درايف">📎 رفع<input type="file" style="display:none" onchange="handleMjgUpload(this)"></label>
     </div>
+    <div id="mjg-upload-status" style="font-size:11px;margin-top:4px;display:none"></div>
   </div>
 
   <div class="modal-footer">
@@ -1252,7 +1306,9 @@ try{ localStorage.removeItem('theme'); }catch(e){}
     <div style="display:flex;gap:6px;align-items:center">
       <input type="text" id="ih-inp-link" placeholder="الصق رابط الملف من Google Drive أو غيره..." style="flex:1">
       <button type="button" class="btn btn-gold btn-sm" onclick="addIhLink()" style="white-space:nowrap;height:38px">+ أضف</button>
+      <label class="btn btn-soft btn-sm" style="white-space:nowrap;height:38px;cursor:pointer" title="رفع ملفات إلى درايف">📎 رفع<input type="file" multiple style="display:none" onchange="handleIhUpload(this)"></label>
     </div>
+    <div id="ih-upload-status" style="font-size:11px;margin-top:4px;display:none"></div>
     <span id="ih-imgs-count" style="font-size:12px;color:var(--gold4);font-weight:600;display:block;margin-top:4px"></span>
     <div id="ih-imgs-preview" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px"></div>
   </div>
@@ -1449,6 +1505,8 @@ let currentPage='shuyookh', editingSheikhShId=null;
 window.onload = () => initAuth();
 
 async function loadAll() {
+  gdPreload();
+  initIstidaa();
   await Promise.all([loadShuyookh(), loadShuyookhSh()]);
 }
 
@@ -2221,10 +2279,11 @@ async function loadDetailWathaeq(id) {
   container.innerHTML = data.map(w => {
     const origUrl = w.url||'';
     const imgUrl = fixDriveUrl(origUrl);
-    const isImg = /\.(jpg|jpeg|png|gif|webp|svg)/i.test(origUrl) || origUrl.includes('imgbb') || origUrl.includes('ibb.co');
+    const gdMime = driveMimeHint(origUrl);
+    const isImg = gdMime ? gdMime.startsWith('image/') : (/\.(jpg|jpeg|png|gif|webp|svg)/i.test(origUrl) || origUrl.includes('imgbb') || origUrl.includes('ibb.co'));
     const thumb = isImg
       ? `<img src="${esc(imgUrl)}" style="width:60px;height:60px;object-fit:cover;border-radius:var(--r1);flex-shrink:0" onerror="this.outerHTML='<div style=width:60px;height:60px;background:var(--bg3);border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0>📄</div>'">`
-      : `<div style="width:60px;height:60px;background:var(--bg3);border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">📄</div>`;
+      : `<div style="width:60px;height:60px;background:var(--bg3);border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${gdMime ? gdFileIcon(gdMime) : '📄'}</div>`;
     return `<div style="background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r1);overflow:hidden;transition:all .15s;margin-bottom:8px;display:flex;align-items:center;gap:10px;padding:8px 10px;cursor:pointer" onclick="openFile('${esc(origUrl)}')">
       ${thumb}
       <div style="flex:1">
@@ -2317,7 +2376,7 @@ async function handleMsPhotoUpload(input) {
   const origText = btn.textContent;
   btn.textContent = '⏳ جارٍ رفع الصورة...';
   btn.disabled = true;
-  const url = await uploadToImgBB(file);
+  const url = await uploadAttachment(file, GDRIVE_SECTIONS.sheikh, document.getElementById('ms-short').value.trim(), p => { btn.textContent = '⏳ جارٍ رفع الصورة ' + p + '%'; });
   btn.textContent = origText;
   btn.disabled = false;
   if (url) {
@@ -2690,25 +2749,19 @@ function openAddWthq(sheikhId) {
 
 
 async function handleWthqUpload(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const status = document.getElementById('wq-upload-status');
-  status.style.display = 'block';
-  status.textContent = '⏳ جارٍ رفع الصورة...';
-  const url = await uploadToImgBB(file);
-  if (url) {
-    document.getElementById('wq-url').value = url;
-    status.textContent = '✓ تم الرفع بنجاح';
-    status.style.color = 'var(--green-c)';
-  } else {
-    status.textContent = '✗ فشل الرفع';
-    status.style.color = 'var(--red-c)';
+  if (!input.files || !input.files[0]) return;
+  const sh = allShuyookh.find(x => x.id === currentWthqSheikhId);
+  const urls = await gdUploadPicked(input, GDRIVE_SECTIONS.sheikh, sh ? sh.name_short : '', document.getElementById('wq-upload-status'));
+  if (urls[0]) {
+    document.getElementById('wq-url').value = urls[0];
+    const lbl = document.getElementById('wq-label');
+    if (!lbl.value.trim()) { const m = driveMimeHint(urls[0]); if (m && !m.startsWith('image/')) document.getElementById('wq-type').value = 'وثيقة'; }
   }
-  input.value = '';
 }
 
 async function saveWthq() {
-  const url=fixDriveUrl(document.getElementById('wq-url').value.trim());
+  // يُحفظ الرابط كما هو (رابط درايف يحمل نوع الملف)، والتحويل للعرض يتم عند العرض
+  const url=document.getElementById('wq-url').value.trim();
   if(!url){showToast('أدخل رابط الصورة',true);return;}
   const wthqType=document.getElementById('wq-type').value;
   const record={
@@ -2781,7 +2834,7 @@ async function handleSshPhotoUpload(input) {
   const origText = btn.textContent;
   btn.textContent = '⏳ جارٍ رفع الصورة...';
   btn.disabled = true;
-  const url = await uploadToImgBB(file);
+  const url = await uploadAttachment(file, GDRIVE_SECTIONS.sheikhSh, document.getElementById('ssh-short').value.trim(), p => { btn.textContent = '⏳ جارٍ رفع الصورة ' + p + '%'; });
   btn.textContent = origText;
   btn.disabled = false;
   if (url) {
@@ -3164,7 +3217,362 @@ async function runReport(type) {
   w.document.close();
 }
 
-// رفع صورة إلى ImgBB
+// ═══════════════════════════════
+// Google Drive — رفع المرفقات إلى مجلد البرنامج وعرضها بمعاينة داخل البرنامج
+// الملفات خاصة: لا تُفتح إلا لمن دخل بحساب جوجل صاحب المجلد
+// ═══════════════════════════════
+const GDRIVE_CFG = {
+  clientId: '903359449035-7ra0dv0mrdtv9nktn0s1clgduqs9famd.apps.googleusercontent.com', // معرّف OAuth
+  apiKey:   'AIzaSyB7DJzdYPh3F2b5rVG2TGBiR8LLzlCQ_TA', // مفتاح API مقيَّد بموقع البرنامج (Google Picker فقط)
+  appId:    '903359449035' // رقم مشروع Google Cloud «Mojam Shiokh» (أول معرّف OAuth)
+};
+const GDRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file'; // يرى البرنامج ملفاته هو فقط
+const GDRIVE_SECTIONS = { sheikh:'معجم الشيوخ', sheikhSh:'شيوخ الشيوخ', istidaa:'الاستدعاء الهندي', mujaz:'المجازون' };
+const GD_BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+function gdriveConfigured(){ return !!(GDRIVE_CFG.clientId && GDRIVE_CFG.apiKey && GDRIVE_CFG.appId); }
+
+let gdToken = null, gdTokenExp = 0, gdTokenClient = null, gdTokenCbs = [], gdAuthWaiters = [];
+let gdFolderCache = {}, gdNoAccess = {};
+const gdBlobCache = {}, gdScripts = {};
+try { const t = JSON.parse(sessionStorage.getItem('gd_token') || 'null'); if (t && t.exp > Date.now() + 60000) { gdToken = t.token; gdTokenExp = t.exp; } } catch(e) {}
+
+function gdTokenValid(){ return !!gdToken && gdTokenExp > Date.now() + 60000; }
+function gdLoadScript(src){
+  if (!gdScripts[src]) gdScripts[src] = new Promise((res, rej) => {
+    const s = document.createElement('script'); s.src = src; s.async = true; s.onload = res;
+    s.onerror = () => { delete gdScripts[src]; rej(new Error('تعذّر تحميل مكتبة جوجل — تحقق من الاتصال')); };
+    document.head.appendChild(s);
+  });
+  return gdScripts[src];
+}
+
+// تُحمَّل مكتبة الدخول مسبقًا، لأن نافذة جوجل يجب أن تُفتح مباشرة عند الضغط وإلا حجبها المتصفح
+async function gdPreload(){
+  gdUpdateNav();
+  if (!gdriveConfigured() || gdTokenClient) return;
+  try {
+    await gdLoadScript('https://accounts.google.com/gsi/client');
+    gdTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GDRIVE_CFG.clientId, scope: GDRIVE_SCOPE,
+      callback: (resp) => {
+        const cbs = gdTokenCbs; gdTokenCbs = [];
+        if (resp.error) { cbs.forEach(c => c.reject(new Error('رُفض الإذن: ' + resp.error))); return; }
+        gdToken = resp.access_token; gdTokenExp = Date.now() + (resp.expires_in || 3600) * 1000;
+        try { sessionStorage.setItem('gd_token', JSON.stringify({ token: gdToken, exp: gdTokenExp })); } catch(e) {}
+        try { localStorage.setItem('gd_consented', '1'); } catch(e) {}
+        cbs.forEach(c => c.resolve(gdToken));
+        gdAfterConnect();
+      },
+      error_callback: (err) => {
+        const cbs = gdTokenCbs; gdTokenCbs = [];
+        const msg = err && err.type === 'popup_closed' ? 'أُغلقت نافذة جوجل قبل الإذن' : err && err.type === 'popup_failed_to_open' ? 'حجب المتصفح نافذة جوجل — اسمح بالنوافذ المنبثقة' : 'تعذّر الدخول إلى جوجل';
+        cbs.forEach(c => c.reject(new Error(msg)));
+      }
+    });
+  } catch(e) { console.warn('Drive:', e.message); }
+}
+
+// تُستدعى من ضغطة المستخدم مباشرة
+function gdRequestToken(){
+  return new Promise((resolve, reject) => {
+    if (!gdTokenClient) { gdPreload(); reject(new Error('مكتبة جوجل لم تُحمَّل بعد، أعد المحاولة بعد لحظة')); return; }
+    gdTokenCbs.push({ resolve, reject });
+    let consented = false; try { consented = !!localStorage.getItem('gd_consented'); } catch(e) {}
+    gdTokenClient.requestAccessToken({ prompt: consented ? '' : 'consent' });
+  });
+}
+
+// إن لم تكن الجلسة نشطة تُعرض نافذة «تنشيط» ليضغطها المستخدم، ثم يكمل العمل تلقائيًا
+function gdEnsureToken(){
+  if (gdTokenValid()) return Promise.resolve(gdToken);
+  return new Promise((resolve, reject) => { gdAuthWaiters.push({ resolve, reject }); openModal('modal-gdrive-auth'); });
+}
+async function gdAuthClick(){
+  try {
+    const t = await gdRequestToken();
+    closeModal('modal-gdrive-auth');
+    const w = gdAuthWaiters; gdAuthWaiters = []; w.forEach(x => x.resolve(t));
+  } catch(e) { showToast(e.message, true); }
+}
+function gdAuthCancel(){
+  closeModal('modal-gdrive-auth');
+  const w = gdAuthWaiters; gdAuthWaiters = []; w.forEach(x => x.reject(new Error('أُلغي')));
+}
+function gdAfterConnect(){
+  gdUpdateNav();
+  gdNoAccess = {};
+  gdHydrate(document.body);
+  if (typeof currentPage !== 'undefined' && currentPage === 'shuyookh') renderShuyookh();
+  if (document.getElementById('modal-gdrive').classList.contains('open')) openDriveSettings();
+}
+
+async function gdApi(path, opts = {}){
+  if (opts.silent && !gdTokenValid()) { const e = new Error('جلسة درايف غير نشطة'); e.status = 401; throw e; }
+  const token = opts.silent ? gdToken : await gdEnsureToken();
+  const res = await fetch('https://www.googleapis.com/drive/v3/' + path, {
+    method: opts.method || 'GET', body: opts.body,
+    headers: Object.assign({ Authorization: 'Bearer ' + token }, opts.headers || {})
+  });
+  if (res.status === 401) { gdToken = null; gdTokenExp = 0; try { sessionStorage.removeItem('gd_token'); } catch(e) {} gdUpdateNav(); }
+  if (!res.ok) {
+    let msg = 'HTTP ' + res.status;
+    try { const j = await res.json(); msg = (j.error && j.error.message) || msg; } catch(e) {}
+    const err = new Error(msg); err.status = res.status; throw err;
+  }
+  return res;
+}
+
+// ── مجلد البرنامج: يُختار مرة واحدة بنافذة جوجل (فيحصل البرنامج على إذن الكتابة فيه) ──
+function gdRootId(){ try { return localStorage.getItem('gd_root_id') || ''; } catch(e) { return ''; } }
+async function gdPickRoot(){
+  const token = await gdEnsureToken();
+  await gdLoadScript('https://apis.google.com/js/api.js');
+  await new Promise(r => gapi.load('picker', r));
+  return new Promise((resolve, reject) => {
+    const view = new google.picker.DocsView(google.picker.ViewId.FOLDERS)
+      .setIncludeFolders(true).setSelectFolderEnabled(true).setMimeTypes('application/vnd.google-apps.folder');
+    new google.picker.PickerBuilder()
+      .addView(view).setOAuthToken(token).setDeveloperKey(GDRIVE_CFG.apiKey).setAppId(GDRIVE_CFG.appId)
+      .setLocale('ar').setTitle('اختر مجلد Mojam_Shiokh')
+      .setCallback(data => {
+        if (data.action === google.picker.Action.PICKED) {
+          const d = data.docs[0];
+          try { localStorage.setItem('gd_root_id', d.id); localStorage.setItem('gd_root_name', d.name || ''); } catch(e) {}
+          gdFolderCache = {}; gdUpdateNav();
+          showToast('✓ رُبط مجلد «' + (d.name || '') + '»');
+          resolve(d.id);
+        } else if (data.action === google.picker.Action.CANCEL) reject(new Error('لم يُختر مجلد'));
+      }).build().setVisible(true);
+  });
+}
+async function gdEnsureRoot(){ return gdRootId() || gdPickRoot(); }
+
+function gdQ(s){ return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+function gdSafeName(s){ return (String(s || '').replace(/[\/\\]/g, '-').replace(/\s+/g, ' ').trim() || 'بلا اسم').slice(0, 120); }
+async function gdFolder(parentId, name){
+  name = gdSafeName(name);
+  const key = parentId + '/' + name;
+  if (gdFolderCache[key]) return gdFolderCache[key];
+  const q = "mimeType='application/vnd.google-apps.folder' and trashed=false and name='" + gdQ(name) + "' and '" + parentId + "' in parents";
+  const found = await (await gdApi('files?q=' + encodeURIComponent(q) + '&fields=files(id)&pageSize=1')).json();
+  let id = found.files && found.files[0] && found.files[0].id;
+  if (!id) {
+    const made = await (await gdApi('files?fields=id', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] }) })).json();
+    id = made.id;
+  }
+  return (gdFolderCache[key] = id);
+}
+
+// رفع قابل للاستئناف (يدعم المقاطع الكبيرة ويُظهر نسبة التقدّم)
+async function gdUploadFile(file, folderId, onProgress){
+  const token = await gdEnsureToken();
+  const mime = file.type || 'application/octet-stream';
+  const meta = { name: file.name || ('مرفق-' + Date.now()), parents: [folderId] };
+  const fields = 'id,name,mimeType,size';
+  const send = (method, url, body, headers) => new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    Object.entries(headers).forEach(([k, v]) => xhr.setRequestHeader(k, v));
+    xhr.upload.onprogress = e => { if (e.lengthComputable && onProgress) onProgress(Math.round(e.loaded / e.total * 100)); };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) { try { resolve(JSON.parse(xhr.responseText)); } catch(e) { reject(new Error('ردّ غير مفهوم من درايف')); } }
+      else { let m = 'HTTP ' + xhr.status; try { m = JSON.parse(xhr.responseText).error.message || m; } catch(e) {} reject(new Error(m)); }
+    };
+    xhr.onerror = () => reject(new Error('انقطع الاتصال أثناء الرفع'));
+    xhr.send(body);
+  });
+  const init = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=' + fields, {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json; charset=UTF-8', 'X-Upload-Content-Type': mime },
+    body: JSON.stringify(meta)
+  });
+  if (!init.ok) { let m = 'HTTP ' + init.status; try { m = (await init.json()).error.message || m; } catch(e) {} const err = new Error(m); err.status = init.status; throw err; }
+  const session = init.headers.get('Location');
+  if (session) return send('PUT', session, file, { 'Content-Type': mime });
+  // احتياط: رفع متعدد الأجزاء في طلب واحد
+  const b = 'gd' + Date.now();
+  const body = new Blob(['--' + b + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(meta) + '\r\n--' + b + '\r\nContent-Type: ' + mime + '\r\n\r\n', file, '\r\n--' + b + '--']);
+  return send('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=' + fields, body,
+    { Authorization: 'Bearer ' + token, 'Content-Type': 'multipart/related; boundary=' + b });
+}
+
+// الواجهة الموحّدة: يرفع إلى Mojam_Shiokh / القسم / صاحب المرفق، ويعيد رابط الملف في درايف
+async function uploadAttachment(file, section, person, onProgress){
+  if (!gdriveConfigured()) {
+    if (file.type && file.type.startsWith('image/')) return uploadToImgBB(file);
+    showToast('الرفع إلى Google Drive لم يُعدّ بعد — الصق رابط الملف', true); return null;
+  }
+  try {
+    await gdEnsureToken();
+    let root = await gdEnsureRoot(), sec;
+    try { sec = await gdFolder(root, section); }
+    catch(e) {
+      if (e.status !== 404) throw e;           // المجلد المختار حُذف أو سُحب إذنه
+      try { localStorage.removeItem('gd_root_id'); } catch(x) {}
+      gdFolderCache = {}; root = await gdPickRoot(); sec = await gdFolder(root, section);
+    }
+    const dest = await gdFolder(sec, person);
+    const f = await gdUploadFile(file, dest, onProgress);
+    gdMetaSet(f.id, { mime: f.mimeType || '', name: f.name || '', size: +f.size || 0 });
+    return 'https://drive.google.com/file/d/' + f.id + '/view#mime=' + encodeURIComponent(f.mimeType || '');
+  } catch(e) {
+    if (e.message !== 'أُلغي' && e.message !== 'لم يُختر مجلد') showToast('تعذّر الرفع إلى درايف: ' + e.message, true);
+    return null;
+  }
+}
+
+// ── بيانات الملف ونوعه ──
+function gdMetaAll(){ try { return JSON.parse(localStorage.getItem('gd_meta') || '{}'); } catch(e) { return {}; } }
+function gdMetaSet(id, m){ const a = gdMetaAll(); a[id] = m; try { localStorage.setItem('gd_meta', JSON.stringify(a)); } catch(e) {} }
+async function gdMeta(id){
+  const c = gdMetaAll()[id]; if (c) return c;
+  const j = await (await gdApi('files/' + id + '?fields=mimeType,name,size', { silent: true })).json();
+  const m = { mime: j.mimeType || '', name: j.name || '', size: +j.size || 0 }; gdMetaSet(id, m); return m;
+}
+function driveIdOf(url){
+  url = String(url || '');
+  if (!/drive\.google\.com|docs\.google\.com/.test(url)) return '';
+  const m = url.match(/\/file\/d\/([\w-]{10,})/) || url.match(/[?&]id=([\w-]{10,})/);
+  return m ? m[1] : '';
+}
+function driveMimeHint(url){
+  const m = String(url || '').match(/#mime=([^&\s]+)/);
+  if (m) { try { return decodeURIComponent(m[1]); } catch(e) {} }
+  const id = driveIdOf(url); const c = id && gdMetaAll()[id];
+  return c ? c.mime : '';
+}
+function gdFileIcon(mime){ mime = mime || ''; return mime.startsWith('video/') ? '🎬' : mime.startsWith('audio/') ? '🎧' : mime === 'application/pdf' ? '📄' : mime.startsWith('image/') ? '🖼️' : '📎'; }
+async function gdBlobUrl(id){
+  if (gdBlobCache[id]) return gdBlobCache[id];
+  const res = await gdApi('files/' + id + '?alt=media', { silent: true });
+  return (gdBlobCache[id] = URL.createObjectURL(await res.blob()));
+}
+
+// ── عرض الصور الخاصة: كل <img> رابطه في درايف يُجلب بإذن الحساب ويُعرض ──
+function gdHydrateImg(img){
+  if (!gdTokenValid()) return;
+  const src = img.getAttribute('src') || '';
+  const id = driveIdOf(src);
+  if (!id || gdNoAccess[id] || img.dataset.gdBusy) return;
+  img.dataset.gdBusy = '1';
+  const onerr = img.getAttribute('onerror');
+  img.removeAttribute('onerror');
+  img.src = GD_BLANK;
+  (async () => {
+    try {
+      const meta = await gdMeta(id);
+      if (meta.mime && !meta.mime.startsWith('image/')) {
+        const t = document.createElement('span');
+        t.className = 'gd-tile';
+        t.innerHTML = '<span class="gd-tile-ic">' + gdFileIcon(meta.mime) + '</span><span class="gd-tile-name">' + esc(meta.name || 'ملف') + '</span>';
+        t.onclick = ev => { ev.stopPropagation(); openDriveViewer(id); };
+        img.replaceWith(t);
+        return;
+      }
+      img.src = await gdBlobUrl(id);
+      if (onerr) img.setAttribute('onerror', onerr);
+    } catch(e) {
+      gdNoAccess[id] = true;              // رابط قديم ليس من رفع البرنامج: يبقى كما كان
+      if (onerr) img.setAttribute('onerror', onerr);
+      img.src = src;
+    } finally { delete img.dataset.gdBusy; }
+  })();
+}
+function gdHydrate(root){
+  if (!root || !gdTokenValid()) return;
+  (root.tagName === 'IMG' ? [root] : root.querySelectorAll ? root.querySelectorAll('img') : []).forEach(gdHydrateImg);
+}
+new MutationObserver(muts => {
+  if (!gdTokenValid()) return;
+  for (const m of muts) {
+    if (m.type === 'attributes') gdHydrateImg(m.target);
+    else m.addedNodes.forEach(n => { if (n.nodeType === 1) gdHydrate(n); });
+  }
+}).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+
+// روابط درايف تُفتح في نافذة المعاينة داخل البرنامج بدل صفحة جديدة
+document.addEventListener('click', ev => {
+  if (!gdriveConfigured()) return;
+  const a = ev.target.closest && ev.target.closest('a[href*="drive.google.com"]');
+  if (!a || a.id === 'gdview-open') return;
+  const id = driveIdOf(a.getAttribute('href'));
+  if (!id) return;
+  ev.preventDefault(); ev.stopPropagation();
+  openDriveViewer(id);
+}, true);
+
+// ── نافذة المعاينة: صورة، PDF، مقطع، صوت، أو عارض درايف لما سواها ──
+async function openDriveViewer(id){
+  const body = document.getElementById('gdview-body'), title = document.getElementById('gdview-title');
+  document.getElementById('gdview-open').href = 'https://drive.google.com/file/d/' + id + '/view';
+  title.textContent = 'معاينة';
+  body.innerHTML = '<div class="loading-state" style="padding:40px"><div class="spinner"></div><p>جارٍ التحميل من درايف...</p></div>';
+  openModal('modal-gdview');
+  const drivePreview = () => '<iframe src="https://drive.google.com/file/d/' + id + '/preview" allow="autoplay" style="width:100%;height:75vh;border:none;border-radius:var(--r2);background:#fff"></iframe>';
+  try {
+    await gdEnsureToken();
+    let meta;
+    try { meta = await gdMeta(id); }
+    catch(e) { body.innerHTML = drivePreview(); return; }   // ملف لم يرفعه البرنامج: عارض درايف
+    title.textContent = meta.name || 'معاينة';
+    const mime = meta.mime || '', small = !meta.size || meta.size <= 40 * 1024 * 1024;
+    if (mime.startsWith('image/')) body.innerHTML = '<img src="' + await gdBlobUrl(id) + '" style="max-width:100%;max-height:75vh;border-radius:var(--r2)">';
+    else if (mime === 'application/pdf') body.innerHTML = '<iframe src="' + await gdBlobUrl(id) + '" style="width:100%;height:75vh;border:none;border-radius:var(--r2);background:#fff"></iframe>';
+    else if (mime.startsWith('video/') && small) body.innerHTML = '<video src="' + await gdBlobUrl(id) + '" controls style="max-width:100%;max-height:75vh;border-radius:var(--r2)"></video>';
+    else if (mime.startsWith('audio/') && small) body.innerHTML = '<audio src="' + await gdBlobUrl(id) + '" controls style="width:100%"></audio>';
+    else body.innerHTML = drivePreview();
+  } catch(e) {
+    body.innerHTML = '<div class="empty-state"><span class="es-ic">⚠️</span><p>تعذّرت المعاينة</p><div class="es-sub">' + esc(e.message) + '</div></div>';
+  }
+}
+function closeDriveViewer(){ document.getElementById('gdview-body').innerHTML = ''; closeModal('modal-gdview'); }
+
+// ── الإعدادات والحالة ──
+function gdUpdateNav(){
+  const b = document.getElementById('nb-gdrive'); if (!b) return;
+  b.textContent = !gdriveConfigured() ? 'غير مُعدّ' : !gdRootId() ? 'بلا مجلد' : gdTokenValid() ? 'نشط' : 'غير نشط';
+}
+function openDriveSettings(){
+  const st = document.getElementById('gd-status');
+  const row = (ok, label, val) => '<div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--b2)"><span>' + label + '</span><b style="color:' + (ok ? 'var(--green-c)' : 'var(--red-c)') + '">' + val + '</b></div>';
+  let rootName = ''; try { rootName = localStorage.getItem('gd_root_name') || ''; } catch(e) {}
+  st.innerHTML = !gdriveConfigured()
+    ? '<p style="line-height:1.9;color:var(--cream2)">لم تُضف بعد بيانات مشروع Google Cloud (معرّف OAuth ومفتاح API ورقم المشروع). وإلى أن تُضاف: الصور تُرفع كما كانت، وبقية الملفات تُلصق روابطها.</p>'
+    : row(true, 'الإعداد', 'مكتمل') + row(gdTokenValid(), 'جلسة جوجل', gdTokenValid() ? 'نشطة' : 'غير نشطة') + row(!!gdRootId(), 'مجلد البرنامج', rootName ? '«' + esc(rootName) + '»' : 'لم يُختر');
+  ['gd-btn-connect', 'gd-btn-folder', 'gd-btn-off'].forEach(i => { const el = document.getElementById(i); if (el) el.style.display = gdriveConfigured() ? '' : 'none'; });
+  openModal('modal-gdrive');
+}
+async function gdConnectClick(){ try { await gdRequestToken(); showToast('✓ نُشّطت جلسة درايف'); } catch(e) { showToast(e.message, true); } }
+async function gdFolderClick(){ try { await gdPickRoot(); openDriveSettings(); } catch(e) { if (e.message !== 'لم يُختر مجلد' && e.message !== 'أُلغي') showToast(e.message, true); } }
+function gdDisconnect(){
+  if (!confirm('فصل جلسة درايف على هذا الجهاز؟ (الملفات تبقى في درايفك)')) return;
+  try { if (gdToken && window.google && google.accounts) google.accounts.oauth2.revoke(gdToken, () => {}); } catch(e) {}
+  gdToken = null; gdTokenExp = 0;
+  try { sessionStorage.removeItem('gd_token'); localStorage.removeItem('gd_consented'); } catch(e) {}
+  gdUpdateNav(); openDriveSettings(); showToast('فُصلت جلسة درايف');
+}
+
+// زر رفع عام: يرفع الملفات المختارة واحدًا واحدًا ويعيد روابطها
+async function gdUploadPicked(input, section, person, statusEl){
+  const files = [...(input.files || [])]; input.value = '';
+  const urls = [];
+  for (let i = 0; i < files.length; i++) {
+    const tag = files.length > 1 ? ' (' + (i + 1) + '/' + files.length + ')' : '';
+    if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = 'var(--gold3)'; statusEl.textContent = '⏳ جارٍ رفع «' + files[i].name + '»' + tag; }
+    const url = await uploadAttachment(files[i], section, person, p => { if (statusEl) statusEl.textContent = '⏳ جارٍ رفع «' + files[i].name + '»' + tag + ' — ' + p + '%'; });
+    if (url) urls.push(url);
+  }
+  if (statusEl) {
+    statusEl.style.display = files.length ? 'block' : 'none';
+    statusEl.style.color = urls.length === files.length ? 'var(--green-c)' : 'var(--red-c)';
+    statusEl.textContent = urls.length === files.length ? '✓ رُفع ' + urls.length + ' ملف' : '✗ رُفع ' + urls.length + ' من ' + files.length;
+  }
+  return urls;
+}
+
+// رفع صورة إلى ImgBB (يُستعمل فقط إن لم يُعدّ درايف بعد)
 async function uploadToImgBB(file) {
   const formData = new FormData();
   formData.append('image', file);
@@ -3197,6 +3605,8 @@ function fixDriveUrl(url) {
 // فتح الملف بالطريقة الصحيحة
 function openFile(url) {
   if (!url || !url.trim()) return;
+  const gdId = driveIdOf(url);
+  if (gdId && gdriveConfigured()) { openDriveViewer(gdId); return; }
   // PDF من Google Drive → افتح بصيغة preview
   const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/);
   if (driveMatch) {
@@ -3227,6 +3637,8 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 
 function viewImg(url){
   if(!url||!url.trim()) return;
+  const gdId = driveIdOf(url);
+  if (gdId && gdriveConfigured()) { openDriveViewer(gdId); return; }
   window.open(url, '_blank');
 }
 
@@ -3271,7 +3683,7 @@ let istidaaSeeded = false;
 function mapIhRow(r) {
   const signed = r.signed_url || '';
   return { id: r.id, n: r.name, d: r.dates || '', t: r.scope || '', x: r.notes || '',
-    signed_url: signed, imgs: signed.split('\n').map(s => s.trim()).filter(Boolean) };
+    signed_url: signed, imgs: signed.split(/\s*[\n|]\s*/).map(s => s.trim()).filter(Boolean) };
 }
 
 async function loadIstidaaHindi() {
@@ -3331,7 +3743,10 @@ function renderPendingIstidaat() {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="fg" style="margin:0"><label>تاريخ الإجازة *</label><input id="pend-date-${p.id}" value="${esc(p.ijaza_date || '')}" placeholder="مثال: ٨ محرم ١٤٤٧هـ"></div>
         <div class="fg" style="margin:0"><label>الشمول</label><select id="pend-scope-${p.id}">${scopes.map(s => `<option ${p.scope === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
-        <div class="fg" style="margin:0;grid-column:1/-1"><label>📎 مرفق الاستدعاء الموقّع من الشيخ (ألصق الرابط)</label><input id="pend-signed-${p.id}" value="${esc(p.signed_url || '')}" placeholder="رابط صورة أو PDF للاستدعاء بعد توقيع الشيخ"></div>
+        <div class="fg" style="margin:0;grid-column:1/-1"><label>📎 مرفق الاستدعاء الموقّع من الشيخ (ارفعه أو ألصق الرابط)</label>
+          <div style="display:flex;gap:6px;align-items:center"><input id="pend-signed-${p.id}" value="${esc(p.signed_url || '')}" placeholder="رابط صورة أو PDF للاستدعاء بعد توقيع الشيخ" style="flex:1">
+          <label class="btn btn-soft btn-sm" style="white-space:nowrap;height:38px;cursor:pointer">📎 رفع<input type="file" multiple style="display:none" onchange="handlePendUpload(this, ${p.id})"></label></div>
+          <div id="pend-upload-status-${p.id}" style="font-size:11px;margin-top:4px;display:none"></div></div>
         <div class="fg" style="margin:0;grid-column:1/-1"><label>ملاحظات</label><input id="pend-note-${p.id}" value="${esc(p.notes || '')}"></div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px">
@@ -3339,6 +3754,15 @@ function renderPendingIstidaat() {
         <button class="btn btn-danger btn-sm" onclick="deletePending(${p.id})">🗑️ حذف</button>
       </div>
     </div>`).join('');
+}
+
+async function handlePendUpload(input, id) {
+  const p = (pendingList || []).find(x => x.id === id);
+  const urls = await gdUploadPicked(input, GDRIVE_SECTIONS.istidaa, p ? p.sheikh_name : '', document.getElementById('pend-upload-status-' + id));
+  if (urls.length) {
+    const el = document.getElementById('pend-signed-' + id);
+    el.value = [el.value.trim(), ...urls].filter(Boolean).join(' | ');
+  }
 }
 
 async function addPendingFromForm() {
@@ -3539,7 +3963,7 @@ function getTawabiBadge(t) {
 let editingIstidaaIdx = null;
 let ihTempImgs = []; // مصفوفة روابط الصور المؤقتة
 
-function isPdf(url) { return url && (url.toLowerCase().endsWith('.pdf') || url.includes('/pdf') || url.includes('type=pdf')); }
+function isPdf(url) { return url && (url.toLowerCase().endsWith('.pdf') || url.includes('/pdf') || url.includes('type=pdf') || driveMimeHint(url) === 'application/pdf'); }
 
 function renderIhImgsPreview() {
   const cont = document.getElementById('ih-imgs-preview');
@@ -3554,7 +3978,7 @@ function renderIhImgsPreview() {
   if (!ihTempImgs.length) { cont.innerHTML = ''; return; }
   cont.innerHTML = ihTempImgs.map((url, i) => {
     if (isPdf(url)) {
-      return '<div style="position:relative;display:inline-flex;flex-direction:column;align-items:center;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r1);padding:8px 12px;cursor:pointer;gap:4px" onclick="window.open(\'' + esc(url) + '\',\'_blank\')">' +
+      return '<div style="position:relative;display:inline-flex;flex-direction:column;align-items:center;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r1);padding:8px 12px;cursor:pointer;gap:4px" onclick="openFile(\'' + esc(url) + '\')">' +
         '<span style="font-size:28px">📄</span>' +
         '<span style="font-size:10px;color:var(--cream3)">PDF</span>' +
         '<button onclick="event.stopPropagation();removeIhImg(' + i + ')" style="position:absolute;top:-6px;left:-6px;background:var(--red-bg);border:1px solid var(--red-b);color:var(--red-c);border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:11px;line-height:20px;text-align:center;padding:0">✕</button>' +
@@ -3608,6 +4032,11 @@ function openEditIstidaa(idx) {
   openModal('modal-istidaa');
 }
 
+async function handleIhUpload(input) {
+  const urls = await gdUploadPicked(input, GDRIVE_SECTIONS.istidaa, document.getElementById('ih-inp-name').value.trim(), document.getElementById('ih-upload-status'));
+  if (urls.length) { ihTempImgs.push(...urls); renderIhImgsPreview(); }
+}
+
 function addIhLink() {
   const inp = document.getElementById('ih-inp-link');
   const url = inp.value.trim();
@@ -3632,17 +4061,31 @@ async function saveIstidaa() {
 
   // تحديد الروابط الجديدة (التي لم تكن موجودة سابقاً)
   let oldImgs = [];
+  const dates = date.replace(/\s*\|\s*/g, '\n');
+  let item;
   if (editingIstidaaIdx !== null) {
-    oldImgs = istidaaData[editingIstidaaIdx].imgs || [];
-    istidaaData[editingIstidaaIdx].n = name;
-    istidaaData[editingIstidaaIdx].d = date.replace(/\s*\|\s*/g, '\n');
-    istidaaData[editingIstidaaIdx].t = tawabi;
-    istidaaData[editingIstidaaIdx].x = notes;
-    istidaaData[editingIstidaaIdx].imgs = [...ihTempImgs];
-    istidaaData[editingIstidaaIdx].img = ihTempImgs[0] || '';
+    item = istidaaData[editingIstidaaIdx];
+    oldImgs = item.imgs || [];
+    // الشمول قد يكون عدة أسطر (سطر لكل تاريخ): يُستبدل السطر الأول فقط ولا تُمحى البقية
+    const tLines = (item.t || '').split('\n'); tLines[0] = tawabi;
+    Object.assign(item, { n: name, d: dates, t: tLines.join('\n'), x: notes, imgs: [...ihTempImgs], img: ihTempImgs[0] || '' });
   } else {
-    istidaaData.push({ n: name, d: date, t: tawabi, x: notes, imgs: [...ihTempImgs], img: ihTempImgs[0] || '' });
+    item = { n: name, d: dates, t: tawabi, x: notes, imgs: [...ihTempImgs], img: ihTempImgs[0] || '' };
+    istidaaData.push(item);
   }
+
+  // الحفظ في Supabase (جدول istidaa_hindi)
+  const rec = { name, dates, scope: item.t, notes, signed_url: ihTempImgs.join('\n') };
+  const { data: savedRow, error: saveErr } = item.id
+    ? await sb.from('istidaa_hindi').update(rec).eq('id', item.id).select().single()
+    : await sb.from('istidaa_hindi').insert(rec).select().single();
+  if (saveErr) {
+    btn.textContent = 'حفظ ←'; btn.disabled = false;
+    showToast('تعذّر الحفظ: ' + saveErr.message, true);
+    return;
+  }
+  if (savedRow) item.id = savedRow.id;
+  item.signed_url = rec.signed_url;
 
   // ربط المرفقات بوثائق الشيخ في قاعدة البيانات
   const newLinks = ihTempImgs.filter(u => !oldImgs.includes(u));
@@ -3675,8 +4118,7 @@ async function saveIstidaa() {
   filterIstidaa();
 }
 
-// Initialize on page load
-setTimeout(initIstidaa, 100);
+// يُحمَّل الاستدعاء الهندي بعد تسجيل الدخول (من loadAll) لأن RLS يمنع القراءة قبله
 
 
 // ═══════════════════════════════
@@ -3812,6 +4254,16 @@ function openEditMujaz(idx) {
   document.getElementById('btn-save-mujaz').textContent = 'تحديث ←';
   renderMjImgsPreview();
   openModal('modal-mujaz');
+}
+
+async function handleMjUpload(input) {
+  const urls = await gdUploadPicked(input, GDRIVE_SECTIONS.mujaz, document.getElementById('mj-inp-name').value.trim(), document.getElementById('mj-upload-status'));
+  if (urls.length) { mjTempImgs.push(...urls); renderMjImgsPreview(); }
+}
+async function handleMjgUpload(input) {
+  const date = document.getElementById('mjg-inp-date').value.trim();
+  const urls = await gdUploadPicked(input, GDRIVE_SECTIONS.mujaz, 'استدعاء ' + (date || 'بلا تاريخ'), document.getElementById('mjg-upload-status'));
+  if (urls[0]) document.getElementById('mjg-inp-link').value = urls[0];
 }
 
 function addMjLink() {
@@ -3992,6 +4444,15 @@ function buildIstidaaText() {
   text += '، ' + ISTIDAA_END;
 
   return text;
+}
+
+// الألقاب المؤنثة يتبعها «حفظها الله» تلقائيًا، وما سواها «حفظه الله»
+// («العلّامة» تُطلق على الرجال فلا تُعدّ مؤنثة رغم التاء)
+const IG_FEMININE_TITLES = ['السيِّدة', 'الشريفة', 'الأستاذة', 'الدكتورة'];
+function onIgTitleChange() {
+  const title = document.getElementById('ig-sheikh-title').value;
+  document.getElementById('ig-sheikh-dua').value = IG_FEMININE_TITLES.includes(title) ? 'حفظها الله' : 'حفظه الله';
+  updateIgPreview();
 }
 
 function igOpts() {
