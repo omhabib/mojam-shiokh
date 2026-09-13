@@ -128,6 +128,7 @@ mark.hl{background:rgba(212,168,67,0.3);color:var(--gold1);border-radius:3px;pad
 .badge-green{background:var(--green-bg);color:var(--green-c);border:1px solid rgba(40,120,60,0.3)}
 .badge-red{background:var(--red-bg);color:var(--red-c);border:1px solid var(--red-b)}
 .badge-blue{background:rgba(20,50,120,0.3);color:#88a8e8;border:1px solid rgba(30,60,140,0.4)}
+.badge-wakala{background:#efe3f5;color:#6b3a80;border:1px solid #ddc4e8}
 
 /* ═══════ DETAIL PAGE ═══════ */
 .detail-page{display:none;position:fixed;inset:0;background:var(--bg2);z-index:100;overflow-y:auto;direction:rtl}
@@ -582,6 +583,12 @@ try{ localStorage.removeItem('theme'); }catch(e){}
               <option value="الشيخ">الشيخ</option>
               <option value="السيّد">السيّد</option>
               <option value="السيِّدة">السيِّدة</option>
+              <option value="الشريف">الشريف</option>
+              <option value="الشريفة">الشريفة</option>
+              <option value="الأستاذ">الأستاذ</option>
+              <option value="الأستاذة">الأستاذة</option>
+              <option value="الدكتور">الدكتور</option>
+              <option value="الدكتورة">الدكتورة</option>
               <option value="العلّامة">العلّامة</option>
               <option value="المسنِد">المسنِد</option>
               <option value="المعمَّر">المعمَّر</option>
@@ -948,6 +955,14 @@ try{ localStorage.removeItem('theme'); }catch(e){}
       <option value="سماع">سماع</option>
       <option value="إجازة خاصة">إجازة خاصة</option>
       <option value="إجازة في الطريقة">إجازة في الطريقة</option>
+      <option value="تدبُّج">تدبُّج</option>
+    </select>
+  </div>
+
+  <div class="fg"><label>الصفة <span style="color:var(--cream3);font-weight:400">(الأصل الأصالة، ولا يُنصّ إلا على الوكالة)</span></label>
+    <select id="rw-wakala">
+      <option value="أصالة">أصالة</option>
+      <option value="وكالة">وكالة</option>
     </select>
   </div>
 
@@ -1020,6 +1035,13 @@ try{ localStorage.removeItem('theme'); }catch(e){}
       <option value="سماع">سماع</option>
       <option value="إجازة خاصة">إجازة خاصة</option>
       <option value="إجازة في الطريقة">إجازة في الطريقة</option>
+      <option value="تدبُّج">تدبُّج</option>
+    </select>
+  </div>
+  <div class="fg"><label>الصفة <span style="color:var(--cream3);font-weight:400">(الأصل الأصالة، ولا يُنصّ إلا على الوكالة)</span></label>
+    <select id="rawu-wakala">
+      <option value="أصالة">أصالة</option>
+      <option value="وكالة">وكالة</option>
     </select>
   </div>
   <div class="modal-footer">
@@ -1870,6 +1892,7 @@ function openAddRawu() {
   document.getElementById('rawu-suggest').style.display = 'none';
   document.getElementById('rawu-hint').textContent = '';
   document.getElementById('rawu-type').value = 'إجازة عامة';
+  document.getElementById('rawu-wakala').value = 'أصالة';
   openModal('modal-add-rawu');
 }
 
@@ -1904,7 +1927,7 @@ async function saveRawu() {
   const sid = document.getElementById('rawu-sheikh-id').value;
   if (!sid) { showToast('اختر شيخًا من المعجم', true); return; }
   const teacher = allShuyookhSh.find(s => s.id === detailSheikhShId);
-  const rec = { sheikh_id: parseInt(sid), rawi_id: detailSheikhShId, rawi_name: teacher ? (teacher.name_short || null) : null, ijaza_type: document.getElementById('rawu-type').value };
+  const rec = { sheikh_id: parseInt(sid), rawi_id: detailSheikhShId, rawi_name: teacher ? (teacher.name_short || null) : null, ijaza_type: document.getElementById('rawu-type').value, wakala: document.getElementById('rawu-wakala').value || 'أصالة' };
   const { error } = await sb.from('sheikh_riwaya').insert(rec);
   if (error) { showToast('خطأ: ' + error.message, true); return; }
   showToast('✓ تمت الإضافة إلى القائمة');
@@ -2064,6 +2087,13 @@ async function openDetail(id) {
   document.getElementById('detail-page').scrollTop=0;
 }
 
+// ═══ شارة الوكالة: الأصل الأصالة فلا تُظهَر، ولا يُنصّ إلا على الوكالة ═══
+function wakalaBadge(r){
+  return (r && r.wakala==='وكالة')
+    ? '<span class="badge badge-wakala" style="margin-left:6px" title="أُجيز له بالوكالة عن هذا الشيخ، والوكيل كالأصيل">وكالة</span>'
+    : '';
+}
+
 // ═══ الحواشي (المراجع) داخل النص: {نص} → رقم مرفوع + قائمة مراجع ═══
 function renderRefs(rawText){
   const notes=[];
@@ -2167,6 +2197,7 @@ async function loadDetailRiwaya(id) {
       <div class="riwaya-item-name">${esc(name)}</div>
       <div class="riwaya-item-meta">
         ${r.ijaza_type?`<span class="badge badge-gold" style="margin-left:6px">${esc(r.ijaza_type)}</span>`:''}
+        ${wakalaBadge(r)}
         ${dateStr?`<span style="margin-left:6px">📅 ${dateStr}</span>`:''}
         ${r.masmouat?`<span>🎧 مسموعات</span>`:''}
       </div>
@@ -2507,6 +2538,7 @@ function openAddRiwaya(sheikhId) {
   document.getElementById('rw-rawi-hint').textContent='';
   ['rw-day-name','rw-day-wday','rw-day-num','rw-month'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('rw-type').value='إجازة عامة';
+  document.getElementById('rw-wakala').value='أصالة';
   document.querySelector('#modal-riwaya .modal h3').textContent = '+ إضافة شيخ رواية';
   openModal('modal-riwaya');
 }
@@ -2570,6 +2602,7 @@ async function saveRiwaya() {
     rawi_id:rawiId,
     rawi_name:rawiName,
     ijaza_type:document.getElementById('rw-type').value,
+    wakala:document.getElementById('rw-wakala').value||'أصالة',
     masmouat:document.getElementById('rw-masmouat').value||null,
     date_day:[document.getElementById('rw-day-name').value,document.getElementById('rw-day-wday').value,document.getElementById('rw-day-num').value].filter(Boolean).join(' ')||null,
     date_month:document.getElementById('rw-month').value||null,
@@ -2615,6 +2648,7 @@ async function editRiwayaFull(riwayaId) {
   document.getElementById('rw-suggest').style.display='none';
   const rwh=document.getElementById('rw-rawi-hint'); rwh.innerHTML = data.rawi_id ? '✅ مربوط باسم موحّد' : ''; rwh.style.color='var(--green-c)';
   document.getElementById('rw-type').value = data.ijaza_type || 'إجازة عامة';
+  document.getElementById('rw-wakala').value = data.wakala || 'أصالة';
   document.getElementById('rw-masmouat').value = data.masmouat || '';
 
   // Parse date_day (e.g. "يوم الأربعاء ١٦")
@@ -2857,6 +2891,7 @@ async function openDetailSh(id) {
         <div class="riwaya-item-name" style="cursor:pointer" onclick="closeDetailSh();openDetail(${r.sheikh_id})">${esc(sheikhName)}</div>
         <div class="riwaya-item-meta">
           ${r.ijaza_type?`<span class="badge badge-gold" style="margin-left:6px">${esc(r.ijaza_type)}</span>`:''}
+          ${wakalaBadge(r)}
           ${r.masmouat?`<span>🎧 مسموعات</span>`:''}
         </div>
         ${r.masmouat?`<div style="padding:6px 12px;font-size:13px;color:var(--cream3);line-height:1.9;border-top:1px solid var(--b2)">${mr.html}${mr.fnHtml}</div>`:''}
@@ -3104,6 +3139,7 @@ async function runReport(type) {
               ${rw.map(r=>`<div style="padding:4px 0 4px 40px;font-size:13px;color:#555;border-top:1px solid #f0ece0">
                 <span style="color:#333;font-weight:600">${r.rawi_name||''}</span>
                 <span style="background:#eee;padding:1px 6px;border-radius:8px;font-size:11px;margin:0 4px">${r.ijaza_type||''}</span>
+                ${r.wakala==='وكالة'?`<span style="background:#efe3f5;color:#6b3a80;padding:1px 6px;border-radius:8px;font-size:11px;margin:0 4px">وكالة</span>`:''}
                 ${type==='riwaya-full'&&r.masmouat?`<div style="font-size:12px;color:#888;margin-top:2px">📚 ${refHtml(r.masmouat)}</div>`:''}
               </div>`).join('')}
             </div>`;
