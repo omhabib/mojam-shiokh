@@ -1507,6 +1507,7 @@ window.onload = () => initAuth();
 async function loadAll() {
   gdPreload();
   initIstidaa();
+  initMujazoon();
   await Promise.all([loadShuyookh(), loadShuyookhSh()]);
 }
 
@@ -1529,11 +1530,13 @@ async function downloadBackup(el) {
   const label = el ? el.innerHTML : '';
   if (el) el.innerHTML = '<span class="nav-ic">⏳</span>جارٍ التصدير...';
   try {
-    const tables = ['shuyookh', 'shuyookh_shuyookh', 'akhz', 'sheikh_riwaya', 'wathaeq'];
+    const tables = ['shuyookh', 'shuyookh_shuyookh', 'akhz', 'sheikh_riwaya', 'wathaeq', 'istidaa_hindi', 'issued_istidaat', 'mujazoon'];
     const backup = { app: 'معجم شيوخ ابن حبيب الله', exported_at: new Date().toISOString(), tables: {} };
     const counts = {};
     for (const t of tables) {
-      const rows = await fetchAllRows(t);
+      let rows;
+      try { rows = await fetchAllRows(t); }
+      catch (err) { (backup.errors = backup.errors || {})[t] = err.message; continue; } // جدول غير موجود لا يُفشل النسخة كلها
       backup.tables[t] = rows;
       counts[t] = rows.length;
     }
@@ -4128,8 +4131,23 @@ let mujazoonData = [];
 let mujazoonFiltered = [];
 let editingMujazIdx = null;
 let mjTempImgs = [];
+let mjTableError = '';   // يُملأ إن لم يوجد جدول mujazoon بعد
 
-function initMujazoon() {
+// صفّ من جدول mujazoon ← عنصر العرض
+function mapMjRow(r) {
+  return { id: r.id, name: r.name || '', date: r.ijaza_date || '', masmu: r.masmu || '', notes: r.notes || '',
+    imgs: String(r.attachments || '').split(/\s*[\n|]\s*/).map(s => s.trim()).filter(Boolean),
+    group: Array.isArray(r.group_names) && r.group_names.length ? r.group_names : null, groupKey: r.group_key || null };
+}
+
+async function initMujazoon() {
+  try {
+    const rows = await fetchAllRows('mujazoon');
+    mujazoonData = rows.map(mapMjRow);
+    mjTableError = '';
+  } catch (e) {
+    mjTableError = e.message || 'تعذّر التحميل';
+  }
   document.getElementById('mj-total').textContent = mujazoonData.length;
   document.getElementById('nb-mujazoon').textContent = mujazoonData.length || '—';
   filterMujazoon();
@@ -4162,6 +4180,10 @@ function renderMujazoon(items) {
   document.getElementById('mj-total').textContent = mujazoonData.length;
   document.getElementById('nb-mujazoon').textContent = mujazoonData.length || '—';
 
+  if (mjTableError) {
+    container.innerHTML = '<div class="empty-state"><span class="es-ic">⚠️</span><p>تعذّر تحميل المجازين</p><div class="es-sub">' + esc(mjTableError) + ' — إن لم يُنشأ جدول mujazoon بعد فشغّل أمر SQL الخاص به</div></div>';
+    return;
+  }
   if (items.length === 0) {
     container.innerHTML = '<div class="empty-state"><span class="es-ic">🎓</span><p>لا يوجد مجازون بعد</p><div class="es-sub">أضف مُجازًا أو مجموعة</div></div>';
     return;
@@ -4296,7 +4318,7 @@ function renderMjImgsPreview() {
   container.innerHTML = html;
 }
 
-function saveMujaz() {
+async function saveMujaz() {
   const name = document.getElementById('mj-inp-name').value.trim();
   const date = document.getElementById('mj-inp-date').value.trim();
   if (!name) { showToast('أدخل الاسم', true); return; }
@@ -4304,19 +4326,21 @@ function saveMujaz() {
 
   const masmu = document.getElementById('mj-inp-masmu').value.trim();
   const notes = document.getElementById('mj-inp-notes').value.trim();
+  const rec = { name, ijaza_date: date, masmu, notes, attachments: mjTempImgs.join('\n') };
 
-  if (editingMujazIdx !== null) {
-    mujazoonData[editingMujazIdx].name = name;
-    mujazoonData[editingMujazIdx].date = date;
-    mujazoonData[editingMujazIdx].masmu = masmu;
-    mujazoonData[editingMujazIdx].notes = notes;
-    mujazoonData[editingMujazIdx].imgs = [...mjTempImgs];
-    showToast('✓ تم تحديث المُجاز');
-  } else {
-    mujazoonData.push({ name, date, masmu, notes, imgs: [...mjTempImgs], group: null });
-    showToast('✓ تمت إضافة «' + name + '»');
-  }
+  const btn = document.getElementById('btn-save-mujaz');
+  const label = btn.textContent;
+  btn.textContent = 'جارٍ الحفظ...'; btn.disabled = true;
+  const editing = editingMujazIdx !== null ? mujazoonData[editingMujazIdx] : null;
+  const { data, error } = editing
+    ? await sb.from('mujazoon').update(rec).eq('id', editing.id).select().single()
+    : await sb.from('mujazoon').insert(rec).select().single();
+  btn.textContent = label; btn.disabled = false;
+  if (error) { showToast('تعذّر الحفظ: ' + error.message, true); return; }
 
+  if (editing) Object.assign(editing, mapMjRow(data));
+  else mujazoonData.push(mapMjRow(data));
+  showToast(editing ? '✓ تم تحديث المُجاز' : '✓ تمت إضافة «' + name + '»');
   closeModal('modal-mujaz');
   filterMujazoon();
 }
@@ -4330,7 +4354,7 @@ function openAddMujazGroup() {
   openModal('modal-mujaz-group');
 }
 
-function saveMujazGroup() {
+async function saveMujazGroup() {
   const namesText = document.getElementById('mjg-inp-names').value.trim();
   const date = document.getElementById('mjg-inp-date').value.trim();
   if (!namesText) { showToast('أدخل الأسماء', true); return; }
@@ -4344,22 +4368,30 @@ function saveMujazGroup() {
   const link = document.getElementById('mjg-inp-link').value.trim();
   const imgs = link ? [link] : [];
 
-  // أضف اسمًا لكل شخص مع ربطهم بالمجموعة
+  // صفّ لكل شخص، يجمعهم مفتاح مجموعة واحد وقائمة أسمائهم
   const groupLabel = 'استدعاء ' + date;
-  names.forEach(name => {
-    mujazoonData.push({ name, date, masmu, notes: notes || groupLabel, imgs: [...imgs], group: [...names] });
-  });
+  const groupKey = 'g' + Date.now();
+  const rows = names.map(name => ({ name, ijaza_date: date, masmu, notes: notes || groupLabel,
+    attachments: imgs.join('\n'), group_names: names, group_key: groupKey }));
+
+  const { data, error } = await sb.from('mujazoon').insert(rows).select();
+  if (error) { showToast('تعذّر الحفظ: ' + error.message, true); return; }
+  mujazoonData.push(...(data || []).map(mapMjRow));
 
   closeModal('modal-mujaz-group');
   showToast('✓ تمت إضافة ' + names.length + ' مجاز');
   filterMujazoon();
 }
 
-function deleteMujaz(idx) {
-  const name = mujazoonData[idx].name;
+async function deleteMujaz(idx) {
+  const item = mujazoonData[idx];
+  if (!item) return;
+  if (!confirm('⚠️ حذف «' + item.name + '» من المجازين؟\nلا يمكن التراجع.')) return;
+  const { error } = await sb.from('mujazoon').delete().eq('id', item.id);
+  if (error) { showToast('تعذّر الحذف: ' + error.message, true); return; }
   mujazoonData.splice(idx, 1);
   filterMujazoon();
-  showToast('تم حذف «' + name + '»');
+  showToast('تم حذف «' + item.name + '»');
 }
 
 // close modals on backdrop click
